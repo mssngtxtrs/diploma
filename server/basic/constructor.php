@@ -58,7 +58,7 @@ class Constructor {
     public function constructPage(array $elements, string $page_name, bool $show_messages = false): string {
         global $message_handler;
         $this->page_name = $page_name;
-        $page = '';
+        $page = $this->returnTemplate("head");
 
         foreach ($elements as $element) {
             $page .= $this->returnTemplate($element);
