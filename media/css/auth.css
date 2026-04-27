@@ -1,0 +1,193 @@
+/* Authentication */
+
+#auth {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    min-height: calc(100vh - 50px - 50px - 140px - 160px);
+}
+
+#auth .container {
+    background: var(--background-raise);
+    border-radius: var(--radius-level0);
+    max-width: 540px;
+}
+
+#auth .container form {
+    max-width: 524px;
+    padding: 8px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+#auth h1 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#auth .row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+#auth .input {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#auth #reg .row:first-of-type .input {
+    width: calc(50% - 4px);
+}
+
+#auth form label {
+    margin: 8px 0 8px 16px;
+}
+
+#auth input {
+    padding: 8px 16px;
+    background: var(--background-lower);
+    color: var(--foreground);
+    border: 1px solid var(--background-lower);
+    border-radius: var(--radius-level2);
+    font-size: var(--font-size-buttons);
+    transition:
+        background-color 0.3s,
+        border-color 0.3s;
+}
+
+#auth input:user-invalid {
+    border-color: var(--destructive);
+}
+
+#auth input:hover {
+    border-color: var(--background);
+    background: var(--background);
+}
+
+#auth input[type="text"]:focus,
+#auth input[type="email"]:focus,
+#auth input[type="password"]:focus {
+    border-color: var(--background-raise2);
+    background: var(--background-raise2);
+}
+
+#auth input[type="checkbox"] {
+    appearance: none;
+    position: relative;
+    padding: 0;
+    margin-left: 0;
+    width: 30px;
+    height: 30px;
+}
+
+#auth #reg .row:last-of-type .input {
+    flex-direction: row;
+    align-items: center;
+}
+
+#auth #reg .row:last-of-type label {
+    margin: 0 0 0 6px;
+}
+
+#auth input[type="checkbox"]:checked {
+    background: var(--background-raise2);
+    border-color: var(--background-raise2);
+}
+
+#auth input[type="checkbox"]::after {
+    display: block;
+    content: "\2714";
+    position: absolute;
+    top: -2px;
+    left: 4px;
+    width: 30px;
+    height: 30px;
+    font-size: 26px;
+    color: transparent;
+    transition: background-color 0.3s;
+}
+
+#auth input[type="checkbox"]:checked::after {
+    color: var(--foreground);
+}
+
+#auth input[type="submit"] {
+    margin-top: calc(8px);
+    width: 100%;
+    background: var(--foreground);
+    color: var(--background);
+}
+
+#auth input[type="submit"]:hover {
+    background: var(--foreground-raise);
+}
+
+#auth input[type="submit"]:active {
+    background: var(--foreground-lower);
+}
+
+#auth span {
+    color: var(--destructive);
+    margin: 8px 16px 0 16px;
+}
+
+#auth .auth-switcher {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
+    padding-top: 24px;
+    padding-bottom: 4px;
+    height: calc(80px - 24px - 4px);
+    gap: 24px;
+}
+
+#auth .auth-switcher button {
+    background: transparent;
+    border: none;
+    color: var(--foreground-lower2);
+    font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+    font-size: var(--font-size-subheadings);
+    font-weight: 700;
+    height: 100%;
+    transition:
+        font-size .3s,
+        padding .3s;
+}
+
+#auth .auth-switcher button:hover {
+    color: var(--foreground-lower);
+    font-size: calc(var(--font-size-subheadings) + (var(--font-size-heading2) - var(--font-size-subheadings)) / 2);
+}
+
+#auth .auth-switcher button.opened {
+    color: var(--foreground);
+    font-size: var(--font-size-heading2);
+}
+
+#auth .auth-switcher button::after {
+    content: '';
+    display: block;
+    position: relative;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    transition: width .3s, left .3s;
+    transform: translateX(-50%);
+    background: var(--foreground-lower2);
+}
+
+#auth .auth-switcher button.opened::after,
+#auth .auth-switcher button:hover::after {
+    width: 100%;
+}
+
+#auth .auth-switcher button:hover::after {
+    background: var(--foreground-lower);
+}
+
+#auth .auth-switcher button.opened::after {
+    background: var(--foreground);
+}

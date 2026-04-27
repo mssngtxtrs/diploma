@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg3"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <g
+     color="#bebebe"
+     fill="#474747"
+     id="g3"
+     style="fill:#ebdbb2;fill-opacity:1">
+    <path
+       d="M 2.2,0 C 0.993,0 0,1.007 0,2.209 V 12.791 C 0,13.993 0.994,15 2.2,15 H 13.8 C 15.006,15 16,13.993 16,12.791 V 2.209 C 16,1.007 15.006,0 13.8,0 Z m 0,2 H 13.8 C 13.924,2 14,2.071 14,2.209 V 12.791 C 14,12.929 13.924,13 13.8,13 H 2.2 C 2.076,13 2,12.929 2,12.791 V 2.209 C 2,2.071 2.076,2 2.2,2 Z"
+       style="line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;fill:#ebdbb2;fill-opacity:1;marker:none"
+       font-weight="400"
+       font-family="sans-serif"
+       overflow="visible"
+       id="path1" />
+    <path
+       d="M 4.494,5.895 A 0.6,0.6 0 0 0 4.076,6.924 L 5.652,8.5 4.076,10.076 a 0.6,0.6 0 1 0 0.848,0.848 l 2,-2 a 0.6,0.6 0 0 0 0,-0.848 l -2,-2 A 0.6,0.6 0 0 0 4.494,5.895 Z"
+       style="line-height:normal;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;shape-padding:0;isolation:auto;mix-blend-mode:normal;fill:#ebdbb2;fill-opacity:1;marker:none"
+       font-weight="400"
+       font-family="sans-serif"
+       overflow="visible"
+       id="path2" />
+    <path
+       d="m 8,10 h 3 v 1 H 8 Z"
+       style="fill:#ebdbb2;fill-opacity:1;marker:none"
+       overflow="visible"
+       id="path3" />
+  </g>
+</svg>

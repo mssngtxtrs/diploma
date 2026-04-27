@@ -1,0 +1,371 @@
+/* Variables */
+
+:root {
+    /* basic colors */
+    --bg0: #1d2021;
+    --bg1: #282828;
+    --bg2: #32302f;
+    --bg3: #504945;
+
+    --fg0: #fbf1c7;
+    --fg1: #ebdbb2;
+    --fg2: #d5c4a1;
+    --fg3: #bdae93;
+
+    --red0: #9d0006;
+    --red1: #cc241d;
+    --red2: #fb4934;
+
+    --yellow0: #b57614;
+    --yellow1: #d79921;
+    --yellow2: #fabd2f;
+
+    /* background colors */
+    --background: var(--bg1);
+    --background-lower: var(--bg0);
+    --background-raise: var(--bg2);
+    --background-raise2: var(--bg3);
+
+    /* foreground colors */
+    --foreground: var(--fg1);
+    --foreground-lower: var(--fg2);
+    --foreground-lower2: var(--fg3);
+    --foreground-raise: var(--fg0);
+
+    /* destructive colors */
+    --destructive: var(--red1);
+    --destructive-raise: var(--red2);
+    --destructive-lower: var(--red0);
+
+    /* debug colors */
+    --debug: var(--yellow1);
+    --debug-raise: var(--yellow2);
+    --debug-lower: var(--yellow0);
+
+    /* font size */
+    --font-size-heading1: 64px;
+    --font-size-heading2: 36px;
+    --font-size-subheadings: 16px;
+    --font-size-text: 18px;
+    --font-size-buttons: 16px;
+    --font-size-hints: 14px;
+
+    /* general radius */
+    --radius-level0: 16px;
+    /* inner blocks radius */
+    --radius-level1: 12px;
+    /* buttons radius */
+    --radius-level2: 8px;
+    /* other content radius */
+    --radius-level3: 4px;
+
+    /* button paddings */
+    --button-padding: 12px 24px;
+}
+
+/* Fonts setup */
+
+@font-face {
+    font-family: "Inter";
+    src: local("Inter"),
+        url("../fonts/inter.ttf"), format("truetype");
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: local("Inter"),
+        url("../fonts/inter-italic.ttf"), format("truetype");
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: local("JetBrains Mono"),
+        url("../fonts/jetbrains-mono.ttf"), format("truetype");
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    src: local("JetBrains Mono"),
+        url("../fonts/jetbrains-mono-italic.ttf"), format("truetype");
+    font-style: italic;
+}
+
+
+
+/* Universal */
+
+* {
+    font-family: "Inter", Arial, sans-serif;
+    scroll-behavior: smooth;
+}
+
+body {
+    padding-top: 140px;
+    margin: 0;
+    background: var(--background);
+}
+
+.container {
+    margin-inline: auto;
+    max-width: 1024px;
+}
+
+.placeholder-size {
+    min-height: calc(100vh - 140px - 160px - 75px);
+}
+
+section {
+    margin-top: 75px;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    z-index: 3;
+    width: 100%;
+    height: 140px;
+}
+
+header .container {
+    padding-inline: 30px;
+    border-radius: var(--radius-level0);
+    transition: .3s;
+    height: 140px;
+    margin-top: 0;
+}
+
+header.scrolled .container {
+    padding-inline: 9px;
+    height: 98px;
+    margin-top: 20px;
+    border: 1px solid var(--foreground);
+    background: var(--background-raise);
+}
+
+footer {
+    width: 100%;
+    height: 160px;
+}
+
+header .logo {
+    width: 80px;
+    height: 80px;
+}
+
+footer .logo {
+    width: 128px;
+    height: 128px;
+}
+
+header .logo img,
+footer .logo img {
+    width: inherit;
+    height: inherit;
+}
+
+header .container,
+footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+footer .container {
+    height: inherit;
+}
+
+header nav,
+footer nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header nav {
+    gap: 12px;
+}
+
+footer nav {
+    flex-direction: column;
+    align-items: end;
+}
+
+header .account-nav {
+    margin-right: 12px;
+}
+
+footer .column:last-child {
+    display: flex;
+    flex-direction: row;
+    gap: 48px;
+    align-items: start;
+}
+
+section .container > h1 {
+    margin-bottom: 50px;
+}
+
+h1,
+h2,
+h3,
+p,
+a,
+label,
+pre,
+ul {
+    color: var(--foreground);
+    margin: 0;
+}
+
+h1 {
+    font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+    font-size: var(--font-size-heading1);
+}
+
+h2 {
+    font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+    font-size: var(--font-size-heading2);
+}
+
+h3 {
+    font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+    font-size: var(--font-size-subheadings);
+}
+
+label {
+    font-weight: 400;
+    font-size: var(--font-size-buttons);
+}
+
+pre {
+    font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+    font-weight: 400;
+    font-size: var(--font-size-text);
+}
+
+a,
+p,
+ul {
+    font-size: var(--font-size-text);
+}
+
+.hint {
+    font-size: var(--font-size-hints);
+}
+
+a {
+    transition: color .3s;
+}
+
+a.button,
+button.button,
+input[type=submit].button {
+    display: block;
+    padding: var(--button-padding);
+    text-decoration: none;
+    border-radius: var(--radius-level1);
+    transition: background-color .3s;
+    background: var(--background-raise);
+    color: var(--foreground);
+    border: 1px solid var(--background-raise);
+    font-size: var(--font-size-buttons);
+    font-weight: 700;
+}
+
+a.button:hover,
+button.button:hover,
+input[type=submit].button:hover {
+    background: var(--background-raise2);
+    border-color: var(--background-raise2);
+    color: var(--foreground);
+}
+
+a.button:active,
+button.button:active,
+input[type=submit].button:hover {
+    background: var(--background-lower);
+    border-color: var(--background-lower);
+    color: var(--foreground);
+}
+
+a.header-nav-link,
+a.footer-nav-link {
+    text-decoration: none;
+}
+
+a.footer-nav-link {
+    margin-bottom: 6px;
+}
+
+a.account {
+    font-weight: 700;
+    text-decoration: none;
+}
+
+footer p {
+    font-weight: 700;
+    margin-bottom: 12px;
+    font-size: 20px;
+}
+
+a.button.urgent,
+button.button.urgent {
+    background: var(--foreground);
+    border-color: var(--foreground);
+    color: var(--background);
+}
+
+a.button.urgent:hover,
+button.button.urgent:hover {
+    background: var(--foreground-raise);
+    border-color: var(--foreground-raise);
+    color: var(--background);
+}
+
+a.button.urgent:active,
+button.button.urgent:active {
+    background: var(--foreground-lower);
+    border-color: var(--foreground-lower);
+    color: var(--background);
+}
+
+a.header-nav-link:hover,
+a.footer-nav-link:hover {
+    color: var(--foreground-raise);
+}
+
+a.header-nav-link:active,
+a.footer-nav-link:active {
+    color: var(--foreground-lower);
+}
+
+a.header-nav-link::after,
+a.footer-nav-link::after {
+    content: '';
+    display: block;
+    position: relative;
+    left: 50%;
+    width: 0;
+    height: 1px;
+    transition: width .3s, left .3s, background-color .3s;
+    transform: translateX(-50%);
+    background: var(--foreground);
+}
+
+a.header-nav-link:hover::after,
+a.footer-nav-link:hover::after {
+    width: 100%;
+    background: var(--foreground-raise);
+}
+
+a.header-nav-link:active::after,
+a.footer-nav-link:active::after {
+    width: 100%;
+    background: var(--foreground-lower);
+}

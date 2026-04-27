@@ -1,0 +1,146 @@
+<section id="auth">
+    <div class="container">
+        <div class="auth-switcher">
+            <div class="button-wrap">
+                <button data-target="login">Вход</button>
+            </div>
+            <div class="button-wrap">
+                <button data-target="reg">Регистрация</button>
+            </div>
+        </div>
+
+        <div class="forms">
+            <form action="/api/auth/log-in" id="login" method="post">
+                <div class="row">
+                    <div class="input">
+                        <label for="login">Логин</label>
+                        <input
+                            type="text"
+                            name="login"
+                            id="login"
+                            required
+                            title="5–30 символов: латиница, цифры, нижнее подчёркивание"
+                            pattern="^[A-Za-z0-9_]{5,30}$"
+                        >
+                        <span></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input">
+                        <label for="password">Пароль</label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            required
+                            title="8–30 символов. Минимум: 1 цифра, 1 заглавная буква. Только латиница, цифры и '_'"
+                            pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
+                        >
+                        <span></span>
+                    </div>
+                </div>
+                <input type="submit" class="button urgent" value="Войти">
+            </form>
+
+            <form action="/api/auth/register" id="reg" method="post">
+                <div class="row">
+                    <div class="input">
+                        <label for="firstName">Имя</label>
+                        <input
+                            type="text"
+                            name="firstName"
+                            id="firstName"
+                            required
+                            title="Только буквы: латиница и кириллица"
+                            pattern="^[A-Za-zА-Яа-яЁё]+$"
+                        >
+                        <span></span>
+                    </div>
+                    <div class="input">
+                        <label for="lastName">Фамилия</label>
+                        <input
+                            type="text"
+                            name="lastName"
+                            id="lastName"
+                            required
+                            title="Только буквы: латиница и кириллица"
+                            pattern="^[A-Za-zА-Яа-яЁё]+$"
+                        >
+                        <span></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input">
+                        <label for="login">Логин</label>
+                        <input
+                            type="text"
+                            name="login"
+                            id="login"
+                            required
+                            title="8–30 символов: латиница, цифры, нижнее подчёркивание"
+                            pattern="^[A-Za-z0-9_]{5,30}$"
+                        >
+                        <span></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input">
+                        <label for="email">Почта</label>
+                        <input
+                            type="email"
+                            name="email"
+                            id="email"
+                            title="Почта должна содержать @"
+                            required
+                        >
+                        <span></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input">
+                        <label for="password">Пароль</label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            required
+                            title="8–30 символов. Минимум: 1 цифра, 1 заглавная буква. Только латиница, цифры и _"
+                            pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
+                        >
+                        <span></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input">
+                        <label for="password-confirm">Подтвердите пароль</label>
+                        <input
+                            type="password"
+                            name="password-confirm"
+                            id="password-confirm"
+                            required
+                            title="Пароль должен совпадать"
+                            pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
+                            oninput="checkPasswords()"
+                        >
+                        <span></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input">
+                        <input
+                            type="checkbox"
+                            name="consent"
+                            id="consent"
+                            required
+                        >
+                        <div></div>
+                        <label for="consent">Согласие на обработку персональных данных</label>
+                    </div>
+                </div>
+                <input class="button urgent" type="submit" value="Зарегистрироваться">
+            </form>
+        </div>
+    </div>
+</section>
+
+<script src="<?= $this->media_folder ?>/js/auth.js"></script>

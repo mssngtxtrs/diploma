@@ -1,0 +1,28 @@
+#admin {
+    min-height: calc(100vh - 140px - 160px - 75px);
+}
+
+#admin .request select {
+    padding: 8px 16px;
+    padding-right: 36px;
+    border-radius: var(--radius-level2);
+    color: var(--foreground);
+    background-color: var(--background);
+    font-size: var(--font-size-buttons);
+    border: none;
+    appearance: none;
+    background-image: url("../icons/reveal.svg");
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+    transition: .3s;
+}
+
+#admin .request select:hover {
+    background-color: var(--background-raise2);
+}
+
+#admin .request select:active {
+    background-color: var(--background-lower);
+}

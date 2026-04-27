@@ -1,0 +1,52 @@
+<section id="account">
+    <div class="container">
+        <div id="personal">
+            <div class="text">
+                <h1>Фамилия Имя</h1>
+                <h2>Почта@хз.com</h2>
+                <p>Привелегии: </p>
+            </div>
+            <div class="buttons">
+                <button class="button urgent" onclick="window.location = '/requests/new'">Новая заявка</button>
+            </div>
+        </div>
+
+        <div id="close-modal">
+            <div class="container">
+                <h2>Вы действительно хотите отменить заявку?</h2>
+                <form action="/api/requests/close" method="post">
+                </form>
+            </div>
+        </div>
+
+        <div id="requests-header">
+            <div class="pagination"></div>
+            <select name="filter" id="filter"></select>
+        </div>
+
+        <div id="requests"></div>
+    </div>
+</section>
+
+<script>
+    function requestCloseModal(id) {
+        const close_modal = document.getElementById('close-modal');
+        const modal_form = close_modal.querySelector('form');
+
+        close_modal.style.display = 'flex';
+
+        modal_form.innerHTML = `
+            <button class="button urgent">Нет</button>
+            <input class="button" type="submit" value="Да">
+            <input type="hidden" value="${id}" name="reservationID">
+        `;
+
+        modal_form.querySelector('button').addEventListener('click', (event) => {
+            event.preventDefault();
+            close_modal.style.display = 'none';
+            modal_form.innerHTML = '';
+        });
+    }
+</script>
+
+<script type="module" src="<?= $this->media_folder ?>/js/account.js"></script>

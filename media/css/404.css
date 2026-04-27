@@ -1,0 +1,28 @@
+/* 404 */
+
+#not-found {
+    margin-top: 200px;
+    height: calc(100vh - 200px - 140px - 160px);
+}
+
+#not-found .container {
+    max-width: 540px;
+    display: flex;
+    flex-direction: column;
+    justify-items: space-between;
+    align-items: center;
+}
+
+#not-found h1,
+#not-found h3 {
+    width: 540px;
+}
+
+#not-found h1 {
+    margin-bottom: 0;
+}
+
+#not-found p {
+    margin-top: 75px;
+    margin-bottom: 24px;
+}

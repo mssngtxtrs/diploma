@@ -1,0 +1,54 @@
+/* Message handler */
+
+.messages {
+    position: fixed;
+    bottom: var(--radius-level0);
+    right: var(--radius-level0);
+}
+
+.messages div {
+    margin-top: var(--radius-level0);
+    padding: var(--radius-level0);
+    border-radius: var(--radius-level0);
+    background: var(--foreground);
+    color: var(--background);
+    font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+    font-weight: 400;
+    font-size: var(--font-size-hints);
+    max-width: 540px;
+    transition: .3s;
+}
+
+.messages div:hover {
+    background: var(--foreground-raise);
+}
+
+.messages div:active {
+    background: var(--foreground-lower);
+}
+
+.messages div.debug {
+    background: var(--debug);
+    color: var(--foreground);
+}
+
+.messages div.debug:hover {
+    background: var(--debug-raise);
+}
+
+.messages div.debug:active {
+    background: var(--debug-lower);
+}
+
+.messages div.error {
+    background: var(--destructive);
+    color: var(--foreground);
+}
+
+.messages div.error:hover {
+    background: var(--destructive-raise);
+}
+
+.messages div.error:active {
+    background: var(--destructive-lower);
+}

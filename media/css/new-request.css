@@ -1,0 +1,214 @@
+#new-request {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    min-height: calc(100vh - 50px - 50px - 140px - 160px);
+}
+
+#new-request .container {
+    background: var(--background-raise);
+    border-radius: var(--radius-level0);
+    max-width: 1008px;
+    padding: 8px;
+}
+
+#new-request h1,
+#new-request h2,
+#new-request h3 {
+    margin: 0 16px;
+}
+
+#new-request label h2 {
+    margin: 0;
+}
+
+#new-request h3 {
+    margin-top: 8px;
+}
+
+#new-request .hint {
+    margin-left: 16px;
+}
+
+#new-request .container form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#new-request .row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+#new-request .row:last-of-type {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+#new-request .input {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+#new-request form label {
+    margin: 8px 0 8px 16px;
+}
+
+#new-request input,
+#new-request select,
+#new-request textarea {
+    padding: 8px 16px;
+    background-color: var(--background-lower);
+    color: var(--foreground);
+    border: 1px solid var(--background-lower);
+    border-radius: var(--radius-level2);
+    font-size: var(--font-size-buttons);
+    transition:
+        background-color 0.3s,
+        border-color 0.3s;
+}
+
+#new-request input:user-invalid,
+#new-request select:user-invalid {
+    border-color: var(--destructive);
+}
+
+#new-request input:hover,
+#new-request select:hover {
+    border-color: var(--background);
+    background-color: var(--background);
+}
+
+#new-request input[type="text"]:focus,
+#new-request input[type="email"]:focus,
+#new-request input[type="password"]:focus {
+    border-color: var(--background-raise2);
+    background-color: var(--background-raise2);
+}
+
+#new-request input[type="radio"] {
+    appearance: none;
+    position: relative;
+    padding: 0;
+    margin-left: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 9999px;
+}
+
+#new-request input[type="radio"]:checked {
+    background: var(--background-raise);
+    border-color: var(--background-raise);
+}
+
+#new-request input[type="radio"]::after {
+    display: block;
+    content: "•";
+    position: absolute;
+    top: -19.5px;
+    left: 2.5px;
+    width: 30px;
+    height: 30px;
+    font-size: 48px;
+    color: transparent;
+    transition: background-color 0.3s;
+}
+
+#new-request input[type="radio"]:checked::after {
+    color: var(--foreground);
+}
+
+#new-request select {
+    appearance: none;
+    background-image: url("../icons/reveal.svg");
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+}
+
+#new-request textarea {
+    resize: none;
+}
+
+#new-request input[type="submit"] {
+    margin-top: calc(8px);
+    width: 100%;
+    background: var(--foreground);
+    color: var(--background);
+}
+
+#new-request input[type="submit"]:hover {
+    background: var(--foreground-raise);
+}
+
+#new-request input[type="submit"]:active {
+    background: var(--foreground-lower);
+}
+
+#new-request span {
+    color: var(--destructive);
+    margin: 8px 16px 0 16px;
+}
+
+#new-request #hostings-slider {
+    height: 276px;
+}
+
+#new-request #hostings-container {
+    width: calc(1008px - (47px + 8px) * 2);
+    z-index: 2;
+}
+
+#new-request .hostings-slider {
+    height: 200px;
+    gap: 8px;
+}
+
+#new-request .hostings-slider .hosting-wrap {
+    margin: 0;
+    scroll-snap-align: start;
+}
+
+#new-request .hostings-slider .hosting-wrap:first-of-type,
+#new-request .hostings-slider .hosting-wrap:last-of-type {
+    margin: 0;
+}
+
+#new-request .hostings-slider .hosting {
+    background: var(--background-raise2);
+    padding: 16px 16px 16px 24px;
+    height: 168px;
+    width: 413px;
+}
+
+#new-request .hosting h2 {
+    margin: 0;
+}
+
+#new-request .hosting span.hidden {
+    display: none;
+}
+
+#new-request .hosting .hosting-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#new-request #hostings-slider .hostings-slider-controls {
+    width: 100%;
+    min-height: 200px;
+    position: relative;
+    margin-top: 0;
+    bottom: 200px;
+    z-index: 1;
+}
+
+#new-request #hostings-slider .hostings-slider-controls button {
+    width: 47px;
+    padding-inline: 6.5px;
+}
