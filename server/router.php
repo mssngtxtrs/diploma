@@ -3,12 +3,6 @@ $request = $_SERVER['REQUEST_URI'];
 $path = parse_url($request, PHP_URL_PATH);
 $query = $_GET;
 
-/* echo "<pre>"; */
-/* var_dump($request); */
-/* var_dump($path); */
-/* var_dump($query); */
-/* echo "</pre>"; */
-
 switch (true) {
 
 

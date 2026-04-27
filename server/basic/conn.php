@@ -4,12 +4,6 @@ namespace Server;
 /* Класс базы данных */
 class Database {
     /* Поля класса */
-    private $credentials = [
-        'hostname' => "127.0.0.1",
-        'username' => "root",
-        'password' => "",
-        'database' => "db_course"
-    ];
     private \PDO $conn;
 
 
@@ -17,11 +11,19 @@ class Database {
     /* Создание класса */
     public function __construct() {
         try {
-            $dsn = "mysql:dbname={$this->credentials['database']};host={$this->credentials['hostname']}";
+            global $env;
+            $credentials = [
+                'hostname' => $env['HOSTNAME'],
+                'username' => $env['USERNAME'],
+                'password' => $env['PASSWORD'],
+                'database' => $env['DATABASE']
+            ];
+
+            $dsn = "pgsql:dbname={$credentials['database']};host={$credentials['hostname']}";
             $this->conn = new \PDO(
                 $dsn,
-                $this->credentials['username'],
-                $this->credentials['password']
+                $credentials['username'],
+                $credentials['password']
             );
         } catch (\PDOException $e) {
             error_log("Error connecting to the database: " . $e->getCode());

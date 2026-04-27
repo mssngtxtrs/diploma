@@ -13,12 +13,14 @@ class Constructor {
 
 
     /* Создание класса */
-    public function __construct(string $website_name, string $templates_folder = "templates", string $media_folder = "media", bool $debug = false) {
+    public function __construct(string $website_name, string $templates_folder = "templates", string $media_folder = "media") {
+        global $global_flags;
+
         $this->templates_folder = $templates_folder;
         $this->website_name = $website_name;
         $this->media_folder = $media_folder;
         $this->page_name = "";
-        $this->debug = $debug;
+        $this->debug = $global_flags['debug'];
     }
 
 

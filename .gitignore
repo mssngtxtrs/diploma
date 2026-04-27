@@ -1,3 +1,4 @@
 vendor
 raise.sh
 stop.sh
+.env
