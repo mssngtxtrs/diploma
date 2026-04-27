@@ -43,8 +43,11 @@ class Auth {
 
 
     /* Получение уровня привелегий пользоователя */
-    public function getPermissionLevel(int $user_id): int {
+    public function getPermissionLevel(string $login): int {
         global $database;
+
+        $user_id = $this->getUserID($login);
+
         return $database->returnQuery(
             PERMISSION_QUERY,
             "single",
