@@ -1,0 +1,23 @@
+#not_found {
+
+    & .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        & img {
+            width: 50%;
+            max-height: 450px;
+        }
+
+        & div {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            & h2 {
+                font-size: var(--title-size);
+            }
+        }
+    }
+}

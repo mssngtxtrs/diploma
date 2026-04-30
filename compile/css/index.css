@@ -1,0 +1,23 @@
+#slider {
+    & .slider_container {
+        & .slide_block {
+            display: flex;
+
+            & p {
+                display: flex;
+                align-items: center;
+                min-height: 32px;
+            }
+
+            & span {
+                display: block;
+            }
+
+            & img {
+                width: 32px;
+                height: 32px;
+                margin-right: 12px;
+            }
+        }
+    }
+}

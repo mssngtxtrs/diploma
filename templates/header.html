@@ -1,9 +1,15 @@
 <header>
     <div class="container">
         <a href="/" class="logo">
-            <img src="<?= $this->media_folder ?>/icons/icon.svg" alt="<?= $this->website_name ?>">
-            <!-- <img src="" alt="Логотип"> -->
+            <img src="<?= $this->media_folder ?>/icons/logo.svg" alt="<?= $this->website_name ?>">
+            <h1><?= $this->website_name ?></h1>
         </a>
-        <nav class="account-nav"></nav>
+        <nav class="website_nav">
+            <a class="underlined" href="/hostings">Хостинги</a>
+            <a class="underlined" href="/servers">Серверы</a>
+        </nav>
+        <nav class="account_nav">
+            <a class="underlined" href="/auth">Авторизация</a>
+        </nav>
     </div>
 </header>

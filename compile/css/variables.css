@@ -1,0 +1,16 @@
+:root {
+    --title-size: 64px;
+    --heading-size: 48px;
+    --subheading-size: 28px;
+    --body-size: 18px;
+
+    --fg: #d0d0d0;
+    --fg-hover: #f0f0f0;
+    --fg-active: #b0b0b0;
+    --bg: #121212;
+    --bg-hover: #1a1a1a;
+    --bg-active: #040404;
+    --secondary: #484896;
+    --secondary-hover: #5656aa;
+    --secondary-active: #323276;
+}

@@ -67,17 +67,43 @@ function makeSlide(server: Server): HTMLElement | undefined {
   if (slide_container) {
     createElement("h3", server.name, null, null, slide_container);
 
-    const cpu_block = createElement("div", null, ["cpu_block"]);
+    const cpu_block = createElement("div", null, [ "slide_block", "cpu_block" ]);
     if (cpu_block) {
-      createElement("p", "Процессор", null, null, cpu_block);
-      createElement("span", server.cpu.name, null, null, cpu_block);
-      createElement("span", `${server.cpu.cores} ядра / ${server.cpu.threads} потоков`, null, null, cpu_block);
-      createElement("span", `Частота: ${server.cpu.frequency}`, null, null, cpu_block);
+      createElement("img", null, null, { "src": "/media/img/Th08Kaguya.webp" }, cpu_block);
+      const text_block = createElement("div");
+      if (text_block) {
+        createElement("p", "Процессор", null, null, text_block);
+        createElement("span", server.cpu.name, null, null, text_block);
+        createElement("span", `${server.cpu.cores} ядра / ${server.cpu.threads} потоков`, null, null, text_block);
+        createElement("span", `Частота: ${server.cpu.frequency} МГц`, null, null, text_block);
+        cpu_block.appendChild(text_block);
+      }
       slide_container.appendChild(cpu_block);
     }
 
-    createElement("p", `ОЗУ: ${server.ram} ГБ`, null, null, slide_container);
-    createElement("p", `Диск: ${server.space} ГБ`, null, null, slide_container);
+    const ram_block = createElement("div", null, ["slide_block", "ram_block"]);
+    if (ram_block) {
+      createElement("img", null, null, { "src": "/media/img/Th08Reisen.webp" }, ram_block);
+      const text_block = createElement("div");
+      if (text_block) {
+        const ram = server.ram < 1048576 ? `${server.ram / 1024} ГБ` : `${server.ram / 1048576} ТБ`;
+        createElement("p", `ОЗУ: ${ram}`, null, null, text_block);
+        ram_block.appendChild(text_block);
+      }
+      slide_container.appendChild(ram_block);
+    }
+
+    const space_block = createElement("div", null, ["slide_block", "space_block"]);
+    if (space_block) {
+      createElement("img", null, null, { "src": "/media/img/Th08Mokou.webp" }, space_block);
+      const text_block = createElement("div");
+      if (text_block) {
+        const space = server.space < 1048576 ? `${server.space / 1024} ГБ` : `${server.space / 1048576} ТБ`;
+        createElement("p", `Диск: ${space}`, null, null, text_block);
+        space_block.appendChild(text_block);
+      }
+      slide_container.appendChild(space_block);
+    }
 
     return slide_container;
   }

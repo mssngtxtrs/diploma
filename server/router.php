@@ -136,9 +136,10 @@ case preg_match('#^/api/.*$#', $path):
 default:
     http_response_code(404);
     echo $constructor->constructPage(
-        [ "header", "404", "footer" ],
+        [ "header", "not_found", "footer" ],
         "Страница не найдена",
-        $global_flags['show-messages']
+        $global_flags['show-messages'],
+        "not_found"
     );
     $_SESSION['page_back'] = $request;
     break;
