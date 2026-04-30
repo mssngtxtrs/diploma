@@ -1,0 +1,11 @@
+:root {
+    --title-size: 64px;
+    --heading-size: 48px;
+    --subheading-size: 32px;
+    --body-size: 24px;
+
+    --bg: #f0f0f0;
+    --bg-hover: #f4f4f4;
+    --bg-active: #e6e6e6;
+    --fg: #000000;
+}

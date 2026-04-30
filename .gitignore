@@ -1,4 +1,7 @@
 vendor
 raise.sh
 stop.sh
+compile.sh
 .env
+/media/js
+_backup

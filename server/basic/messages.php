@@ -52,9 +52,7 @@ class Messages {
     /* Создание контейнера в документе */
     public function showMessagesHandler() {
         global $constructor;
-        $output = "<div class='messages'>";
-        $output .= "</div>";
-        $output .= "<script src='" . $constructor->getMediaFolder() . "/js/messages-handler.js'></script>";
+        $output = "<div class='messages'></div>";
         return $output;
     }
 

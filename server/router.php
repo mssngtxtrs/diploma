@@ -10,9 +10,10 @@ switch (true) {
 case $path == '':
 case $path == '/':
     echo $constructor->constructPage(
-        [ "header", "footer" ],
+        [ "header", "page_1", "footer" ],
         "Главная",
-        $global_flags['show-messages']
+        $global_flags['show-messages'],
+        "index"
     );
     $_SESSION['page_back'] = $request;
     break;
@@ -26,7 +27,8 @@ case $path == '/dashboard':
         echo $constructor->constructPage(
             [ "header", "dashboard", "footer" ],
             "Личный кабинет",
-            $global_flags['show-messages']
+            $global_flags['show-messages'],
+            "dashboard"
         );
         $_SESSION['page_back'] = $request;
     }
@@ -41,7 +43,8 @@ case $path == '/requests/new':
         echo $constructor->constructPage(
             [ "header", "request", "footer" ],
             "Новая заявка",
-            $global_flags['show-messages']
+            $global_flags['show-messages'],
+            "request"
         );
         $_SESSION['page_back'] = $request;
     }
@@ -55,7 +58,8 @@ case $path == "/requests/admin":
         echo $constructor->constructPage(
             [ "header", "admin", "footer" ],
             "Админ-панель",
-            $global_flags['show-messages']
+            $global_flags['show-messages'],
+            "admin"
         );
     }
     break;
@@ -69,7 +73,8 @@ case $path == '/auth':
         echo $constructor->constructPage(
             [ "header", "auth", "footer" ],
             "Авторизация",
-            $global_flags['show-messages']
+            $global_flags['show-messages'],
+            "auth"
         );
         $_SESSION['page_back'] = $request;
     }
@@ -79,20 +84,52 @@ case $path == '/auth':
 case preg_match('#^/api/.*$#', $path):
     require "server/custom/hostings.php";
     require "server/custom/requests.php";
+
     $output = [];
+    $output['response'] = false;
+    $output['message'] = "Unknown error";
+
+    $input = file_get_contents("php://input");
+    $data = json_decode($input, true);
+
+    header("Content-Type: application/json");
 
     switch ($path) {
     case "/api/messages":
-        header("Content-Type: application/json");
-        $output['return-messages'] = $message_handler->returnMessages($global_flags['debug']);
-        echo json_encode($output);
+        $output['response'] = $message_handler->returnMessages($global_flags['debug']);
+        break;
+
+
+    case "/api/hostings":
+        $fetched = Server\Custom\Requests::getHostings();
+        if (count($fetched) > 0) {
+            $output['response'] = $fetched;
+            unset($output['message']);
+        } else {
+            $output['message'] = "Empty hostings query";
+        }
+        break;
+
+
+    case "/api/servers":
+        $fetched = Server\Custom\Requests::getServers();
+        if (count($fetched) > 0) {
+            $output['response'] = $fetched;
+            unset($output['message']);
+        } else {
+            $output['message'] = "Empty servers query";
+        }
         break;
 
 
     default:
-        header("Location:/404");
+        http_response_code(400);
+        $output['message'] = "Wrong URL";
         break;
     }
+
+    echo json_encode($output);
+
     break;
 
 

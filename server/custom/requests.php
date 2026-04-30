@@ -1,61 +1,65 @@
 <?php
 namespace Server\Custom;
 
-define("GET_SERVERS_QUERY", "select * from servers");
-define("GET_HOSTINGS_QUERY", `
+define("GET_SERVERS_QUERY", <<<HERE
+    select s.server_id, s.server_name, c.cpu_name, c.cpu_cores, c.cpu_threads, c.cpu_frequency, s.server_ram, s.server_space
+    from servers s
+    left join cpus c on s.cpu_id = c.cpu_id
+HERE);
+define("GET_HOSTINGS_QUERY", <<<HERE
     select h.hosting_id, h.hosting_name, s.server_name, h.hosting_ram, h.hosting_space, h.price_per_month
     from hostings h
     left join servers s on h.server_id = s.server_id
-`);
+HERE);
 define("GET_REQUEST_STATES_QUERY", "select * from request_states");
-define("GET_REQUESTS_QUERY", `
+define("GET_REQUESTS_QUERY", <<<HERE
     select r.request_id, rs.state_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_price_final
     from requests r
     left join request_states rs on r.state_id = rs.state_id
     left join hostings h on r.hosting_id = h.hosting_id
     where user_id = :user_id
-`);
-define("GET_REQUESTS_ADMIN_QUERY", `
+HERE);
+define("GET_REQUESTS_ADMIN_QUERY", <<<HERE
     select r.request_id, r.state_id, u.first_name, u.last_nale, u.second_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_price_final
     from requests r
     left join users u on r.user_id = u.user_id
     left join hostings h on r.hosting_id = h.hosting_id
-`);
-define("GET_HOSTING_PRICE_QUERY", `
+HERE);
+define("GET_HOSTING_PRICE_QUERY", <<<HERE
     select h.price_per_month
     from hostings h
     where h.hosting_id = :hosting_id
-`);
-define("INSERT_REQUEST_QUERY", `
+HERE);
+define("INSERT_REQUEST_QUERY", <<<HERE
     insert into requests (user_id, hosting_id, state_id, request_months, request_price_final)
     values (:user_id, :hosting_id, 1, :request_months, :request_price_final)
-`);
-define("GET_EXPIRATION_DATE_QUERY", `
+HERE);
+define("GET_EXPIRATION_DATE_QUERY", <<<HERE
     select request_expiration_date
     from requests
     where request_id = :request_id
-`);
-define("GET_HOSTING_MONTHS_QUERY", `
+HERE);
+define("GET_HOSTING_MONTHS_QUERY", <<<HERE
     select hosting_months
     from hostings
     where hosting_id = :hosting_id
-`);
-define("UPDATE_EXPIRATION_DATE_QUERY", `
+HERE);
+define("UPDATE_EXPIRATION_DATE_QUERY", <<<HERE
     update requests
     set request_expiration_date = :request_expiration_date
     where request_id = :request_id
-`);
-define("UPDATE_REQUEST_STATE_QUERY", `
+HERE);
+define("UPDATE_REQUEST_STATE_QUERY", <<<HERE
     update requests
     set state_id = :state_id
     where request_id = :request_id
-`);
-define("GET_USER_DELETING_REQUEST", `
+HERE);
+define("GET_USER_DELETING_REQUEST", <<<HERE
     select 1
     from requests r
     where r.request_id = :request_id
     and r.user_id = :user_id
-`);
+HERE);
 
 
 

@@ -57,7 +57,7 @@ class Constructor {
 
 
     /* Сборка страницы */
-    public function constructPage(array $elements, string $page_name, bool $show_messages = false): string {
+    public function constructPage(array $elements, string $page_name, bool $show_messages = false, string $script = null): string {
         global $message_handler;
         $this->page_name = $page_name;
         $page = $this->returnTemplate("head");
@@ -68,6 +68,10 @@ class Constructor {
 
         if ($show_messages) {
             $page .= $message_handler->showMessagesHandler();
+        }
+
+        if ($script) {
+            $page .= "<script type='module' src='" . $this->media_folder . "/js/" . $script . ".js'></script>";
         }
 
         return $page;

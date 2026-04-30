@@ -1,0 +1,29 @@
+@font-face {
+    font-family: "IBM Plex Sans";
+    src: local("IBM Plex Sans"),
+        url("../fonts/IBMPlexSans.woff2"), format("woff2");
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "IBM Plex Sans";
+    src: local("IBM Plex Sans"),
+        url("../fonts/IBMPlexSans_Italic.woff2"), format("woff2");
+    font-style: italic;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "Iosevka Custom";
+    src: url("../fonts/Iosevka.woff2"), format("woff2");
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "Iosevka Custom";
+    src: url("../fonts/Iosevka_Italic.woff2"), format("woff2");
+    font-style: italic;
+    font-weight: normal;
+}
