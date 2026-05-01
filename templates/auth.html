@@ -1,143 +1,142 @@
 <section id="auth">
     <div class="container">
-        <div class="auth-switcher">
-            <div class="button-wrap">
-                <button data-target="login">Вход</button>
-            </div>
-            <div class="button-wrap">
-                <button data-target="reg">Регистрация</button>
-            </div>
+        <div class="auth_switcher">
+            <button class="bordered" data-target="login">Вход</button>
+            <button class="bordered" data-target="reg">Регистрация</button>
         </div>
 
         <div class="forms">
             <form action="/api/auth/log-in" id="login" method="post">
-                <div class="row">
-                    <div class="input">
-                        <label for="login">Логин</label>
-                        <input
-                            type="text"
-                            name="login"
-                            id="login"
-                            required
-                            title="5–30 символов: латиница, цифры, нижнее подчёркивание"
-                            pattern="^[A-Za-z0-9_]{5,30}$"
-                        >
-                        <span></span>
-                    </div>
+                <div class="input tooltipped">
+                    <label for="login">Логин</label>
+                    <input
+                        type="text"
+                        name="login"
+                        id="login"
+                        required
+                        title="Неверный формат логина"
+                        pattern="^[A-Za-z0-9_]{5,30}$"
+                    >
+                    <span></span>
+                    <p class="tooltip">5–30 символов: латиница, цифры, нижнее подчёркивание</p>
                 </div>
-                <div class="row">
-                    <div class="input">
-                        <label for="password">Пароль</label>
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            required
-                            title="8–30 символов. Минимум: 1 цифра, 1 заглавная буква. Только латиница, цифры и '_'"
-                            pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
-                        >
-                        <span></span>
-                    </div>
+                <div class="input tooltipped">
+                    <label for="password">Пароль</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        required
+                        title="Неверный формат пароля"
+                        pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
+                    >
+                    <span></span>
+                    <p class="tooltip">8–30 символов. Минимум: 1 цифра, 1 заглавная буква. Только латиница, цифры и '_'</p>
                 </div>
-                <input type="submit" class="button urgent" value="Войти">
+                <button type="submit">Войти</button>
             </form>
 
             <form action="/api/auth/register" id="reg" method="post">
-                <div class="row">
-                    <div class="input">
-                        <label for="firstName">Имя</label>
-                        <input
-                            type="text"
-                            name="firstName"
-                            id="firstName"
-                            required
-                            title="Только буквы: латиница и кириллица"
-                            pattern="^[A-Za-zА-Яа-яЁё]+$"
-                        >
-                        <span></span>
-                    </div>
-                    <div class="input">
-                        <label for="lastName">Фамилия</label>
-                        <input
-                            type="text"
-                            name="lastName"
-                            id="lastName"
-                            required
-                            title="Только буквы: латиница и кириллица"
-                            pattern="^[A-Za-zА-Яа-яЁё]+$"
-                        >
-                        <span></span>
-                    </div>
+                <div class="input tooltipped">
+                    <label for="first_name">Имя</label>
+                    <input
+                        type="text"
+                        name="first_name"
+                        id="first_name"
+                        required
+                        title="Неверный формат имени"
+                        pattern="^[A-Za-zА-Яа-яЁё]+$"
+                    >
+                    <span></span>
+                    <p class="tooltip">Только буквы: латиница и кириллица</p>
                 </div>
-                <div class="row">
-                    <div class="input">
-                        <label for="login">Логин</label>
-                        <input
-                            type="text"
-                            name="login"
-                            id="login"
-                            required
-                            title="8–30 символов: латиница, цифры, нижнее подчёркивание"
-                            pattern="^[A-Za-z0-9_]{5,30}$"
-                        >
-                        <span></span>
-                    </div>
+                <div class="input tooltipped">
+                    <label for="last_name">Фамилия</label>
+                    <input
+                        type="text"
+                        name="last_name"
+                        id="last_name"
+                        required
+                        title="Неверный формат фамилии"
+                        pattern="^[A-Za-zА-Яа-яЁё]+$"
+                    >
+                    <span></span>
+                    <p class="tooltip">Только буквы: латиница и кириллица</p>
                 </div>
-                <div class="row">
-                    <div class="input">
-                        <label for="email">Почта</label>
-                        <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            title="Почта должна содержать @"
-                            required
-                        >
-                        <span></span>
-                    </div>
+                <div class="input tooltipped">
+                    <label for="second_name">Отчество (необязательно)</label>
+                    <input
+                        type="text"
+                        name="second_name"
+                        id="second_name"
+                        title="Неверный формат отчества"
+                        pattern="^[A-Za-zА-Яа-яЁё]+$"
+                    >
+                    <span></span>
+                    <p class="tooltip">Только буквы: латиница и кириллица</p>
                 </div>
-                <div class="row">
-                    <div class="input">
-                        <label for="password">Пароль</label>
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            required
-                            title="8–30 символов. Минимум: 1 цифра, 1 заглавная буква. Только латиница, цифры и _"
-                            pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
-                        >
-                        <span></span>
-                    </div>
+                <div class="input tooltipped">
+                    <label for="login">Логин</label>
+                    <input
+                        type="text"
+                        name="login"
+                        id="login"
+                        required
+                        title="Неверный формат логина"
+                        pattern="^[A-Za-z0-9_]{5,30}$"
+                    >
+                    <span></span>
+                    <p class="tooltip">8–30 символов: латиница, цифры, нижнее подчёркивание</p>
                 </div>
-                <div class="row">
-                    <div class="input">
-                        <label for="password-confirm">Подтвердите пароль</label>
-                        <input
-                            type="password"
-                            name="password-confirm"
-                            id="password-confirm"
-                            required
-                            title="Пароль должен совпадать"
-                            pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
-                            oninput="checkPasswords()"
-                        >
-                        <span></span>
-                    </div>
+                <div class="input tooltipped">
+                    <label for="email">Почта</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        title="Неверный формат почты"
+                        required
+                    >
+                    <span></span>
+                    <p class="tooltip">Почта должна быть в формате example@example.com</p>
                 </div>
-                <div class="row">
-                    <div class="input">
-                        <input
-                            type="checkbox"
-                            name="consent"
-                            id="consent"
-                            required
-                        >
-                        <div></div>
-                        <label for="consent">Согласие на обработку персональных данных</label>
-                    </div>
+                <div class="input tooltipped">
+                    <label for="password">Пароль</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        required
+                        title="Неверный формат пароля"
+                        pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
+                    >
+                    <span></span>
+                    <p class="tooltip">8–30 символов: минимум 1 цифра, 1 заглавная буква, только латиница, цифры и _</p>
                 </div>
-                <input class="button urgent" type="submit" value="Зарегистрироваться">
+                <div class="input tooltipped">
+                    <label for="password-confirm">Подтвердите пароль</label>
+                    <input
+                        type="password"
+                        name="password_confirm"
+                        id="password_confirm"
+                        required
+                        title="Пароли не совпадают"
+                        pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
+                    >
+                    <span></span>
+                    <p class="tooltip">Пароли должны совпадать</p>
+                </div>
+                <div class="input rowwed">
+                    <input
+                        type="checkbox"
+                        name="consent"
+                        id="consent"
+                        required
+                        title=""
+                    >
+                    <label for="consent">Согласие на обработку персональных данных</label>
+                </div>
+                <button type="submit">Зарегистрироваться</button>
             </form>
         </div>
     </div>

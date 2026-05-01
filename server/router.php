@@ -20,6 +20,18 @@ case $path == '/':
 
 
 
+case $path == "/hostings":
+    echo $constructor->constructPage(
+        [ "header", "hostings", "footer" ],
+        "Наши хостинги",
+        $global_flags['show-messages'],
+        "hostings"
+    );
+    $_SESSION['page_back'] = $request;
+    break;
+
+
+
 case $path == '/dashboard':
     if (empty($_SESSION['user']['login'])) {
         header("Location: /auth");
@@ -67,7 +79,7 @@ case $path == "/requests/admin":
 
 
 case $path == '/auth':
-    if (empty($_SESSION['user']['login'])) {
+    if (!empty($_SESSION['user']['login'])) {
         header("Location: /requests");
     } else {
         echo $constructor->constructPage(

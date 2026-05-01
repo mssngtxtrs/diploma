@@ -1,5 +1,8 @@
+/* Импортирование нескольких файлов */
+
 @import url("fonts.css");
 @import url("variables.css");
 @import url("basic.css");
 @import url("index.css");
+@import url("auth.css");
 @import url("not_found.css");

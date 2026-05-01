@@ -1,16 +1,118 @@
-:root {
-    --title-size: 64px;
-    --heading-size: 48px;
-    --subheading-size: 28px;
-    --body-size: 18px;
+/* Переменные */
 
-    --fg: #d0d0d0;
-    --fg-hover: #f0f0f0;
-    --fg-active: #b0b0b0;
-    --bg: #121212;
-    --bg-hover: #1a1a1a;
-    --bg-active: #040404;
-    --secondary: #484896;
-    --secondary-hover: #5656aa;
-    --secondary-active: #323276;
+/* Размеры текста */
+
+@property --title-size {
+    syntax: "<length>";
+    initial-value: 64px;
+    inherits: false;
+}
+@property --heading-size {
+    syntax: "<length>";
+    initial-value: 48px;
+    inherits: false;
+}
+@property --subheading-size {
+    syntax: "<length>";
+    initial-value: 28px;
+    inherits: false;
+}
+@property --body-size {
+    syntax: "<length>";
+    initial-value: 18px;
+    inherits: false;
+}
+@property --tooltip-size {
+    syntax: "<length>";
+    initial-value: 14px;
+    inherits: false;
+}
+
+/* Основные цвета */
+
+/* Передний план */
+@property --fg {
+    syntax: "<color>";
+    initial-value: #d0d0d0;
+    inherits: false;
+}
+@property --fg-hover {
+    syntax: "<color>";
+    initial-value: #f0f0f0;
+    inherits: false;
+}
+@property --fg-active {
+    syntax: "<color>";
+    initial-value: #b0b0b0;
+    inherits: false;
+}
+
+/* Фон */
+@property --bg {
+    syntax: "<color>";
+    initial-value: #121212;
+    inherits: false;
+}
+@property --bg-hover {
+    syntax: "<color>";
+    initial-value: #1a1a1a;
+    inherits: false;
+}
+@property --bg-active {
+    syntax: "<color>";
+    initial-value: #040404;
+    inherits: false;
+}
+
+/* Акцент */
+@property --secondary {
+    syntax: "<color>";
+    initial-value: #484896;
+    inherits: false;
+}
+@property --secondary-hover {
+    syntax: "<color>";
+    initial-value: #5656aa;
+    inherits: false;
+}
+@property --secondary-active {
+    syntax: "<color>";
+    initial-value: #323276;
+    inherits: false;
+}
+
+/* Семантические цвета */
+
+/* Ошибка */
+@property --destructive {
+    syntax: "<color>";
+    initial-value: #aa5656;
+    inherits: false;
+}
+@property --destructive-hover {
+    syntax: "<color>";
+    initial-value: #bb6666;
+    inherits: false;
+}
+@property --destructive-active {
+    syntax: "<color>";
+    initial-value: #964848;
+    inherits: false;
+}
+
+/* Прочие цвета */
+
+/* Всплывающая подсказка */
+@property --tooltip {
+    syntax: "<color>";
+    initial-value: #2a2a2a;
+    inherits: false;
+}
+
+/* Параметр для анимации класса .bordered */
+
+@property --fill {
+    syntax: "<percentage>";
+    initial-value: 0%;
+    inherits: false;
 }

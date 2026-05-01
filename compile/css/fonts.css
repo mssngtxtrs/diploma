@@ -1,3 +1,5 @@
+/* Основной шрифт текста: IBM Plex Sans */
+
 @font-face {
     font-family: "IBM Plex Sans";
     src: local("IBM Plex Sans"),
@@ -13,6 +15,8 @@
     font-style: italic;
     font-weight: normal;
 }
+
+/* Шрифт для заголовков: Iosevka (собственная сборка) */
 
 @font-face {
     font-family: "Iosevka Custom";

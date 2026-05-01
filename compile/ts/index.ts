@@ -1,8 +1,10 @@
 import { fetchAPIResponse } from "./modules/api.js";
 import { displayMessage, createElement } from "./modules/utils.js";
+import { changeHeaderColorOnScroll } from "./modules/ui.js";
 import type { Server } from "./types/servers.js";
 
 async function main(): Promise<void> {
+  changeHeaderColorOnScroll();
   var servers = await getServers();
   if (servers) {
     const container = document.querySelector("#slider .slider_container");

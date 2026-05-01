@@ -16,7 +16,7 @@ require "server/basic/constructor.php";
 require "server/basic/messages.php";
 
 $constructor = new Server\Constructor(
-    website_name: "EasyHost",
+    website_name: "ЛунаХост",
     templates_folder: "templates",
     media_folder: "/media",
 );

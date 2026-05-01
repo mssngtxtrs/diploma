@@ -1,9 +1,23 @@
+import { changeHeaderColorOnScroll } from "./modules/ui.js";
+
 function main(): void {
+  changeHeaderColorOnScroll();
+  const tooltipped_block = document.querySelector("#not_found .tooltipped");
+  if (tooltipped_block) {
+    tooltipped_block.addEventListener("click", pasteImageWithTooltip);
+    pasteImageWithTooltip();
+  } else {
+    console.log("Tooltipped block not found, Touhou legacy was erased. Erased, but not forgotten!");
+  }
+}
+
+function pasteImageWithTooltip(): void {
   const not_found_img = document.querySelector("#not_found img");
 
   if (not_found_img) {
     const sources = [
-       "/media/img/Th08Alice.webp",
+      "/media/img/Th08Alice.webp",
+      "/media/img/Th08Eirin.webp",
       "/media/img/Th08Kaguya.webp",
       "/media/img/Th08Keine1.webp",
       "/media/img/Th08Keine2.webp",
@@ -22,22 +36,23 @@ function main(): void {
     ];
 
     const alts = [
-      "Alice",
-      "Kaguya",
-      "Keine (human)",
-      "Keine (hakutaku)",
-      "Marisa",
-      "Mokou",
-      "Mystia",
-      "Nightbug",
-      "Reimu",
-      "Reisen",
-      "Remilia",
-      "Sakuya",
-      "Tewi",
-      "Youmu",
-      "Yukari",
-      "Yuyuko",
+      "Алиса Маргатройд",
+      "Эйрин Ягокоро",
+      "Кагуя Хорайсан",
+      "Кейна Камисирасава (человек)",
+      "Кейна Камисирасава (хакутаку)",
+      "Мариса Кирисаме",
+      "Фудзивара-но Моко",
+      "Мистия Лорелей",
+      "Риггл Найтбаг",
+      "Рейму Хакурей",
+      "Рейсен Удонгейн Инаба",
+      "Ремилия Скарлет",
+      "Сакуя Идзаёи",
+      "Теви Инаба",
+      "Ёму Компаку",
+      "Юкари Якумо",
+      "Ююко Сайгёдзи",
     ];
 
     const index = Math.floor(Math.random() * sources.length);
@@ -45,6 +60,11 @@ function main(): void {
     if (sources[index] && alts[index]) {
       not_found_img.setAttribute("src", sources[index]);
       not_found_img.setAttribute("alt", alts[index]);
+
+      const tooltip = document.querySelector("#not_found .tooltip");
+      if (tooltip) {
+        tooltip.textContent = alts[index] + " из Touhou 8 ~ Imperishable Night";
+      }
     }
 
   } else {

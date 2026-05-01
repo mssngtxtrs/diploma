@@ -1,9 +1,13 @@
+/* Общие параметры */
+
 * {
     scroll-behavior: smooth;
-    transition: background-color .2s cubic-bezier(.19,1,.22,1),
-        color .2s cubic-bezier(.19,1,.22,1);
+    transition: background-color .3s cubic-bezier(.19,1,.22,1),
+        color .3s cubic-bezier(.19,1,.22,1),
+        border-color .3s cubic-bezier(.19,1,.22,1);
 }
 
+/* Высота контента: если не заполняет полностью: помещает его по центру и убирает подвал вниз */
 body {
     margin: 0;
     background: var(--bg);
@@ -12,6 +16,7 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
+/* Заголовки */
 h1, h2, h3 {
     font-family: "Iosevka Custom", "Courier New", monospace;
     font-weight: normal;
@@ -20,6 +25,7 @@ h1, h2, h3 {
     color: var(--fg);
 }
 
+/* Текст, кнопки и поля */
 a, p, span, button, input, label, textarea {
     font-family: "IBM Plex Sans", Arial, sans-serif;
     font-weight: normal;
@@ -30,37 +36,61 @@ a, p, span, button, input, label, textarea {
     text-decoration: none;
 }
 
+/* Ссылки */
 a {
     &:hover { color: var(--fg-hover); }
     &:active { color: var(--fg-active); }
+}
 
+/* Анимация подчеркивания */
+.underlined {
+    position: relative;
+    padding-bottom: 5px;
 
-    &.underlined {
-        position: relative;
-        padding-bottom: 5px;
+    &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--fg);
+        transition: width .3s cubic-bezier(.19,1,.22,1),
+            left .3s cubic-bezier(.19,1,.22,1);
+        transform: translateX(-50%);
+    }
 
-        &::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--fg);
-            transition: width 0.3s cubic-bezier(.19,1,.22,1), left 0.3s cubic-bezier(.19,1,.22,1);
-            transform: translateX(-50%);
-        }
+    &:hover::after {
+        background-color: var(--fg-hover);
+        width: 100%;
+        left: 50%;
+    }
 
-        &:hover::after {
-            background-color: var(--fg-hover);
-            width: 100%;
-            left: 50%;
-        }
+    &:active::after { background-color: var(--fg-active); }
+}
 
-        &:active::after { background-color: var(--fg-active); }
+/* Анимация обводки */
+.bordered {
+    border: 2px solid transparent;
+    background:
+        linear-gradient(var(--bg), var(--bg)) padding-box,
+        conic-gradient(
+            from 0deg,
+            var(--fg) 0deg,
+            var(--fg) var(--fill),
+            transparent var(--fill)
+        ) border-box !important;
+
+    transition: --fill 1.0s cubic-bezier(.19,1,.22,1),
+        color .3s cubic-bezier(.19,1,.22,1),
+        background-color .3s cubic-bezier(.19,1,.22,1);
+
+    &:hover {
+        --fill: 100%;
     }
 }
 
+/* Кнопки */
 button {
     padding: 12px 24px;
     background: var(--secondary);
@@ -73,33 +103,85 @@ button {
     &:active { background: var(--secondary-active); }
 }
 
+/* Размер текста для заголовков */
 h1 { font-size: var(--title-size); }
 h2 { font-size: var(--heading-size); }
 h3 { font-size: var(--subheading-size); }
 
+/* Изображения */
 img {
     display: block;
     object-position: center;
     object-fit: contain;
 }
 
+/* Всплывающие подсказки */
+.tooltip {
+    visibility: hidden;
+    min-width: 130px;
+    max-width: 400px;
+    background: var(--bg);
+    border: 1px solid var(--bg);
+    color: var(--bg);
+    text-align: center;
+    border-radius: 11px;
+    padding: 6px 12px;
+    position: absolute;
+    z-index: 2;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--tooltip-size);
+}
+
+/* Блоки со всплывающими подсказками */
+.tooltipped {
+    position: relative;
+    cursor: pointer;
+
+    /* Отырытие при наведении */
+    &:hover .tooltip {
+        visibility: visible;
+        background: var(--tooltip);
+        border-color: var(--fg);
+        color: var(--fg);
+    }
+}
+
+/* Контейнер для контента */
 .container {
     width: 900px;
     margin: 0 auto;
 }
 
+/* Шапка */
 header {
     width: 100vw;
     height: 80px;
     padding-top: 12px;
     padding-bottom: 12px;
 
+    /* Шапка всегда вверху страницы */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+
+    /* Прозрачный фон, при прокручивании заполняется цветом */
+    background: transparent;
+
+    &.scrolled {
+        background: var(--bg-hover);
+    }
+
+    /* Размещение контента внутри шапки */
     & .container {
         display: flex;
         align-items: stretch;
         justify-content: space-between;
         gap: 12px;
 
+        /* Стили блоков логотипа и навигации */
         & .logo {
             display: flex;
             align-items: center;
@@ -123,22 +205,36 @@ header {
             & a { align-content: center; }
         }
 
+        /* Размещение навигации по страницам сайта строго по центру */
         & .website_nav {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
         }
+
+        /* Кнопка бургер-меню */
+        & .burger {
+            display: none;
+        }
     }
 }
 
+/* Пустой блок для отступа шапки */
+.header_placeholder {
+    width: 100vw;
+    height: 80px;
+}
+
+/* Секции контента */
 section {
     display: grid;
     width: 100vw;
 }
 
+/* Подвал */
 footer {
-    width: calc(100vw - 24px);
-    padding: 12px;
+    width: 100vw;
+    padding: 12px 0;
 
     & .container {
         display: flex;
@@ -156,5 +252,108 @@ footer {
             }
         }
     }
+}
 
+/* Формы */
+form {
+    display: flex;
+    flex-direction: column;
+    width: inherit;
+    align-items: stretch;
+    gap: 12px;
+
+    /* Блок с полем ввода и подписью */
+    & .input {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        /* Поле ввода */
+        & input {
+            padding: 6px 12px;
+            border: 1px solid var(--fg);
+            border-radius: 11px;
+            background: var(--tooltip);
+
+            &:hover { background: var(--bg-hover); }
+            &:focus { background: var(--bg); }
+
+            /* Окрашивание границы в красный при неправильном вводе */
+            &:user-invalid { border-color: var(--destructive); }
+
+            /* Стилизация чекбокса */
+            &[type='checkbox'] {
+                position: relative;
+                padding: 15px;
+                width: 30px;
+                height: 30px;
+
+                /* Скрытие стандартного поля */
+                appearance: none;
+
+                /* Новая галочка */
+                &::after {
+                    font-family: "Iosevka Custom", "Segoe UI Symbol", sans-serif;
+                    display: block;
+                    content: "\2714";
+                    position: absolute;
+                    top: -2px;
+                    left: 2px;
+                    width: 30px;
+                    height: 30px;
+                    font-size: 26px;
+
+                    /* Прозрачный цвет если не выбрана */
+                    color: transparent;
+                }
+
+                /* Стиль при выборе чекбокса / радио */
+                &:checked {
+                    background: var(--fg-active);
+
+                    &::after { color: var(--bg); }
+                }
+            }
+        }
+
+        /* Выравнивание элементов в строку */
+        &.rowwed {
+            flex-direction: row;
+        }
+
+        /* Вывод ошибки ввода */
+        & span {
+            display: block;
+            font-size: var(--tooltip);
+            color: var(--destructive);
+            word-break: break-all;
+        }
+    }
+}
+
+/* Адаптивность */
+
+@media screen and (max-width: 900px) {
+    /* Ширина контейнера на всю ширину экрана с отступами по краям */
+    .container {
+        width: calc(100vw - 24px) !important;
+        padding-inline: 12px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    /* Скрытие навигации и показ кнопки бургер-меню */
+    header {
+        & nav { display: none !important; }
+        & .burger { display: block !important; }
+    }
+}
+
+@media screen and (max-width: 400px) {
+    /* Построение элементов в колонку с выравниванием по левому краю */
+    footer .container {
+        flex-direction: column;
+        align-items: start;
+    }
 }
