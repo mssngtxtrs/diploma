@@ -14,7 +14,7 @@ class Messages {
     public function __construct() {
         $this->messages = $_SESSION['msg']['std'] ?? [];
         $this->error_messages = $_SESSION['msg']['error'] ?? [];
-        $this->debug_messages = $_SESSION['msg']['dbg'] ?? [];
+        $this->debug_messages = $_SESSION['msg']['debug'] ?? [];
 
     }
 
@@ -37,11 +37,6 @@ class Messages {
                 array_push($messages, [ 'message' => $msg, 'type' => "debug" ]);
             }
         }
-
-        /* echo "<pre>"; */
-        /* var_dump($_SESSION); */
-        /* var_dump($messages); */
-        /* echo "</pre>"; */
 
         unset($_SESSION['msg']);
         return $messages;

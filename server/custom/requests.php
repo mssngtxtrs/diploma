@@ -2,12 +2,12 @@
 namespace Server\Custom;
 
 define("GET_SERVERS_QUERY", <<<HERE
-    select s.server_id, s.server_name, c.cpu_name, c.cpu_cores, c.cpu_threads, c.cpu_frequency, s.server_ram, s.server_space
+    select s.server_id, s.server_name, c.cpu_name, c.cpu_cores, c.cpu_threads, c.cpu_frequency
     from servers s
     left join cpus c on s.cpu_id = c.cpu_id
 HERE);
 define("GET_HOSTINGS_QUERY", <<<HERE
-    select h.hosting_id, h.hosting_name, s.server_name, h.hosting_ram, h.hosting_space, h.price_per_month
+    select h.hosting_id, h.hosting_name, s.server_name, h.hosting_ram, h.hosting_space, h.hosting_vcpu, h.hosting_traffic, h.price_per_month
     from hostings h
     left join servers s on h.server_id = s.server_id
 HERE);

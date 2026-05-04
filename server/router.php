@@ -10,7 +10,7 @@ switch (true) {
 case $path == '':
 case $path == '/':
     echo $constructor->constructPage(
-        [ "header", "page_1", "footer" ],
+        [ "header", "index_waves", "page_1", "page_2", "page_3", "page_4", "footer_placeholder" ],
         "Главная",
         $global_flags['show-messages'],
         "index"

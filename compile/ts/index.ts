@@ -1,13 +1,15 @@
 import { fetchAPIResponse } from "./modules/api.js";
 import { displayMessage, createElement } from "./modules/utils.js";
-import { changeHeaderColorOnScroll } from "./modules/ui.js";
-import type { Server } from "./types/servers.js";
+// import { changeHeaderColorOnScroll } from "./modules/ui.js";
+import { displayMessagesFromServer } from "./modules/messages.js";
+import type { Hosting } from "./types/hostings.js";
 
 async function main(): Promise<void> {
-  changeHeaderColorOnScroll();
-  var servers = await getServers();
+  // changeHeaderColorOnScroll();
+  displayMessagesFromServer();
+  var servers = await getHostings();
   if (servers) {
-    const container = document.querySelector("#slider .slider_container");
+    const container = document.querySelector("#page_3 .slider_container");
     if (container) {
       for (const server of servers) {
         const slide = makeSlide(server);
@@ -17,6 +19,8 @@ async function main(): Promise<void> {
           console.error("Error creating slide for server", server);
         }
       }
+
+      addSliderListeners();
     } else {
       console.error("slider_container not found");
     }
@@ -25,29 +29,27 @@ async function main(): Promise<void> {
   }
 }
 
-function convertServers(response: Record<string, any>): Array<Server> {
-  var output: Array<Server> = [];
+function convertHostings(response: Record<string, any>): Array<Hosting> {
+  var output: Array<Hosting> = [];
 
-  for (const [, server] of Object.entries(response)) {
+  for (const [, hosting] of Object.entries(response)) {
     output.push({
-      id: server.server_id,
-      name: server.server_name,
-      cpu: {
-        name: server.cpu_name,
-        cores: server.cpu_cores,
-        threads: server.cpu_threads,
-        frequency: server.cpu_frequency,
-      },
-      ram: server.server_ram,
-      space: server.server_space,
+      id: hosting.hosting_id,
+      name: hosting.hosting_name,
+      server_name: hosting.server_name,
+      ram: hosting.hosting_ram,
+      space: hosting.hosting_space,
+      vcpu: hosting.hosting_vcpu,
+      traffic: hosting.hosting_traffic,
+      price_per_month: hosting.price_per_month
     });
   }
 
   return output;
 }
 
-async function getServers(): Promise<Array<Server> | undefined> {
-  const servers_response = await fetchAPIResponse("/api/servers");
+async function getHostings(): Promise<Array<Hosting> | undefined> {
+  const servers_response = await fetchAPIResponse("/api/hostings");
 
   if (servers_response.status === "error") {
     displayMessage("Ошибка при обращении к серверу");
@@ -56,61 +58,98 @@ async function getServers(): Promise<Array<Server> | undefined> {
   }
 
   if (servers_response.data) {
-    const converted: Array<Server> | null = convertServers(servers_response.data);
+    const converted: Array<Hosting> | null = convertHostings(servers_response.data);
     if (converted) {
       return converted;
     }
   }
 }
 
-function makeSlide(server: Server): HTMLElement | undefined {
-  const slide_container = createElement("div", null, ["slide"], { "id": server.id.toString() });
+function makeSlide(hosting: Hosting): HTMLElement | undefined {
+  const slide_container = createElement("div", null, ["slide"], { "id": hosting.id.toString() });
 
   if (slide_container) {
-    createElement("h3", server.name, null, null, slide_container);
+    createElement("h3", hosting.name, null, null, slide_container);
 
-    const cpu_block = createElement("div", null, [ "slide_block", "cpu_block" ]);
-    if (cpu_block) {
-      createElement("img", null, null, { "src": "/media/img/Th08Kaguya.webp" }, cpu_block);
-      const text_block = createElement("div");
-      if (text_block) {
-        createElement("p", "Процессор", null, null, text_block);
-        createElement("span", server.cpu.name, null, null, text_block);
-        createElement("span", `${server.cpu.cores} ядра / ${server.cpu.threads} потоков`, null, null, text_block);
-        createElement("span", `Частота: ${server.cpu.frequency} МГц`, null, null, text_block);
-        cpu_block.appendChild(text_block);
-      }
-      slide_container.appendChild(cpu_block);
+    const price_block = createElement("div", null, [ "slide_block", "price_block" ]);
+    if (price_block) {
+      createElement("p", `${hosting.price_per_month}₽/мес.`, null, null, price_block);
+      slide_container.appendChild(price_block);
     }
 
-    const ram_block = createElement("div", null, ["slide_block", "ram_block"]);
+    const vcpu_block = createElement("div", null, [ "slide_block", "vcpu_block" ]);
+    if (vcpu_block) {
+      createElement("img", null, null, { "src": "/media/icons/vcpu.svg" }, vcpu_block);
+      createElement("p", "Процессор", null, null, vcpu_block);
+      createElement("p", `${hosting.vcpu} x vCPU`, null, null, vcpu_block);
+      slide_container.appendChild(vcpu_block);
+    }
+
+    const ram_block = createElement("div", null, [ "slide_block", "ram_block" ]);
     if (ram_block) {
-      createElement("img", null, null, { "src": "/media/img/Th08Reisen.webp" }, ram_block);
-      const text_block = createElement("div");
-      if (text_block) {
-        const ram = server.ram < 1048576 ? `${server.ram / 1024} ГБ` : `${server.ram / 1048576} ТБ`;
-        createElement("p", `ОЗУ: ${ram}`, null, null, text_block);
-        ram_block.appendChild(text_block);
-      }
+      const ram = hosting.ram < 1048576 ? `${hosting.ram / 1024} ГБ` : `${hosting.ram / 1048576} ТБ`;
+      createElement("img", null, null, { "src": "/media/icons/ram.svg" }, ram_block);
+      createElement("p", "Оперативная память", null, null, ram_block);
+      createElement("p", `${ram}`, null, null, ram_block);
       slide_container.appendChild(ram_block);
     }
 
-    const space_block = createElement("div", null, ["slide_block", "space_block"]);
+    const space_block = createElement("div", null, [ "slide_block", "space_block" ]);
     if (space_block) {
-      createElement("img", null, null, { "src": "/media/img/Th08Mokou.webp" }, space_block);
-      const text_block = createElement("div");
-      if (text_block) {
-        const space = server.space < 1048576 ? `${server.space / 1024} ГБ` : `${server.space / 1048576} ТБ`;
-        createElement("p", `Диск: ${space}`, null, null, text_block);
-        space_block.appendChild(text_block);
-      }
+      const space = hosting.space < 1048576 ? `${hosting.space / 1024} ГБ` : `${hosting.space / 1048576} ТБ`;
+      createElement("img", null, null, { "src": "/media/icons/space.svg" }, space_block);
+      createElement("p", "Объём диска", null, null, space_block);
+      createElement("p", `${space}`, null, null, space_block);
       slide_container.appendChild(space_block);
+    }
+
+    const traffic_block = createElement("div", null, [ "slide_block", "traffic_block" ]);
+    if (traffic_block) {
+      createElement("img", null, null, { "src": "/media/icons/traffic.svg" }, traffic_block);
+      createElement("p", "Ежемесячный трафик", null, null, traffic_block);
+      createElement("p", `${hosting.traffic} ГБ, далее - ограничение скорости до 10 Мбит/с`, null, null, traffic_block);
+      slide_container.appendChild(traffic_block);
+    }
+
+    const request_block = createElement("div", null, [ "slide_block", "request_block" ]);
+    if (request_block) {
+      createElement("button", "Арендовать", null, { "onclick": `window.location.href = "/request?id=${hosting.id}"` }, request_block);
+      slide_container.appendChild(request_block);
     }
 
     return slide_container;
   }
 
   return undefined;
+}
+
+function addSliderListeners(): void {
+  const slider_buttons: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll("#page_3 .slider_controls button");
+  if (slider_buttons) {
+    const slider: HTMLElement | null = document.querySelector("#page_3 .slider_container");
+
+    if (slider) {
+      slider_buttons.forEach((button) => {
+        switch (button.id) {
+          case "prev_button":
+            button.addEventListener("click", () => {
+              changeSlide(slider, "prev");
+            });
+            break;
+          case "next_button":
+            button.addEventListener("click", () => {
+              changeSlide(slider, "next");
+            });
+            break;
+        }
+      });
+    }
+  }
+}
+
+function changeSlide(slider: HTMLElement, direction: "prev" | "next"): void {
+  const scroll_amount = slider.clientWidth;
+  slider.scrollBy({ left: direction === "next" ? scroll_amount : -scroll_amount });
 }
 
 document.addEventListener("DOMContentLoaded", main);

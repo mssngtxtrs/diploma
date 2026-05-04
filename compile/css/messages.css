@@ -1,0 +1,74 @@
+/* Сообщения */
+
+.messages {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    top: 104px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 540px;
+
+    & .message {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 12px;
+        border-radius: 11px;
+
+        & p { width: calc(100% - 40px); }
+
+        & button {
+            font-family: "Iosevka Custom", "Segoe UI Symbol", sans-serif;
+            font-size: 24px;
+            margin: -6px -12px;
+            padding: 0;
+            width: 40px;
+            min-height: 40px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 11px;
+            border-bottom-right-radius: 11px;
+        }
+
+        &.std {
+            background: var(--tooltip);
+
+            & button {
+                background: var(--tooltip);
+
+                &:hover { background: var(--tooltip-hover); }
+                &:active { background: var(--tooltip-active); }
+            }
+        }
+
+        &.error {
+            background: var(--destructive);
+
+            & button {
+                background: var(--destructive);
+
+                &:hover { background: var(--destructive-hover); }
+                &:active { background: var(--destructive-active); }
+            }
+        }
+
+        &.debug {
+            background: var(--debug);
+
+            & button {
+                background: var(--debug);
+
+                &:hover { background: var(--debug-hover); }
+                &:active { background: var(--debug-active); }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .messages {
+        width: calc(100vw - 24px);
+        padding-inline: 12px;
+    }
+}

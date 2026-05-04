@@ -5,6 +5,7 @@
     transition: background-color .3s cubic-bezier(.19,1,.22,1),
         color .3s cubic-bezier(.19,1,.22,1),
         border-color .3s cubic-bezier(.19,1,.22,1);
+    word-break: break-word;
 }
 
 /* Высота контента: если не заполняет полностью: помещает его по центру и убирает подвал вниз */
@@ -188,8 +189,12 @@ header {
             gap: 12px;
             width: min-content;
             justify-self: start;
+            word-break: normal;
 
-            & h1 { font-size: 48px; }
+            & h1 {
+                font-size: var(--heading-size);
+                word-break: normal;
+            }
 
             & img {
                 width: 80px;
@@ -222,7 +227,7 @@ header {
 /* Пустой блок для отступа шапки */
 .header_placeholder {
     width: 100vw;
-    height: 80px;
+    height: 104px;
 }
 
 /* Секции контента */
@@ -327,7 +332,6 @@ form {
             display: block;
             font-size: var(--tooltip);
             color: var(--destructive);
-            word-break: break-all;
         }
     }
 }
@@ -355,5 +359,15 @@ form {
     footer .container {
         flex-direction: column;
         align-items: start;
+    }
+}
+
+@media screen and (max-height: 780px) {
+    :root {
+        --title-size: 48px;
+        --heading-size: 40px;
+        --subheading-size: 24px;
+        --body-size: 16px;
+        --tooltip-size: 12px;
     }
 }

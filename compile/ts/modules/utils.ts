@@ -1,4 +1,4 @@
-type MessageClass = "std" | "error" | "debug";
+export type MessageClass = "std" | "error" | "debug";
 
 export function displayMessage(message: string, message_class: MessageClass = "std") {
   const message_box: HTMLElement | null = document.querySelector(".messages");
@@ -8,8 +8,9 @@ export function displayMessage(message: string, message_class: MessageClass = "s
     console.log(message);
     return;
   }
-  const message_element = createElement("p", message, [ "message", message_class ]);
+  const message_element = createElement("div", null, [ "message", message_class ]);
   if (message_element) {
+    createElement("p", message, null, null, message_element);
     createElement("button", "×", [ "close" ], { "onclick": "this.parentElement.remove()" }, message_element);
     message_box.appendChild(message_element);
   }

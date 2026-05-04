@@ -5,27 +5,27 @@
 @property --title-size {
     syntax: "<length>";
     initial-value: 64px;
-    inherits: false;
+    inherits: true;
 }
 @property --heading-size {
     syntax: "<length>";
     initial-value: 48px;
-    inherits: false;
+    inherits: true;
 }
 @property --subheading-size {
     syntax: "<length>";
     initial-value: 28px;
-    inherits: false;
+    inherits: true;
 }
 @property --body-size {
     syntax: "<length>";
     initial-value: 18px;
-    inherits: false;
+    inherits: true;
 }
 @property --tooltip-size {
     syntax: "<length>";
     initial-value: 14px;
-    inherits: false;
+    inherits: true;
 }
 
 /* Основные цвета */
@@ -100,6 +100,23 @@
     inherits: false;
 }
 
+/* Отладка */
+@property --debug {
+    syntax: "<color>";
+    initial-value: #bf7b2e;
+    inherits: false;
+}
+@property --debug-hover {
+    syntax: "<color>";
+    initial-value: #e69437;
+    inherits: false;
+}
+@property --debug-active {
+    syntax: "<color>";
+    initial-value: #996325;
+    inherits: false;
+}
+
 /* Прочие цвета */
 
 /* Всплывающая подсказка */
@@ -109,10 +126,56 @@
     inherits: false;
 }
 
+@property --tooltip-hover {
+    syntax: "<color>";
+    initial-value: #3a3a3a;
+    inherits: false;
+}
+
+@property --tooltip-active {
+    syntax: "<color>";
+    initial-value: #1a1a1a;
+    inherits: false;
+}
+
 /* Параметр для анимации класса .bordered */
 
 @property --fill {
     syntax: "<percentage>";
     initial-value: 0%;
     inherits: false;
+}
+
+/* Анимация градиента на фоне главной страницы */
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+/* Анимация волн на фоне главной страницы */
+
+@keyframes wave {
+    2% {
+        transform: TranslateX(1);
+    }
+    25% {
+        transform: TranslateX(-25%);
+    }
+    50% {
+        transform: TranslateX(-50%);
+    }
+    75% {
+        transform: TranslateX(-25%);
+    }
+    100% {
+        transform: TranslateX(1);
+    }
 }

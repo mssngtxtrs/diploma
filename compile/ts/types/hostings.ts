@@ -4,5 +4,7 @@ export type Hosting = {
   server_name: string;
   ram: number;
   space: number;
+  vcpu: number;
+  traffic: number;
   price_per_month: number;
 };
