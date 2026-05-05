@@ -92,7 +92,7 @@ case $path == "/requests/admin":
 
 case $path == '/auth':
     if (!empty($_SESSION['user']['login'])) {
-        header("Location: /requests");
+        header("Location: /dashboard");
     } else {
         echo $constructor->constructPage(
             [ "header", "auth", "footer" ],
@@ -110,7 +110,6 @@ case preg_match('#^/api/.*$#', $path):
 
     $output = [];
     $output['response'] = false;
-    $output['message'] = "Unknown error";
 
     $input = file_get_contents("php://input");
     $data = json_decode($input, true);
@@ -141,6 +140,71 @@ case preg_match('#^/api/.*$#', $path):
             unset($output['message']);
         } else {
             $output['message'] = "Empty servers query";
+        }
+        break;
+
+
+    case "/api/auth/register":
+        $result = $auth->register(
+            [
+                "email" => $data['email'],
+                "login" => $data['login'],
+                "first_name" => $data['first_name'],
+                "last_name" => $data['last_name'],
+            ],
+            $data['password'],
+            $data['password_confirm'],
+            $data['consent']
+        );
+
+        if ($result === true) {
+            $output['response'] = true;
+        } else {
+            $output['message'] = $result;
+        }
+        break;
+
+
+    case "/api/auth/log-in":
+        $result = $auth->logIn($data['login'], $data['password']);
+
+        if ($result === true) {
+            $output['response'] = true;
+        } else {
+            $output['message'] = $result;
+        }
+        break;
+
+
+    case "/api/auth/log-out":
+        $result = $auth->logOut();
+
+        if ($result === true) {
+            $output['response'] = true;
+        } else {
+            $output['message'] = $result;
+        }
+        break;
+
+
+    case "/api/auth/credentials":
+        $result = $auth->getCredentials();
+
+        if ($result === false) {
+            $output['message'] = "No credentials found";
+        } else {
+            $output['response'] = $result;
+        }
+        break;
+
+
+    case "/api/requests/total":
+        $result = Server\Custom\Requests::getRequestsTotal();
+
+        if ($result === false) {
+            $output['message'] = "No requests found";
+        } else {
+            $output['response'] = $result;
         }
         break;
 

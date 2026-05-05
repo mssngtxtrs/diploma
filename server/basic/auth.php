@@ -4,10 +4,10 @@ namespace Server;
 /* Константы с запросами */
 define("PASSWORD_QUERY", "select password from users where user_id = :user_id");
 define("USER_ID_QUERY", "select user_id from users where login = :login");
-define("PERMISSION_QUERY", "select permission_id from users where user_id = :user_id");
+define("PERMISSION_QUERY", "select level_id from users where user_id = :user_id");
 define("LOGIN_QUERY", "select login from users where login = :login");
-define("GET_CREDENTIALS_QUERY", "select first_name, last_name, email from users where user_id = :user_id");
-define("REGISTER_QUERY", "insert into users (email, login, password, first_name, last_name, permission_id) values (:email, :login, :password, :first_name, :last_name, 1)");
+define("GET_CREDENTIALS_QUERY", "select first_name, last_name, email, level_id from users where user_id = :user_id");
+define("REGISTER_QUERY", "insert into users (email, login, password, first_name, last_name, level_id) values (:email, :login, :password, :first_name, :last_name, 1)");
 
 /* Класс авторизации */
 class Auth {
@@ -15,7 +15,7 @@ class Auth {
 
 
     /* Подтверждение пароля */
-    private static function verifyPassword(string $password, int $userID): bool {
+    private static function verifyPassword(string $password, int $user_id): bool {
         global $database;
 
         return password_verify(
@@ -23,7 +23,7 @@ class Auth {
             $database->returnQuery(
                 PASSWORD_QUERY,
                 "single",
-                [ 'userID' => $userID ]
+                [ 'user_id' => $user_id ]
             )
         );
     }
@@ -57,21 +57,18 @@ class Auth {
 
 
 
-    /* Получение имени пользователя */
-    public function getName(): string {
-        return $this->credentials['firstName'];
-    }
-
-
-
     /* Получение данных пользователя */
-    public function getCredentials(): array {
-        return [
-            'firstName' => $this->credentials['firstName'],
-            'lastName' => $this->credentials['lastName'],
-            'email' => $this->credentials['email'],
-            'permissionID' => $this->getPermissionLevel(),
-        ];
+    public function getCredentials(): array | bool {
+        if (!empty($_SESSION['credentials'])) {
+            return [
+                'first_name' => $_SESSION['credentials']['first_name'],
+                'last_name' => $_SESSION['credentials']['last_name'],
+                'email' => $_SESSION['credentials']['email'],
+                'level_id' => $_SESSION['credentials']['level_id'],
+            ];
+        } else {
+            return false;
+        }
     }
 
 
@@ -84,10 +81,10 @@ class Auth {
 
 
     /* Вход */
-    public function login(string $login, string $password): bool {
+    public function logIn(string $login, string $password): string | bool {
         global $database;
-        $userID = $this->getUserID($login);
-        $output = false;
+        $user_id = $this->getUserID($login);
+        $output = "Неизвестная ошибка";
 
         /* Проверки: */
         /*     1. Получены ли данные из формы */
@@ -96,33 +93,23 @@ class Auth {
         /*     4. Удалось ли получить данные из БД */
         /* При успехе: внесение данных для автоматического входа в сессию */
         if (empty($password) && empty($login)) {
-            $_SESSION['msg']['error'][] = "Данные для входа не были переданы";
+            $output = "Данные для входа не были переданы";
         } else {
-            if (!$userID) {
-                $_SESSION['msg']['error'][] = "Пользователя с таким логином не существует";
+            if (empty($user_id)) {
+                $output = "Пользователя с таким логином не существует";
             } else {
-                if (!$this->verifyPassword($password, $userID, true)) {
-                    $_SESSION['msg']['error'][] = "Неверный пароль";
+                if (!$this->verifyPassword($password, $user_id, true)) {
+                    $output = "Неверный пароль";
                 } else {
-                    $_SESSION['user']['login'] = $login;
-                    $_SESSION['user']['hash'] = $database->returnQuery(
-                        PASSWORD_QUERY,
-                        "single",
-                        [ 'userID' => $userID ]
-                    );
-
-                    if (!$raw = $database->returnQuery(
+                    $credentials = $database->returnQuery(
                         GET_CREDENTIALS_QUERY,
                         "assoc",
-                        [ 'login' => $_SESSION['user']['login'] ]
-                    )) {
-                        $_SESSION['msg']['error'][] = "Неизвестная ошибка";
-                    } else {
-                        $this->credentials = [
-                            'firstName' => $raw[0]['firstName'],
-                            'login' => $raw[0]['login'],
-                            'email' => $raw[0]['email']
-                        ];
+                        [ 'user_id' => $user_id ]
+                    );
+                    if (!empty($credentials[0])) {
+                        $_SESSION['user']['login'] = $login;
+                        $_SESSION['user']['password'] = $password;
+                        $_SESSION['credentials'] = $credentials[0];
                         $_SESSION['msg']['std'][] = "Успешный вход";
                         $output = true;
                     }
@@ -135,8 +122,9 @@ class Auth {
 
 
     /* Выход */
-    public function logout(): bool {
+    public function logOut(): bool {
         unset($_SESSION['user']);
+        unset($_SESSION['credentials']);
         $_SESSION['msg']['std'][] = "Вы вышли из аккаунта";
         return true;
     }
@@ -144,7 +132,7 @@ class Auth {
 
 
     /* Регистрация */
-    public function register(array $credentials, string $password, string $password_confirm, string $consent): bool {
+    public function register(array $credentials, string $password, string $password_confirm, bool $consent): string | bool {
         global $database;
 
         $output = false;
@@ -157,38 +145,39 @@ class Auth {
         /*     5. Получилось ли внести данные в БД */
         /* При успехе:  */
         if (empty($credentials) || empty($password) || empty($password_confirm) || empty($consent)) {
-            $_SESSION['msg']['error'][] = "Данные для регистрации не были переданы";
+            $output = "Данные для регистрации не были переданы";
         } else {
             if ($database->returnQuery(
                 LOGIN_QUERY,
                 "bool",
                 [ 'login' => $credentials['login'] ]
             )) {
-                $_SESSION['msg']['error'][] = "Пользователь с таким логином уже существует";
+                $output = "Пользователь с таким логином уже существует";
             } else {
                 if (!$consent) {
-                    $_SESSION['msg']['error'][] = "Не передано согласие на обработку персональных данных";
+                    $output = "Не передано согласие на обработку персональных данных";
                 } else {
                     if ($password !== $password_confirm) {
-                        $_SESSION['msg']['error'][] = "Пароли не совпадают";
+                        $output = "Пароли не совпадают";
                     } else {
                         $password_hash = password_hash($password, PASSWORD_DEFAULT);
-
-                        if (!$database->returnQuery(
+                        $result = $database->returnQuery(
                             REGISTER_QUERY,
                             "bool",
                             [
                                 'email' => $credentials['email'],
                                 'login' => $credentials['login'],
                                 'password' => $password_hash,
-                                'firstName' => $credentials['firstName'],
-                                'lastName' => $credentials['lastName']
+                                'first_name' => $credentials['first_name'],
+                                'last_name' => $credentials['last_name']
                             ]
-                        )) {
-                            $_SESSION['msg']['error'][] = "Неизвестная ошибка";
-                        } else {
-                            $_SESSION['msg']['std'][] = "Успешная регистрация! Теперь Вы можете войти";
+                        );
+
+                        if ($result === true) {
+                            // $_SESSION['msg']['std'][] = "Успешная регистрация! Теперь Вы можете войти";
                             $output = true;
+                        } else {
+                            $output = "Неизвестная ошибка";
                         }
                     }
                 }

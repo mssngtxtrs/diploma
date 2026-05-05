@@ -1,11 +1,13 @@
 import { fetchAPIResponse } from "./modules/api.js";
 import { displayMessage, createElement, getMidpoint } from "./modules/utils.js";
 // import { changeHeaderColorOnScroll } from "./modules/ui.js";
+import { changeHeaderAuthButtons } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
 import type { Hosting } from "./types/hostings.js";
 
 async function main(): Promise<void> {
   // changeHeaderColorOnScroll();
+  changeHeaderAuthButtons();
   displayMessagesFromServer();
 
   var hostings = await getHostings();
@@ -81,7 +83,7 @@ function makeSlide(hosting: Hosting): HTMLElement | undefined {
 
     const vcpu_block = createElement("div", null, [ "slide_block", "vcpu_block" ]);
     if (vcpu_block) {
-      createElement("img", null, null, { "src": "/media/icons/vcpu.svg" }, vcpu_block);
+      createElement("img", null, null, { "src": "/media/icons/vcpu.svg", "alt": "vCPU" }, vcpu_block);
       createElement("p", "Процессор", null, null, vcpu_block);
       createElement("p", `${hosting.vcpu} x vCPU`, null, null, vcpu_block);
       slide_container.appendChild(vcpu_block);
@@ -90,7 +92,7 @@ function makeSlide(hosting: Hosting): HTMLElement | undefined {
     const ram_block = createElement("div", null, [ "slide_block", "ram_block" ]);
     if (ram_block) {
       const ram = hosting.ram < 1048576 ? `${hosting.ram / 1024} ГБ` : `${hosting.ram / 1048576} ТБ`;
-      createElement("img", null, null, { "src": "/media/icons/ram.svg" }, ram_block);
+      createElement("img", null, null, { "src": "/media/icons/ram.svg", "alt": "ОЗУ" }, ram_block);
       createElement("p", "Оперативная память", null, null, ram_block);
       createElement("p", `${ram}`, null, null, ram_block);
       slide_container.appendChild(ram_block);
@@ -99,7 +101,7 @@ function makeSlide(hosting: Hosting): HTMLElement | undefined {
     const space_block = createElement("div", null, [ "slide_block", "space_block" ]);
     if (space_block) {
       const space = hosting.space < 1048576 ? `${hosting.space / 1024} ГБ` : `${hosting.space / 1048576} ТБ`;
-      createElement("img", null, null, { "src": "/media/icons/space.svg" }, space_block);
+      createElement("img", null, null, { "src": "/media/icons/space.svg", "alt": "Объём диска" }, space_block);
       createElement("p", "Объём диска", null, null, space_block);
       createElement("p", `${space}`, null, null, space_block);
       slide_container.appendChild(space_block);
@@ -107,7 +109,7 @@ function makeSlide(hosting: Hosting): HTMLElement | undefined {
 
     const traffic_block = createElement("div", null, [ "slide_block", "traffic_block" ]);
     if (traffic_block) {
-      createElement("img", null, null, { "src": "/media/icons/traffic.svg" }, traffic_block);
+      createElement("img", null, null, { "src": "/media/icons/traffic.svg", "alt": "Трафик" }, traffic_block);
       createElement("p", "Ежемесячный трафик", null, null, traffic_block);
       createElement("p", `${hosting.traffic} ГБ, далее - ограничение скорости до 10 Мбит/с`, null, null, traffic_block);
       slide_container.appendChild(traffic_block);

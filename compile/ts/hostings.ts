@@ -1,4 +1,4 @@
-import { changeHeaderColorOnScroll } from "./modules/ui.js";
+import { changeHeaderColorOnScroll, changeHeaderAuthButtons } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
 import type { HostingFull } from "./types/hostings.js";
 import { fetchAPIResponse } from "./modules/api.js";
@@ -7,6 +7,7 @@ import { displayMessage, createElement } from "./modules/utils.js";
 async function main(): Promise<void> {
   displayMessagesFromServer();
   changeHeaderColorOnScroll();
+  changeHeaderAuthButtons();
 
   var hostings = await getHostings();
   if (hostings) {
@@ -89,7 +90,7 @@ function makeBlock(hosting: HostingFull): HTMLElement | undefined {
 
     const vcpu_block = createElement("div", null, [ "hosting_block", "vcpu_block" ]);
     if (vcpu_block) {
-      createElement("img", null, null, { "src": "/media/icons/vcpu.svg" }, vcpu_block);
+      createElement("img", null, null, { "src": "/media/icons/vcpu.svg", "alt": "vCPU" }, vcpu_block);
       createElement("p", "Процессор", null, null, vcpu_block);
       createElement("p", `${hosting.vcpu} x vCPU`, null, null, vcpu_block);
       block.appendChild(vcpu_block);
@@ -98,7 +99,7 @@ function makeBlock(hosting: HostingFull): HTMLElement | undefined {
     const ram_block = createElement("div", null, [ "hosting_block", "ram_block" ]);
     if (ram_block) {
       const ram = hosting.ram < 1048576 ? `${hosting.ram / 1024} ГБ` : `${hosting.ram / 1048576} ТБ`;
-      createElement("img", null, null, { "src": "/media/icons/ram.svg" }, ram_block);
+      createElement("img", null, null, { "src": "/media/icons/ram.svg", "alt": "ОЗУ" }, ram_block);
       createElement("p", "Оперативная память", null, null, ram_block);
       createElement("p", `${ram}`, null, null, ram_block);
       block.appendChild(ram_block);
@@ -107,7 +108,7 @@ function makeBlock(hosting: HostingFull): HTMLElement | undefined {
     const space_block = createElement("div", null, [ "hosting_block", "space_block" ]);
     if (space_block) {
       const space = hosting.space < 1048576 ? `${hosting.space / 1024} ГБ` : `${hosting.space / 1048576} ТБ`;
-      createElement("img", null, null, { "src": "/media/icons/space.svg" }, space_block);
+      createElement("img", null, null, { "src": "/media/icons/space.svg", "alt": "Объём диска" }, space_block);
       createElement("p", "Объём диска", null, null, space_block);
       createElement("p", `${space}`, null, null, space_block);
       block.appendChild(space_block);
@@ -115,7 +116,7 @@ function makeBlock(hosting: HostingFull): HTMLElement | undefined {
 
     const traffic_block = createElement("div", null, [ "hosting_block", "traffic_block" ]);
     if (traffic_block) {
-      createElement("img", null, null, { "src": "/media/icons/traffic.svg" }, traffic_block);
+      createElement("img", null, null, { "src": "/media/icons/traffic.svg", "alt": "Трафик" }, traffic_block);
       createElement("p", "Ежемесячный трафик", null, null, traffic_block);
       createElement("p", `${hosting.traffic} ГБ, далее - ограничение скорости до 10 Мбит/с`, null, null, traffic_block);
       block.appendChild(traffic_block);
@@ -123,7 +124,7 @@ function makeBlock(hosting: HostingFull): HTMLElement | undefined {
 
     const server_block = createElement("div", null, ["hosting_block", "server_block"]);
     if (server_block) {
-      createElement("img", null, null, { "src": "/media/icons/server.svg" }, server_block);
+      createElement("img", null, null, { "src": "/media/icons/server.svg", "alt": "Сервер" }, server_block);
       createElement("p", "Сервер", null, null, server_block);
       createElement("p", `${hosting.server.name}`, null, null, server_block);
       block.appendChild(server_block);

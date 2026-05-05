@@ -20,6 +20,7 @@ define("GET_REQUESTS_QUERY", <<<HERE
     left join hostings h on r.hosting_id = h.hosting_id
     where user_id = :user_id
 HERE);
+define("GET_REQUESTS_TOTAL_QUERY", "select count(*) from requests where user_id = :user_id");
 define("GET_REQUESTS_ADMIN_QUERY", <<<HERE
     select r.request_id, r.state_id, u.first_name, u.last_nale, u.second_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_price_final
     from requests r
@@ -108,6 +109,23 @@ class Requests {
             return $database->returnQuery(
                 GET_REQUESTS_QUERY,
                 "assoc",
+                [ "user_id" => $user_id ]
+            );
+        }
+    }
+
+
+
+    /* Получение числа заявок пользователя */
+    static public function getRequestsTotal() {
+        global $auth, $database;
+        if (empty($_SESSION['user']['login'])) {
+            return false;
+        } else {
+            $user_id = $auth->getUserId($_SESSION['user']['login']);
+            return $database->returnQuery(
+                GET_REQUESTS_TOTAL_QUERY,
+                "single",
                 [ "user_id" => $user_id ]
             );
         }

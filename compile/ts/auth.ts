@@ -1,8 +1,13 @@
-import { changeHeaderColorOnScroll } from "./modules/ui.js";
+import { changeHeaderColorOnScroll, changeHeaderAuthButtons, changeButtonState } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
+import { displayMessage } from "./modules/utils.js";
+import { fetchAPIResponse } from "./modules/api.js";
+
+type FormType = "login" | "reg";
 
 function main(): void {
   changeHeaderColorOnScroll();
+  changeHeaderAuthButtons();
   displayMessagesFromServer();
   listenersSetup();
 }
@@ -43,6 +48,21 @@ function listenersSetup(): void {
     });
   } else {
     console.error("Auth switcher buttons or forms not found");
+  }
+
+  if (auth_forms) {
+    auth_forms.forEach(form => {
+      switch (form.id) {
+        case "reg":
+          form.addEventListener("submit", (e) => sendRegData(e));
+          break;
+        case "login":
+          form.addEventListener("submit", (e) => sendLoginData(e));
+          break;
+      }
+    });
+  } else {
+    console.error("Auth forms not found");
   }
 
   if (auth_switcher_buttons[0]) {
@@ -88,6 +108,121 @@ function displayError(input: HTMLInputElement): void {
   } else {
     console.error("Error span not found");
   }
+}
+
+async function sendRegData(e: SubmitEvent): Promise<void> {
+  var error: string = "Неизвестная ошибка";
+  var submit_button: HTMLButtonElement | null = null;
+  if (e) {
+    e.preventDefault();
+
+    const form: HTMLFormElement | null = e.target as HTMLFormElement | null;
+
+    if (form) {
+      submit_button = form.querySelector("button[type='submit']");
+
+      if (submit_button) {
+        changeButtonState(submit_button);
+      }
+
+      const form_data: FormData = new FormData(form);
+      var payload: Record<string, string> = convertToPayload(form_data);
+
+      const response = await fetchAPIResponse("/api/auth/register", payload);
+
+      if (response.status === "error") {
+        error = response.message || "Неизвестная ошибка";
+      }
+
+      if (response.data === true) {
+        const form_buttons: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".auth_switcher button");
+
+        if (form_buttons) {
+          changeForm("login", form_buttons);
+          displayMessage("Успешная регистрация! Теперь вы можете войти в систему.");
+          return;
+        }
+      } else {
+        console.log(response.message);
+        error = response.message as string;
+      }
+    } else {
+      console.error("Error getting form data");
+    }
+  } else {
+    console.error("Event of registration form was not passed");
+  }
+
+  displayMessage(`Ошибка отправки данных: ${error}`);
+
+  if (submit_button) {
+    changeButtonState(submit_button);
+  }
+}
+
+async function sendLoginData(e: SubmitEvent): Promise<void> {
+  var error: string = "Неизвестная ошибка";
+  var submit_button: HTMLButtonElement | null = null;
+  if (e) {
+    e.preventDefault();
+
+    const form: HTMLFormElement | null = e.target as HTMLFormElement | null;
+
+    if (form) {
+      submit_button = form.querySelector("button[type='submit']");
+
+      if (submit_button) {
+        changeButtonState(submit_button);
+      }
+
+      const form_data: FormData = new FormData(form);
+      var payload: Record<string, string> = convertToPayload(form_data);
+
+      const response = await fetchAPIResponse("/api/auth/log-in", payload);
+
+      if (response.status === "error") {
+        error = response.message || "Неизвестная ошибка";
+      }
+
+      if (response.data === true) {
+        const get_query = window.location.search;
+        window.location.href = "/request" + get_query;
+        return;
+      } else {
+        error = response.message as string;
+      }
+    } else {
+      console.error("Error getting form data");
+    }
+  } else {
+    console.error("Event of registration form was not passed");
+  }
+
+  displayMessage(`Ошибка отправки данных: ${error}`);
+
+  if (submit_button) {
+    changeButtonState(submit_button);
+  }
+}
+
+function convertToPayload(form_data: FormData): Record<string, string> {
+  var output: Record<string, any> = {};
+  form_data.forEach(function (value: FormDataEntryValue, key: string) {
+    var result_value: string | boolean = value as string;
+    if (key === "consent") {
+      result_value = value as string === "on" ? true : false;
+    }
+    output[key] = result_value;
+  });
+  return output;
+}
+
+function changeForm(type: FormType, buttons: NodeListOf<HTMLButtonElement>): void {
+  buttons.forEach(button => {
+    if (button.dataset.target === type) {
+      button.click();
+    }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", main);
