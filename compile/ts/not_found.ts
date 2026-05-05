@@ -1,7 +1,9 @@
 import { changeHeaderColorOnScroll } from "./modules/ui.js";
+import { displayMessagesFromServer } from "./modules/messages.js";
 
 function main(): void {
   changeHeaderColorOnScroll();
+  displayMessagesFromServer();
   const tooltipped_block = document.querySelector("#not_found .tooltipped");
   if (tooltipped_block) {
     tooltipped_block.addEventListener("click", pasteImageWithTooltip);

@@ -7,9 +7,10 @@ define("GET_SERVERS_QUERY", <<<HERE
     left join cpus c on s.cpu_id = c.cpu_id
 HERE);
 define("GET_HOSTINGS_QUERY", <<<HERE
-    select h.hosting_id, h.hosting_name, s.server_name, h.hosting_ram, h.hosting_space, h.hosting_vcpu, h.hosting_traffic, h.price_per_month
+    select h.hosting_id, h.hosting_name, s.server_name, c.cpu_name, c.cpu_cores, c.cpu_threads, c.cpu_frequency, h.hosting_ram, h.hosting_space, h.hosting_vcpu, h.hosting_traffic, h.price_per_month
     from hostings h
     left join servers s on h.server_id = s.server_id
+    left join cpus c on s.cpu_id = c.cpu_id
 HERE);
 define("GET_REQUEST_STATES_QUERY", "select * from request_states");
 define("GET_REQUESTS_QUERY", <<<HERE

@@ -1,4 +1,5 @@
 export interface CPU {
+  id: number;
   name: string;
   cores: number;
   threads: number;
@@ -9,6 +10,4 @@ export type Server = {
   id: number;
   name: string;
   cpu: CPU;
-  ram: number;
-  space: number;
 };

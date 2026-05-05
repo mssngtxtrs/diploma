@@ -20,8 +20,9 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: var(--bg);
-        mix-blend-mode: color;
+        background-image: linear-gradient(180deg, var(--bg-mask), var(--bg));
+        mix-blend-mode: screen;
+        transition: --bg-mask .7s ease;
     }
 
     & .wave {
@@ -49,6 +50,7 @@
 /* Контейнер для экранов */
 .pages_container {
     scroll-snap-type: y mandatory;
+    scrollbar-color: var(--fg) var(--bg);
     overflow-y: scroll;
     overflow-x: hidden;
     height: 100vh;
@@ -102,6 +104,11 @@
                 background-repeat: no-repeat;
                 background-position: center bottom;
                 opacity: 0.5;
+                /*animation: arrow_bounce 2s  infinite;*/
+                animation-name: arrow_bounce;
+                animation-duration: 2s;
+                animation-iteration-count: infinite;
+                animation-timing-function: ease-in-out;
             }
         }
 
@@ -115,11 +122,45 @@
     }
 }
 
+#page_2 {
+    & .container {
+        padding-bottom: 30%;
+
+        & > h3, > p { margin-bottom: 12px; }
+        & > p { display: none; }
+    }
+
+    & .advantage_container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+
+        & .advantage {
+            background: var(--bg-hover);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: default;
+
+            & img {
+                width: 32px;
+                height: 32px;
+                float: left;
+            }
+
+            & h3 {
+                margin-left: 44px;
+                height: 32px;
+            }
+
+
+            & p { margin-top: 6px; }
+        }
+    }
+}
+
 /* Третий экран */
 #page_3 {
-    & .container > p {
-        margin-bottom: 12px;
-    }
+    & .container > p { margin-bottom: 12px; }
 
     & .slider_container {
         display: flex;
@@ -146,9 +187,7 @@
             scroll-snap-stop: always;
             margin-inline: 25px;
 
-            & h3 {
-                margin-top: 6px;
-            }
+            & h3 { margin-top: 6px; }
 
             & .slide_block {
                 &.price_block {
@@ -227,6 +266,43 @@
     }
 }
 
+#page_4 {
+    & .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        & .column {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            gap: 6px;
+
+            & .logo {
+                min-width: 64px;
+                min-height: 64px;
+                display: flex;
+                align-items: center;
+                margin-bottom: 12px;
+                gap: 12px;
+
+                & img {
+                    width: 64px;
+                    height: 64px;
+                }
+            }
+
+            & button {
+                margin-top: 6px;
+            }
+        }
+    }
+}
+
+#page_2, #page_3, #page_4 {
+    & .container { margin: auto; }
+}
+
 /* Адаптивность */
 
 @media screen and (max-width: 900px) {
@@ -244,14 +320,29 @@
             flex-direction: column;
             justify-content: center;
 
-            /* Увеличение отступа между элементами */
-            /*gap: 48px;*/
-
             /* Ширина по ширине контента */
             & > div {
                 width: fit-content !important;
                 max-width: calc(100vw - 24px) !important;
                 max-height: calc(50% - 6px);
+            }
+        }
+    }
+
+    #page_2 {
+        & .container { padding-bottom: 0; }
+
+        & .advantage_container {
+            grid-template-columns: repeat(1, 1fr);
+
+            & img {
+                width: 27px !important;
+                height: 27px !important;
+            }
+
+            & h3 {
+                min-height: 27px;
+                height: fit-content !important;
             }
         }
     }
@@ -265,11 +356,9 @@
             & .slide {
                 min-width: calc(100% - 10px);
                 padding-inline: 5px;
-                padding-bottom: 5px;
+                padding-top: 3px;
 
                 & .slide_block {
-                    /*&.request_block { padding-bottom: 5px; }*/
-
                     & p {
                         margin-left: 52px;
                         min-height: 21px;
@@ -283,11 +372,33 @@
             }
         }
 
-        & .slider_controls {
-            display: none;
+        & .slider_controls { display: none; }
+    }
+
+    #page_4 {
+        & .container {
+            flex-direction: column;
+            gap: 48px;
+
+            & .column {
+                width: calc(100vw - 24px);
+            }
         }
     }
 }
 
 @media screen and (max-height: 780px) {
+    #page_2 {
+        & .container > p { display: block; }
+
+        & .advantage {
+            cursor: pointer !important;
+
+            & p { display: none; }
+
+            &:focus {
+                & p { display: block; }
+            }
+        }
+    }
 }

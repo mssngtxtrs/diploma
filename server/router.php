@@ -20,6 +20,18 @@ case $path == '/':
 
 
 
+case $path == "/about":
+    echo $constructor->constructPage(
+        [ "header", "about", "footer" ],
+        "О нас",
+        $global_flags['show-messages'],
+        "about"
+    );
+    $_SESSION['page_back'] = $request;
+    break;
+
+
+
 case $path == "/hostings":
     echo $constructor->constructPage(
         [ "header", "hostings", "footer" ],
@@ -48,9 +60,9 @@ case $path == '/dashboard':
 
 
 
-case $path == '/requests/new':
+case $path == '/request':
     if (empty($_SESSION['user']['login'])) {
-        header("Location: /auth");
+        header("Location: /auth?" . htmlspecialchars($_SERVER['QUERY_STRING']));
     } else {
         echo $constructor->constructPage(
             [ "header", "request", "footer" ],
@@ -94,7 +106,6 @@ case $path == '/auth':
 
 
 case preg_match('#^/api/.*$#', $path):
-    require "server/custom/hostings.php";
     require "server/custom/requests.php";
 
     $output = [];

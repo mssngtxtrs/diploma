@@ -138,6 +138,14 @@
     inherits: false;
 }
 
+/* Маска для фона главной страницы */
+@property --bg-mask {
+    syntax: "<color>";
+    initial-value: #5656aa;
+    inherits: true;
+}
+
+
 /* Параметр для анимации класса .bordered */
 
 @property --fill {
@@ -177,5 +185,19 @@
     }
     100% {
         transform: TranslateX(1);
+    }
+}
+
+/* Анимация подпрыгивания стрелки на главной странице */
+
+@keyframes arrow_bounce {
+    0% {
+        transform: translateY(25%);
+    }
+    50% {
+        transform: translateY(-25%);
+    }
+    100% {
+        transform: translateY(25%);
     }
 }

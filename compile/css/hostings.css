@@ -1,0 +1,55 @@
+#hostings {
+    & .hostings_container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+
+        & .hosting {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-radius: 15px;
+            padding: 15px;
+            background: var(--bg-hover);
+
+            & h3 { margin-top: 6px; }
+
+            & .hosting_block {
+                &.price_block {
+                    margin-top: -6px;
+                    margin-bottom: 6px;
+
+                    & p {
+                        margin-left: 0;
+                        height: fit-content;
+                        font-size: 20px;
+                        font-family: "Iosevka Custom", "Courier New", sans-serif;
+                    }
+                }
+
+                &.request_block {
+                    min-height: 48px;
+
+                    & button {
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+
+                & p {
+                    margin-left: 56px;
+                    min-height: 24px;
+                }
+
+                & img {
+                    width: 32px;
+                    height: 32px;
+                    margin: 8px;
+                    float: left;
+                }
+            }
+        }
+    }
+}

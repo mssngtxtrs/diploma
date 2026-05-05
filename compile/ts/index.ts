@@ -1,5 +1,5 @@
 import { fetchAPIResponse } from "./modules/api.js";
-import { displayMessage, createElement } from "./modules/utils.js";
+import { displayMessage, createElement, getMidpoint } from "./modules/utils.js";
 // import { changeHeaderColorOnScroll } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
 import type { Hosting } from "./types/hostings.js";
@@ -7,16 +7,17 @@ import type { Hosting } from "./types/hostings.js";
 async function main(): Promise<void> {
   // changeHeaderColorOnScroll();
   displayMessagesFromServer();
-  var servers = await getHostings();
-  if (servers) {
+
+  var hostings = await getHostings();
+  if (hostings) {
     const container = document.querySelector("#page_3 .slider_container");
     if (container) {
-      for (const server of servers) {
-        const slide = makeSlide(server);
+      for (const hosting of hostings) {
+        const slide = makeSlide(hosting);
         if (slide) {
           container.appendChild(slide);
         } else {
-          console.error("Error creating slide for server", server);
+          console.error("Error creating slide for hosting", hosting);
         }
       }
 
@@ -25,8 +26,10 @@ async function main(): Promise<void> {
       console.error("slider_container not found");
     }
   } else {
-    console.error("Error getting servers");
+    console.error("Error getting hostings info");
   }
+
+  changeBackgroundOnScroll();
 }
 
 function convertHostings(response: Record<string, any>): Array<Hosting> {
@@ -36,7 +39,6 @@ function convertHostings(response: Record<string, any>): Array<Hosting> {
     output.push({
       id: hosting.hosting_id,
       name: hosting.hosting_name,
-      server_name: hosting.server_name,
       ram: hosting.hosting_ram,
       space: hosting.hosting_space,
       vcpu: hosting.hosting_vcpu,
@@ -49,16 +51,16 @@ function convertHostings(response: Record<string, any>): Array<Hosting> {
 }
 
 async function getHostings(): Promise<Array<Hosting> | undefined> {
-  const servers_response = await fetchAPIResponse("/api/hostings");
+  const hostings_response = await fetchAPIResponse("/api/hostings");
 
-  if (servers_response.status === "error") {
+  if (hostings_response.status === "error") {
     displayMessage("Ошибка при обращении к серверу");
-    console.log(servers_response.message);
+    console.log(hostings_response.message);
     return undefined;
   }
 
-  if (servers_response.data) {
-    const converted: Array<Hosting> | null = convertHostings(servers_response.data);
+  if (hostings_response.data) {
+    const converted: Array<Hosting> | null = convertHostings(hostings_response.data);
     if (converted) {
       return converted;
     }
@@ -150,6 +152,34 @@ function addSliderListeners(): void {
 function changeSlide(slider: HTMLElement, direction: "prev" | "next"): void {
   const scroll_amount = slider.clientWidth;
   slider.scrollBy({ left: direction === "next" ? scroll_amount : -scroll_amount });
+}
+
+function changeBackgroundOnScroll(): void {
+  const background: HTMLElement | null = document.querySelector(".background");
+  const scroll_container: HTMLElement | null = document.querySelector(".pages_container");
+
+  if (background && scroll_container) {
+    const scroll_threshold: number = scroll_container.clientHeight;
+
+    scroll_container.addEventListener("scroll", () => {
+      const scroll_position: number = scroll_container.scrollTop;
+
+      switch (true) {
+        case scroll_position <= scroll_threshold - getMidpoint(scroll_threshold):
+          background.style.setProperty('--bg-mask', 'var(--secondary-hover)');
+          break;
+        case scroll_position <= scroll_threshold * 2 - getMidpoint(scroll_threshold):
+          background.style.setProperty('--bg-mask', 'var(--secondary-active)');
+          break;
+        case scroll_position <= scroll_threshold * 3 - getMidpoint(scroll_threshold):
+          background.style.setProperty('--bg-mask', '#383838');
+          break;
+        default:
+          background.style.setProperty('--bg-mask', 'var(--bg)');
+          break;
+      }
+    });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", main);

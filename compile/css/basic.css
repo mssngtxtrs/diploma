@@ -27,7 +27,7 @@ h1, h2, h3 {
 }
 
 /* Текст, кнопки и поля */
-a, p, span, button, input, label, textarea {
+a, p, span, button, input, label, textarea, li {
     font-family: "IBM Plex Sans", Arial, sans-serif;
     font-weight: normal;
     font-size: var(--body-size);
@@ -166,7 +166,7 @@ header {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: 3;
 
     /* Прозрачный фон, при прокручивании заполняется цветом */
     background: transparent;
@@ -246,6 +246,19 @@ footer {
         justify-content: space-between;
         align-items: center;
         gap: 12px;
+
+        & .column:first-child {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+        }
+
+        & .column:last-child {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 2px 12px;
+        }
 
         & .logo {
             width: 64px;
@@ -349,8 +362,21 @@ form {
 @media screen and (max-width: 800px) {
     /* Скрытие навигации и показ кнопки бургер-меню */
     header {
+        height: 56px !important;
+
         & nav { display: none !important; }
         & .burger { display: block !important; }
+
+        .logo {
+            & img {
+                height: 56px !important;
+                width: 56px !important;
+            }
+        }
+    }
+
+    .header_placeholder {
+        height: 80px !important;
     }
 }
 

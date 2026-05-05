@@ -40,3 +40,7 @@ export function createElement(tag: string, text_content: string | null = null, c
     return;
   }
 }
+
+export function getMidpoint(a: number): number {
+  return a * 0.5;
+}

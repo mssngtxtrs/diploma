@@ -1,7 +1,9 @@
 import { changeHeaderColorOnScroll } from "./modules/ui.js";
+import { displayMessagesFromServer } from "./modules/messages.js";
 
 function main(): void {
   changeHeaderColorOnScroll();
+  displayMessagesFromServer();
   listenersSetup();
 }
 
