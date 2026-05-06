@@ -153,7 +153,7 @@ async function sendRegData(e: SubmitEvent): Promise<void> {
     console.error("Event of registration form was not passed");
   }
 
-  displayMessage(`Ошибка отправки данных: ${error}`);
+  displayMessage(`${error}`, "error");
 
   if (submit_button) {
     changeButtonState(submit_button);
@@ -186,7 +186,11 @@ async function sendLoginData(e: SubmitEvent): Promise<void> {
 
       if (response.data === true) {
         const get_query = window.location.search;
-        window.location.href = "/request" + get_query;
+        if (get_query) {
+          window.location.href = "/request" + get_query;
+        } else {
+          window.location.href = "/dashboard";
+        }
         return;
       } else {
         error = response.message as string;
@@ -198,7 +202,7 @@ async function sendLoginData(e: SubmitEvent): Promise<void> {
     console.error("Event of registration form was not passed");
   }
 
-  displayMessage(`Ошибка отправки данных: ${error}`);
+  displayMessage(`${error}`, "error");
 
   if (submit_button) {
     changeButtonState(submit_button);

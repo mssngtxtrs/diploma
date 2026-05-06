@@ -51,7 +51,7 @@ class Auth {
         return $database->returnQuery(
             PERMISSION_QUERY,
             "single",
-            [ 'userID' => $user_id ]
+            [ 'user_id' => $user_id ]
         );
     }
 
@@ -122,11 +122,16 @@ class Auth {
 
 
     /* Выход */
-    public function logOut(): bool {
-        unset($_SESSION['user']);
-        unset($_SESSION['credentials']);
-        $_SESSION['msg']['std'][] = "Вы вышли из аккаунта";
-        return true;
+    public function logOut(): string | bool {
+        if (empty($_SESSION['user']) && empty($_SESSION['credentials'])) {
+            $_SESSION['msg']['error'][] = "Вы уже вышли из аккаунта";
+            return "Вы уже вышли из аккаунта";
+        } else {
+            unset($_SESSION['user']);
+            unset($_SESSION['credentials']);
+            $_SESSION['msg']['std'][] = "Вы вышли из аккаунта";
+            return true;
+        }
     }
 
 

@@ -75,7 +75,7 @@ case $path == '/request':
     break;
 
 
-case $path == "/requests/admin":
+case $path == "/admin":
     if (empty($_SESSION['user']['login']) || $auth->getPermissionLevel($_SESSION['user']['login']) !== 2) {
         header("Location: /");
     } else {
@@ -204,7 +204,8 @@ case preg_match('#^/api/.*$#', $path):
         if ($result === false) {
             $output['message'] = "No requests found";
         } else {
-            $output['response'] = $result;
+            $output['response'][] = $result;
+            $output['response'][] = $auth->getPermissionLevel($_SESSION['user']['login']);
         }
         break;
 

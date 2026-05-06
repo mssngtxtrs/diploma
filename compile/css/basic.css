@@ -240,14 +240,14 @@ header {
                 &:first-child {
                     border-top-left-radius: 11px;
                     border-bottom-left-radius: 11px;
-                    border-right: 2px solid #ffffff40;
                 }
 
                 &:last-child {
                     border-top-right-radius: 11px;
                     border-bottom-right-radius: 11px;
-                    border-left: 2px solid #ffffff40;
                 }
+
+                &:not(:first-child) { border-left: 2px solid #ffffff40; }
             }
         }
 
@@ -296,9 +296,15 @@ footer {
         }
 
         & .column:last-child {
-            display: grid;
-            grid-template-columns: repeat(2, auto);
-            gap: 2px 12px;
+            display: flex;
+            gap: 12px;
+
+            & div {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                align-items: start;
+            }
         }
 
         & .logo {
@@ -412,6 +418,18 @@ form {
             & img {
                 height: 56px !important;
                 width: 56px !important;
+            }
+        }
+    }
+
+    footer {
+        & .container {
+            flex-direction: column;
+            align-items: start;
+
+            & .column:last-child {
+                flex-direction: column;
+                gap: 2px;
             }
         }
     }
