@@ -7,7 +7,7 @@
 
         <div class="forms">
             <form id="login">
-                <div class="input tooltipped">
+                <div class="input tooltipped" style="anchor-name: --login-1">
                     <label for="login">Логин</label>
                     <input
                         type="text"
@@ -18,9 +18,9 @@
                         pattern="^[A-Za-z0-9_]{5,30}$"
                     >
                     <span></span>
-                    <p class="tooltip">5–30 символов: латиница, цифры, нижнее подчёркивание</p>
+                    <p class="tooltip" style="position-anchor: --login-1">5–30 символов: латиница, цифры, нижнее подчёркивание</p>
                 </div>
-                <div class="input tooltipped">
+                <div class="input tooltipped" style="anchor-name: --login-2">
                     <label for="password">Пароль</label>
                     <input
                         type="password"
@@ -31,13 +31,13 @@
                         pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
                     >
                     <span></span>
-                    <p class="tooltip">8–30 символов. Минимум: 1 цифра, 1 заглавная буква. Только латиница, цифры и '_'</p>
+                    <p class="tooltip" style="position-anchor: --login-2">8–30 символов. Минимум: 1 цифра, 1 заглавная буква. Только латиница, цифры и '_'</p>
                 </div>
                 <button type="submit">Войти</button>
             </form>
 
             <form id="reg">
-                <div class="input tooltipped">
+                <div class="input tooltipped" style="anchor-name: --reg-1">
                     <label for="first_name">Имя</label>
                     <input
                         type="text"
@@ -48,9 +48,9 @@
                         pattern="^[A-Za-zА-Яа-яЁё]+$"
                     >
                     <span></span>
-                    <p class="tooltip">Только буквы: латиница и кириллица</p>
+                    <p class="tooltip" style="position-anchor: --reg-1">Только буквы: латиница и кириллица</p>
                 </div>
-                <div class="input tooltipped">
+                <div class="input tooltipped" style="anchor-name: --reg-2">
                     <label for="last_name">Фамилия</label>
                     <input
                         type="text"
@@ -61,9 +61,9 @@
                         pattern="^[A-Za-zА-Яа-яЁё]+$"
                     >
                     <span></span>
-                    <p class="tooltip">Только буквы: латиница и кириллица</p>
+                    <p class="tooltip" style="position-anchor: --reg-2">Только буквы: латиница и кириллица</p>
                 </div>
-                <div class="input tooltipped">
+                <div class="input tooltipped" style="anchor-name: --reg-3">
                     <label for="second_name">Отчество (необязательно)</label>
                     <input
                         type="text"
@@ -73,9 +73,9 @@
                         pattern="^[A-Za-zА-Яа-яЁё]+$"
                     >
                     <span></span>
-                    <p class="tooltip">Только буквы: латиница и кириллица</p>
+                    <p class="tooltip" style="position-anchor: --reg-3">Только буквы: латиница и кириллица</p>
                 </div>
-                <div class="input tooltipped">
+                <div class="input tooltipped" style="anchor-name: --reg-4">
                     <label for="login">Логин</label>
                     <input
                         type="text"
@@ -86,9 +86,9 @@
                         pattern="^[A-Za-z0-9_]{5,30}$"
                     >
                     <span></span>
-                    <p class="tooltip">8–30 символов: латиница, цифры, нижнее подчёркивание</p>
+                    <p class="tooltip" style="position-anchor: --reg-4">8–30 символов: латиница, цифры, нижнее подчёркивание</p>
                 </div>
-                <div class="input tooltipped">
+                <div class="input tooltipped" style="anchor-name: --reg-5">
                     <label for="email">Почта</label>
                     <input
                         type="email"
@@ -98,9 +98,9 @@
                         required
                     >
                     <span></span>
-                    <p class="tooltip">Почта должна быть в формате example@example.com</p>
+                    <p class="tooltip" style="position-anchor: --reg-5">Почта должна быть в формате example@example.com</p>
                 </div>
-                <div class="input tooltipped">
+                <div class="input tooltipped" style="anchor-name: --reg-6">
                     <label for="password">Пароль</label>
                     <input
                         type="password"
@@ -111,9 +111,9 @@
                         pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
                     >
                     <span></span>
-                    <p class="tooltip">8–30 символов: минимум 1 цифра, 1 заглавная буква, только латиница, цифры и _</p>
+                    <p class="tooltip" style="position-anchor: --reg-6">8–30 символов: минимум 1 цифра, 1 заглавная буква, только латиница, цифры и _</p>
                 </div>
-                <div class="input tooltipped">
+                <div class="input tooltipped" style="anchor-name: --reg-7">
                     <label for="password-confirm">Подтвердите пароль</label>
                     <input
                         type="password"
@@ -124,7 +124,7 @@
                         pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
                     >
                     <span></span>
-                    <p class="tooltip">Пароли должны совпадать</p>
+                    <p class="tooltip" style="position-anchor: --reg-7">Пароли должны совпадать</p>
                 </div>
                 <div class="input rowwed">
                     <input

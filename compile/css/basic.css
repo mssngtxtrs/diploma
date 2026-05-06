@@ -129,7 +129,6 @@ img {
 
 /* Всплывающие подсказки */
 .tooltip {
-    /*visibility: hidden;*/
     opacity: 0;
     pointer-events: none;
     min-width: 60px;
@@ -142,27 +141,27 @@ img {
     border-radius: 11px;
     padding: 6px 12px;
     position: absolute;
+    position-area: bottom;
+    position-try-fallbacks: flip-block, flip-inline;
+    margin-top: 12px;
     z-index: 2;
-    top: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
     font-size: var(--tooltip-size);
     transition: opacity .3s cubic-bezier(.19,1,.22,1);
 }
 
 /* Блоки со всплывающими подсказками */
 .tooltipped {
-    position: relative;
     cursor: pointer;
 
     /* Отырытие при наведении */
     &:hover:not(:disabled) .tooltip,
     &:focus-visible:not(:disabled) .tooltip,
     &:focus-within:not(:disabled) .tooltip {
-        visibility: visible;
         opacity: 1;
     }
 }
+
+button.tooltipped .tooltip { margin-top: 36px; }
 
 /* Контейнер для контента */
 .container {

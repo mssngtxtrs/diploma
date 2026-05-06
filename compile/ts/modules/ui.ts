@@ -41,26 +41,26 @@ export async function changeHeaderAuthButtons() {
       if (auth_buttons) {
         createElement("button", `Заявок: ${response.data[0]}`, null, { "onclick": "window.location.href = '/dashboard'" }, auth_buttons);
 
-        const new_request_button = createElement("button", null, [ "tooltipped" ], { "onclick": "window.location.href = '/request'" });
+        const new_request_button = createElement("button", null, [ "tooltipped" ], { "onclick": "window.location.href = '/request'", "style": "anchor-name: --auth-1" });
         if (new_request_button) {
           createElement("img", null, null, { "src": "/media/icons/new_request.svg", "alt": "Новая заявка" }, new_request_button);
-          createElement("p", "Новая заявка", [ "tooltip" ], null, new_request_button);
+          createElement("p", "Новая заявка", [ "tooltip" ], { "style": "position-anchor: --auth-1" }, new_request_button);
           auth_buttons.appendChild(new_request_button);
         }
 
         if (response.data[1] === 2) {
-          const admin_button = createElement("button", null, [ "tooltipped" ], { "onclick": "window.location.href = '/admin'" });
+          const admin_button = createElement("button", null, [ "tooltipped" ], { "onclick": "window.location.href = '/admin'", "style": "anchor-name: --auth-2" });
           if (admin_button) {
             createElement("img", null, null, { "src": "/media/icons/admin.svg", "alt": "Админ-панель" }, admin_button);
-            createElement("p", "Админ-панель", [ "tooltip" ], null, admin_button);
+            createElement("p", "Админ-панель", [ "tooltip" ], { "style": "position-anchor: --auth-2" }, admin_button);
             auth_buttons.appendChild(admin_button);
           }
         }
 
-        const log_out_button = createElement("button", null, [ "tooltipped" ]);
+        const log_out_button = createElement("button", null, [ "tooltipped" ], { "style": "anchor-name: --auth-3" });
         if (log_out_button) {
           createElement("img", null, null, { "src": "/media/icons/log_out.svg", "alt": "Выйти" }, log_out_button);
-          createElement("p", "Выйти", [ "tooltip" ], null, log_out_button);
+          createElement("p", "Выйти", [ "tooltip" ], { "style": "position-anchor: --auth-3" }, log_out_button);
           auth_buttons.appendChild(log_out_button);
         }
 
