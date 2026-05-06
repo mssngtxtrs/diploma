@@ -1,0 +1,77 @@
+/* Формы */
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: inherit;
+    align-items: stretch;
+    gap: 12px;
+
+    /* Блок с полем ввода и подписью */
+    & .input {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        /* Поле ввода */
+        & input {
+            padding: 6px 12px;
+            border: 1px solid var(--fg);
+            border-radius: 11px;
+            background: var(--tooltip);
+
+            &:hover { background: var(--bg-hover); }
+            &:focus { background: var(--bg); }
+
+            /* Окрашивание границы в красный при неправильном вводе */
+            &:user-invalid { border-color: var(--destructive); }
+
+            /* Стилизация чекбокса */
+            &[type='checkbox'] {
+                position: relative;
+                padding: 15px;
+                width: 30px;
+                height: 30px;
+
+                /* Скрытие стандартного поля */
+                appearance: none;
+
+                /* Новая галочка */
+                &::after {
+                    font-family: "Iosevka Custom", "Segoe UI Symbol", sans-serif;
+                    display: block;
+                    content: "\2714";
+                    position: absolute;
+                    top: -2px;
+                    left: 2px;
+                    width: 30px;
+                    height: 30px;
+                    font-size: 26px;
+
+                    /* Прозрачный цвет если не выбрана */
+                    color: transparent;
+                }
+
+                /* Стиль при выборе чекбокса / радио */
+                &:checked {
+                    background: var(--fg-active);
+
+                    &::after { color: var(--bg); }
+                }
+            }
+        }
+
+        /* Выравнивание элементов в строку */
+        &.rowwed {
+            flex-direction: row;
+        }
+
+        /* Вывод ошибки ввода */
+        & span {
+            display: block;
+            font-size: var(--tooltip);
+            color: var(--destructive);
+        }
+    }
+}

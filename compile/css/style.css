@@ -1,11 +1,23 @@
 /* Импортирование нескольких файлов */
 
-@import url("fonts.css");
-@import url("variables.css");
-@import url("basic.css");
-@import url("messages.css");
-@import url("index.css");
-@import url("about.css");
-@import url("hostings.css");
-@import url("auth.css");
-@import url("not_found.css");
+/* Ключевые стили */
+@import url("essential/fonts.css");
+@import url("essential/variables.css");
+
+/* Общие стили */
+@import url("basic/basic.css");
+@import url("basic/header_burger.css");
+@import url("basic/footer.css");
+@import url("basic/forms.css");
+
+/* Стили утилит */
+@import url("utils/messages.css");
+@import url("utils/tooltips.css");
+
+/* Стили страниц */
+@import url("pages/index.css");
+@import url("pages/about.css");
+@import url("pages/hostings.css");
+@import url("pages/dashboard.css");
+@import url("pages/auth.css");
+@import url("pages/not_found.css");

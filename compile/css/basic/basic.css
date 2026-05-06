@@ -1,0 +1,163 @@
+/* Общие параметры */
+
+* {
+    scroll-behavior: smooth;
+    transition: background-color .3s cubic-bezier(.19,1,.22,1),
+        color .3s cubic-bezier(.19,1,.22,1),
+        border-color .3s cubic-bezier(.19,1,.22,1);
+    word-break: break-word;
+}
+
+/* Высота контента: если не заполняет полностью: помещает его по центру и убирает подвал вниз */
+body {
+    margin: 0;
+    background: var(--bg);
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+/* Заголовки */
+h1, h2, h3 {
+    font-family: "Iosevka Custom", "Courier New", monospace;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    color: var(--fg);
+}
+
+/* Текст, кнопки и поля */
+a, p, span, button, input, label, textarea, li {
+    font-family: "IBM Plex Sans", Arial, sans-serif;
+    font-weight: normal;
+    font-size: var(--body-size);
+    margin: 0;
+    padding: 0;
+    color: var(--fg);
+    text-decoration: none;
+}
+
+/* Ссылки */
+a {
+    &:hover { color: var(--fg-hover); }
+    &:active { color: var(--fg-active); }
+}
+
+/* Анимация подчеркивания */
+.underlined {
+    position: relative;
+    padding-bottom: 5px;
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--fg);
+        transition: width .3s cubic-bezier(.19,1,.22,1),
+            left .3s cubic-bezier(.19,1,.22,1);
+        transform: translateX(-50%);
+    }
+
+    &:hover::after {
+        background-color: var(--fg-hover);
+        width: 100%;
+        left: 50%;
+    }
+
+    &:active::after { background-color: var(--fg-active); }
+}
+
+/* Анимация обводки */
+.bordered {
+    border: 2px solid transparent;
+    background:
+        linear-gradient(var(--bg), var(--bg)) padding-box,
+        conic-gradient(
+            from 0deg,
+            var(--fg) 0deg,
+            var(--fg) var(--fill),
+            transparent var(--fill)
+        ) border-box !important;
+
+    transition: --fill 1.0s cubic-bezier(.19,1,.22,1),
+        color .3s cubic-bezier(.19,1,.22,1),
+        background-color .3s cubic-bezier(.19,1,.22,1);
+
+    &:hover {
+        --fill: 100%;
+    }
+}
+
+.standby {
+    background: linear-gradient(
+        90deg,
+        #242424 0%,
+        #363636 50%,
+        #242424 100%);
+    background-size: 200% 100%;
+    animation: standby 2s linear infinite;
+}
+
+/* Кнопки */
+button {
+    padding: 12px 24px;
+    background: var(--secondary);
+    color: var(--fg);
+    border: none;
+    border-radius: 11px;
+    cursor: pointer;
+
+    &:hover { background-color: var(--secondary-hover); }
+    &:active { background-color: var(--secondary-active); }
+    &:disabled { opacity: 0.6; }
+}
+
+/* Размер текста для заголовков */
+h1 { font-size: var(--title-size); }
+h2 { font-size: var(--heading-size); }
+h3 { font-size: var(--subheading-size); }
+
+/* Изображения */
+img {
+    display: block;
+    object-position: center;
+    object-fit: contain;
+}
+
+
+/* Контейнер для контента */
+.container {
+    width: 900px;
+    margin: 0 auto;
+}
+
+/* Секции контента */
+section {
+    display: grid;
+    width: 100vw;
+}
+
+
+
+/* Адаптивность */
+
+@media screen and (max-width: 900px) {
+    /* Ширина контейнера на всю ширину экрана с отступами по краям */
+    .container {
+        width: calc(100vw - 24px) !important;
+        padding-inline: 12px;
+    }
+}
+
+@media screen and (max-height: 780px) {
+    :root {
+        --title-size: 48px;
+        --heading-size: 40px;
+        --subheading-size: 24px;
+        --body-size: 16px;
+        --tooltip-size: 12px;
+    }
+}
