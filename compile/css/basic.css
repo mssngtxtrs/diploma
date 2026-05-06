@@ -129,13 +129,15 @@ img {
 
 /* Всплывающие подсказки */
 .tooltip {
-    visibility: hidden;
+    /*visibility: hidden;*/
+    opacity: 0;
+    pointer-events: none;
     min-width: 60px;
     max-width: 300px;
     width: max-content;
-    background: var(--bg);
-    border: 1px solid var(--bg);
-    color: var(--bg);
+    background: var(--tooltip);
+    border: 1px solid var(--fg);
+    color: var(--fg);
     text-align: center;
     border-radius: 11px;
     padding: 6px 12px;
@@ -145,6 +147,7 @@ img {
     left: 50%;
     transform: translateX(-50%);
     font-size: var(--tooltip-size);
+    transition: opacity .3s cubic-bezier(.19,1,.22,1);
 }
 
 /* Блоки со всплывающими подсказками */
@@ -153,11 +156,11 @@ img {
     cursor: pointer;
 
     /* Отырытие при наведении */
-    &:hover:not(:disabled) .tooltip {
+    &:hover:not(:disabled) .tooltip,
+    &:focus-visible:not(:disabled) .tooltip,
+    &:focus-within:not(:disabled) .tooltip {
         visibility: visible;
-        background: var(--tooltip);
-        border-color: var(--fg);
-        color: var(--fg);
+        opacity: 1;
     }
 }
 
@@ -178,14 +181,12 @@ header {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 3;
+    z-index: 4;
 
     /* Прозрачный фон, при прокручивании заполняется цветом */
     background: transparent;
 
-    &.scrolled {
-        background: var(--bg-hover);
-    }
+    &.scrolled { background: var(--bg-hover); }
 
     /* Размещение контента внутри шапки */
     & .container {
@@ -216,38 +217,17 @@ header {
 
         & nav {
             display: flex;
-            gap: 6px;
+            gap: 12px;
             height: 80px;
 
             & a, span { align-content: center; }
-            & span { margin-bottom: 5px; }
-        }
-
-        & .auth_buttons {
-            display: flex;
-            align-items: center;
-
-            & button {
-                border-radius: 0;
-                height: 56px;
-
-                & img {
-                    width: 32px;
-                    height: 32px;
-                    margin-inline: -12px;
-                }
-
-                &:first-child {
-                    border-top-left-radius: 11px;
-                    border-bottom-left-radius: 11px;
-                }
-
-                &:last-child {
-                    border-top-right-radius: 11px;
-                    border-bottom-right-radius: 11px;
-                }
-
-                &:not(:first-child) { border-left: 2px solid #ffffff40; }
+            & span {
+                padding-bottom: 3px;
+                margin-top: auto;
+                margin-bottom: auto;
+                width: 2px;
+                height: 24px;
+                background: var(--fg-active) content-box;
             }
         }
 
@@ -261,7 +241,45 @@ header {
         /* Кнопка бургер-меню */
         & .burger {
             display: none;
+            background: transparent;
+
+            & img {
+                width: 32px;
+                height: 32px;
+                margin-inline: -12px;
+            }
+
+            &:hover { background: #ffffff40 }
+            &:active { background: #ffffff20 }
         }
+    }
+}
+
+.auth_buttons {
+    display: flex;
+    align-items: center;
+
+    & button {
+        border-radius: 0;
+        height: 56px;
+
+        & img {
+            width: 32px;
+            height: 32px;
+            margin-inline: -12px;
+        }
+
+        &:first-child {
+            border-top-left-radius: 11px;
+            border-bottom-left-radius: 11px;
+        }
+
+        &:last-child {
+            border-top-right-radius: 11px;
+            border-bottom-right-radius: 11px;
+        }
+
+        &:not(:first-child) { border-left: 2px solid #ffffff40; }
     }
 }
 
@@ -269,6 +287,68 @@ header {
 .header_placeholder {
     width: 100vw;
     height: 104px;
+}
+
+.burger_menu {
+    display: none;
+    background: var(--bg-hover);
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    left: -100vw;
+    width: 100vw;
+    height: calc(100vh - 104px - 56px);
+    padding-top: 104px;
+    padding-bottom: 56px;
+    justify-content: end;
+    align-items: stretch;
+    flex-direction: column;
+    transition: left .3s cubic-bezier(.19,1,.22,1);
+
+    &.open { left: 0; }
+
+    & .website_nav {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: calc(100vw - 24px);
+        gap: 6px;
+
+        & a {
+            text-align: center;
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+    }
+
+    & .account_nav {
+        display: flex;
+        align-items: stretch;
+        justify-content: end;
+        border-top: 2px solid #ffffff40;
+        border-bottom: 2px solid #ffffff40;
+
+        & > button { width: 100%; }
+
+        & button {
+            background: transparent;
+            border-radius: 0 !important;
+
+            &:hover { background: #ffffff40; }
+            &:active { background: #ffffff20; }
+        }
+
+        & .auth_buttons {
+            width: 100%;
+            justify-content: end;
+
+            & button:first-child { width: 100% !important; }
+        }
+    }
 }
 
 /* Секции контента */
@@ -421,6 +501,8 @@ form {
             }
         }
     }
+
+    .burger_menu { display: flex !important; }
 
     footer {
         & .container {

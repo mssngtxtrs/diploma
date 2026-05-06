@@ -6,14 +6,26 @@
         </a>
         <nav class="website_nav">
             <a class="underlined" href="/about">О нас</a>
-            <span>|</span>
+            <span></span>
             <a class="underlined" href="/hostings">Хостинги</a>
         </nav>
         <nav class="account_nav">
             <a class="underlined" href="/auth">Авторизация</a>
         </nav>
-        <button class="burger"></button>
+        <button class="burger">
+            <img src="<?= $this->media_folder ?>/icons/burger.svg" alt="Бургер-меню">
+        </button>
     </div>
 </header>
+
+<div class="burger_menu">
+	<div class="website_nav">
+	    <a class="underlined" href="/about">О нас</a>
+		<a class="underlined" href="/hostings">Хостинги</a>
+	</div>
+	<div class="account_nav">
+        <button onclick="window.location.href='/auth'">Авторизация</button>
+	</div>
+</div>
 
 <div class="header_placeholder"></div>

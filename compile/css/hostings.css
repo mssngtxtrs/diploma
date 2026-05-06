@@ -53,3 +53,15 @@
         }
     }
 }
+
+@media screen and (max-width: 900px) {
+    .hostings_container {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .hostings_container {
+        grid-template-columns: 1fr !important;
+    }
+}

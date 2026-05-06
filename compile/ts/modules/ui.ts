@@ -17,9 +17,23 @@ export function changeHeaderColorOnScroll() {
   }
 }
 
+export function burgerButtonListenerSetup(): void {
+  const burger_button: HTMLButtonElement | null = document.querySelector("header .burger");
+  const burger_menu: HTMLElement | null = document.querySelector(".burger_menu");
+  if (burger_button && burger_menu) {
+    burger_button.addEventListener("click", () => {
+      burger_menu.classList.toggle("open");
+    });
+  } else {
+    console.error("Burger button and/or burger menu not found");
+  }
+}
+
 export async function changeHeaderAuthButtons() {
   const header_account_nav: HTMLElement | null = document.querySelector("header .account_nav");
-  if (header_account_nav) {
+  const burger_account_nav: HTMLElement | null = document.querySelector(".burger_menu .account_nav");
+
+  if (header_account_nav && burger_account_nav) {
     const response = await fetchAPIResponse<Array<any>>("/api/requests/total");
 
     if (response.status === "success" && response.data) {
@@ -47,29 +61,36 @@ export async function changeHeaderAuthButtons() {
         if (log_out_button) {
           createElement("img", null, null, { "src": "/media/icons/log_out.svg", "alt": "Выйти" }, log_out_button);
           createElement("p", "Выйти", [ "tooltip" ], null, log_out_button);
-
-          log_out_button.addEventListener("click", async (e) => {
-            if (e.target) {
-              const button: HTMLButtonElement = e.target as HTMLButtonElement;
-              changeButtonState(button);
-
-              const response = await fetchAPIResponse("/api/auth/log-out");
-              if (response.status === "success") {
-                window.location.reload();
-                changeButtonState(button);
-              }
-            }
-          });
-
           auth_buttons.appendChild(log_out_button);
         }
 
-        header_account_nav.replaceChildren(auth_buttons);
+        header_account_nav.replaceChildren(auth_buttons.cloneNode(true));
+        burger_account_nav.replaceChildren(auth_buttons);
+
+        const created_buttons: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".auth_buttons button:last-child");
+        if (created_buttons) {
+          created_buttons.forEach(button => {
+            button.addEventListener("click", (e) => logOutEvent(e));
+          })
+        }
       }
     }
 
   } else {
-    console.error("Header account_nav not found");
+    console.error("Header and/or burger account_nav not found");
+  }
+}
+
+async function logOutEvent(e: MouseEvent): Promise<void> {
+  if (e.target) {
+    const button: HTMLButtonElement = e.target as HTMLButtonElement;
+    changeButtonState(button);
+
+    const response = await fetchAPIResponse("/api/auth/log-out");
+    if (response.status === "success") {
+      window.location.reload();
+      changeButtonState(button);
+    }
   }
 }
 

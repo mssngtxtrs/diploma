@@ -1,4 +1,4 @@
-import { changeHeaderColorOnScroll, changeHeaderAuthButtons } from "./modules/ui.js";
+import { changeHeaderColorOnScroll, changeHeaderAuthButtons, burgerButtonListenerSetup } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
 import type { HostingFull } from "./types/hostings.js";
 import { fetchAPIResponse } from "./modules/api.js";
@@ -8,6 +8,7 @@ async function main(): Promise<void> {
   displayMessagesFromServer();
   changeHeaderColorOnScroll();
   changeHeaderAuthButtons();
+  burgerButtonListenerSetup();
 
   var hostings = await getHostings();
   if (hostings) {

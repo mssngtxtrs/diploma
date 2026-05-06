@@ -1,4 +1,4 @@
-import { changeHeaderColorOnScroll, changeHeaderAuthButtons, changeButtonState } from "./modules/ui.js";
+import { changeHeaderColorOnScroll, changeHeaderAuthButtons, burgerButtonListenerSetup, changeButtonState } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
 import { displayMessage } from "./modules/utils.js";
 import { fetchAPIResponse } from "./modules/api.js";
@@ -10,6 +10,7 @@ function main(): void {
   changeHeaderAuthButtons();
   displayMessagesFromServer();
   listenersSetup();
+  burgerButtonListenerSetup();
 }
 
 function listenersSetup(): void {

@@ -1,10 +1,12 @@
-import { changeHeaderColorOnScroll, changeHeaderAuthButtons } from "./modules/ui.js";
+import { changeHeaderColorOnScroll, changeHeaderAuthButtons, burgerButtonListenerSetup } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
 
 function main(): void {
   changeHeaderColorOnScroll();
   changeHeaderAuthButtons();
   displayMessagesFromServer();
+  burgerButtonListenerSetup();
+
   const tooltipped_block = document.querySelector("#not_found .tooltipped");
   if (tooltipped_block) {
     tooltipped_block.addEventListener("click", pasteImageWithTooltip);
