@@ -33,4 +33,10 @@
     }
 }
 
-button.tooltipped .tooltip { margin-top: 36px; }
+@media screen and (max-width: 800px) {
+    .tooltip {
+        margin-top: 0;
+        margin-bottom: 6px;
+        position-area: top;
+    }
+}

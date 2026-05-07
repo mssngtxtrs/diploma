@@ -27,7 +27,7 @@ h1, h2, h3 {
 }
 
 /* Текст, кнопки и поля */
-a, p, span, button, input, label, textarea, li {
+a, p, span, button, input, label, textarea, li, select {
     font-family: "IBM Plex Sans", Arial, sans-serif;
     font-weight: normal;
     font-size: var(--body-size);
@@ -107,12 +107,30 @@ button {
     background: var(--secondary);
     color: var(--fg);
     border: none;
-    border-radius: 11px;
+    border-radius: 7px;
     cursor: pointer;
 
     &:hover { background-color: var(--secondary-hover); }
     &:active { background-color: var(--secondary-active); }
     &:disabled { opacity: 0.6; }
+
+    & img {
+        width: 32px;
+        height: 32px;
+        margin-inline: -12px;
+    }
+}
+
+/* Select */
+select {
+    /*appearance: none;*/
+    padding: 6px 12px;
+    background: var(--tooltip);
+    border: 2px solid #ffffff40;
+    border-radius: 7px;
+
+    &:hover { background: var(--tooltip-hover); }
+    &:focus { background: var(--tooltip-active); }
 }
 
 /* Размер текста для заголовков */

@@ -11,10 +11,13 @@
             flex-direction: column;
             gap: 6px;
             border-radius: 15px;
-            padding: 15px;
+            padding: 8px;
             background: var(--bg-hover);
 
-            & h3 { margin-top: 6px; }
+            & h3 {
+                margin-top: 6px;
+                padding-inline: 8px;
+            }
 
             & .hosting_block {
                 &.price_block {
@@ -26,6 +29,7 @@
                         height: fit-content;
                         font-size: 20px;
                         font-family: "Iosevka Custom", "Courier New", sans-serif;
+                        padding-inline: 8px;
                     }
                 }
 

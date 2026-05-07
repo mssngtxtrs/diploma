@@ -1,19 +1,31 @@
-<section id="account">
+<section id="dashboard">
     <div class="container">
         <div id="personal">
             <div class="text">
-                <h2></h2>
-                <h3></h3>
-                <p></p>
+                <h2 class="skeleton">Имя Фамилия Отчество</h2>
+                <h3 class="skeleton">Почта</h3>
+                <p class="skeleton">Роль</p>
+                <p class="skeleton">Количество заявок</p>
             </div>
             <div class="buttons">
-                <button class="button urgent" onclick="window.location = '/requests/new'">Новая заявка</button>
+                <button class="tooltipped" style="anchor-name: --dash-1" onclick="window.location.href = '/request'">
+                    <img src="<?= $this->media_folder ?>/icons/new_request.svg" alt="Новая заявка">
+                    <p class="tooltip" style="position-anchor: --dash-1">Новая заявка</p>
+                </button>
+                <button class="tooltipped" style="anchor-name: --dash-2" onclick="window.location.href = '/edit_info'">
+                    <img src="<?= $this->media_folder ?>/icons/edit_info.svg" alt="Редактировать информацию">
+                    <p class="tooltip" style="position-anchor: --dash-2">Редактировать информацию</p>
+                </button>
+                <button class="tooltipped" style="anchor-name: --dash-3">
+                    <img src="<?= $this->media_folder ?>/icons/log_out.svg" alt="Выйти">
+                    <p class="tooltip" style="position-anchor: --dash-3">Выйти</p>
+                </button>
             </div>
         </div>
 
         <div id="requests-header">
             <div class="pagination"></div>
-            <select name="filter" id="filter"></select>
+            <select name="filter" id="filter" class="skeleton"></select>
         </div>
 
         <div id="requests"></div>

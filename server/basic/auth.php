@@ -6,8 +6,14 @@ define("PASSWORD_QUERY", "select password from users where user_id = :user_id");
 define("USER_ID_QUERY", "select user_id from users where login = :login");
 define("PERMISSION_QUERY", "select level_id from users where user_id = :user_id");
 define("LOGIN_QUERY", "select login from users where login = :login");
-define("GET_CREDENTIALS_QUERY", "select first_name, last_name, email, level_id from users where user_id = :user_id");
-define("REGISTER_QUERY", "insert into users (email, login, password, first_name, last_name, level_id) values (:email, :login, :password, :first_name, :last_name, 1)");
+define("GET_CREDENTIALS_QUERY", <<<HERE
+    select u.first_name, u.last_name, u.second_name, u.email, pl.level_name,
+    ( select count(*) from requests r where r.user_id = u.user_id and (r.state_id = 1 or r.state_id = 2) ) as requests_total
+    from users u
+    left join permission_levels pl on u.level_id = pl.level_id
+    where u.user_id = :user_id
+HERE);
+define("REGISTER_QUERY", "insert into users (email, login, password, first_name, last_name, second_name, level_id) values (:email, :login, :password, :first_name, :last_name, :second_name, 1)");
 
 /* Класс авторизации */
 class Auth {
@@ -59,13 +65,14 @@ class Auth {
 
     /* Получение данных пользователя */
     public function getCredentials(): array | bool {
-        if (!empty($_SESSION['credentials'])) {
-            return [
-                'first_name' => $_SESSION['credentials']['first_name'],
-                'last_name' => $_SESSION['credentials']['last_name'],
-                'email' => $_SESSION['credentials']['email'],
-                'level_id' => $_SESSION['credentials']['level_id'],
-            ];
+        global $database;
+        if (!empty($_SESSION['user']['login'])) {
+            $user_id = $this->getUserID($_SESSION['user']['login']);
+            return $database->returnQuery(
+                GET_CREDENTIALS_QUERY,
+                "assoc",
+                [ "user_id" => $user_id ]
+            )[0];
         } else {
             return false;
         }
@@ -109,7 +116,6 @@ class Auth {
                     if (!empty($credentials[0])) {
                         $_SESSION['user']['login'] = $login;
                         $_SESSION['user']['password'] = $password;
-                        $_SESSION['credentials'] = $credentials[0];
                         $_SESSION['msg']['std'][] = "Успешный вход";
                         $output = true;
                     }
@@ -123,12 +129,11 @@ class Auth {
 
     /* Выход */
     public function logOut(): string | bool {
-        if (empty($_SESSION['user']) && empty($_SESSION['credentials'])) {
+        if (empty($_SESSION['user'])) {
             $_SESSION['msg']['error'][] = "Вы уже вышли из аккаунта";
             return "Вы уже вышли из аккаунта";
         } else {
             unset($_SESSION['user']);
-            unset($_SESSION['credentials']);
             $_SESSION['msg']['std'][] = "Вы вышли из аккаунта";
             return true;
         }
@@ -149,7 +154,16 @@ class Auth {
         /*     4. Совпадают ли переданные пароли */
         /*     5. Получилось ли внести данные в БД */
         /* При успехе:  */
-        if (empty($credentials) || empty($password) || empty($password_confirm) || empty($consent)) {
+        if (
+            empty($credentials['email']) ||
+            empty($credentials['login']) ||
+            empty($credentials['first_name']) ||
+            empty($credentials['last_name']) ||
+            empty($credentials['second_name']) ||
+            empty($password) ||
+            empty($password_confirm) ||
+            empty($consent)
+        ) {
             $output = "Данные для регистрации не были переданы";
         } else {
             if ($database->returnQuery(
@@ -174,7 +188,8 @@ class Auth {
                                 'login' => $credentials['login'],
                                 'password' => $password_hash,
                                 'first_name' => $credentials['first_name'],
-                                'last_name' => $credentials['last_name']
+                                'last_name' => $credentials['last_name'],
+                                'second_name' => $credentials['second_name'],
                             ]
                         );
 

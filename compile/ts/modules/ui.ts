@@ -81,7 +81,7 @@ export async function changeHeaderAuthButtons() {
   }
 }
 
-async function logOutEvent(e: MouseEvent): Promise<void> {
+export async function logOutEvent(e: MouseEvent): Promise<void> {
   if (e.target) {
     const button: HTMLButtonElement = e.target as HTMLButtonElement;
     changeButtonState(button);

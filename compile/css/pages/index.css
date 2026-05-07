@@ -120,8 +120,6 @@
 
 #page_2 {
     & .container {
-        padding-bottom: 30%;
-
         & > h3, > p { margin-bottom: 12px; }
         & > p { display: none; }
     }
@@ -158,84 +156,77 @@
 #page_3 {
     & .container > p { margin-bottom: 12px; }
 
-    & .slider_container {
+    & .slider {
         display: flex;
-        overflow-y: hidden;
-        overflow-x: scroll;
-        scroll-snap-type: x mandatory;
-        scrollbar-color: var(--fg) transparent;
-        scrollbar-width: thin;
-        padding-bottom: 5px;
-        background: linear-gradient(var(--bg-hover), var(--bg-hover)) content-box, linear-gradient(#222222, #222222) padding-box;
-        width: 804px;
-        min-height: 349px;
-        margin-inline: 48px;
-        position: relative;
-        z-index: 2;
 
-        & .slide {
+        & .slider_container {
             display: flex;
-            flex-direction: column;
-            gap: 6px;
-            min-width: 754px;
-            height: 100%;
-            scroll-snap-align: center;
-            scroll-snap-stop: always;
-            margin-inline: 25px;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            scrollbar-color: var(--fg) transparent;
+            scrollbar-width: thin;
+            padding-bottom: 5px;
+            background: linear-gradient(var(--bg-hover), var(--bg-hover)) content-box, linear-gradient(#222222, #222222) padding-box;
+            position: relative;
+            z-index: 2;
+            width: 100%;
 
-            & h3 { margin-top: 6px; }
+            & .slide {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                scroll-snap-align: start;
+                scroll-snap-stop: always;
+                padding: 8px;
+                min-width: calc(100% - (8px * 2));
 
-            & .slide_block {
-                &.price_block {
-                    margin-top: -6px;
-                    margin-bottom: 6px;
+                & h3 {
+                    margin-top: 6px;
+                    padding-inline: 8px;
+                }
+
+                & .slide_block {
+                    &.price_block {
+                        margin-top: -6px;
+                        margin-bottom: 6px;
+
+                        & p {
+                            margin-left: 0;
+                            height: fit-content;
+                            font-size: 20px;
+                            font-family: "Iosevka Custom", "Courier New", sans-serif;
+                            padding-inline: 8px;
+                        }
+                    }
+
+                    &.request_block {
+                        min-height: 48px;
+
+                        & button {
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
 
                     & p {
-                        margin-left: 0;
-                        height: fit-content;
-                        font-size: 20px;
-                        font-family: "Iosevka Custom", "Courier New", sans-serif;
+                        margin-left: 56px;
+                        min-height: 24px;
                     }
-                }
 
-                &.request_block {
-                    min-height: 48px;
-
-                    & button {
-                        width: 100%;
-                        height: 100%;
+                    & img {
+                        width: 32px;
+                        height: 32px;
+                        margin: 8px;
+                        float: left;
                     }
-                }
-
-                & p {
-                    margin-left: 56px;
-                    min-height: 24px;
-                }
-
-                & img {
-                    width: 32px;
-                    height: 32px;
-                    margin: 8px;
-                    float: left;
                 }
             }
         }
-    }
 
-    & .slider_controls {
-        width: inherit;
-        height: 354px;
-        position: relative;
-        bottom: 354px;
-        left: 0;
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        & button {
+        & > button {
             width: 48px;
-            height: 100%;
+            min-height: 100%;
             padding: 0;
             background: var(--bg-hover);
             border-radius: 0;
@@ -251,6 +242,15 @@
             &:last-child {
                 border-top-right-radius: 15px;
                 border-bottom-right-radius: 15px;
+            }
+
+            &:disabled {
+                opacity: 1;
+
+                &:hover { background: var(--bg-hover); }
+                &:active { background: var(--bg-hover); }
+
+                & img { opacity: 0.4; }
             }
 
             & img {
@@ -296,7 +296,9 @@
 }
 
 #page_2, #page_3, #page_4 {
-    & .container { margin: auto; }
+    & .container {
+        margin: auto;
+    }
 }
 
 /* Адаптивность */
@@ -344,31 +346,33 @@
     }
 
     #page_3 {
-        & .slider_container {
-            width: calc(100vw - 24px);
-            margin-inline: 0;
-            border-radius: 15px;
+        & .slider {
+            & > button {
+                display: none;
+            }
 
-            & .slide {
-                min-width: calc(100% - 10px);
-                padding-inline: 5px;
-                padding-top: 3px;
+            & .slider_container {
+                width: calc(100vw - 24px);
+                border-radius: 15px;
 
-                & .slide_block {
-                    & p {
-                        margin-left: 52px;
-                        min-height: 21px;
-                    }
+                & .slide {
+                    min-width: calc(100% - 16px);
+                    padding-inline: 8px;
 
-                    & img {
-                        width: 28px;
-                        height: 28px;
+                    & .slide_block {
+                        & p {
+                            margin-left: 52px;
+                            min-height: 21px;
+                        }
+
+                        & img {
+                            width: 28px;
+                            height: 28px;
+                        }
                     }
                 }
             }
         }
-
-        & .slider_controls { display: none; }
     }
 
     #page_4 {

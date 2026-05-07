@@ -14,6 +14,7 @@ async function main(): Promise<void> {
   if (hostings) {
     const container = document.querySelector("#hostings .hostings_container");
     if (container) {
+      container.replaceChildren();
       for (const hosting of hostings) {
         const block = makeBlock(hosting);
         if (block) {

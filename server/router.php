@@ -151,6 +151,7 @@ case preg_match('#^/api/.*$#', $path):
                 "login" => $data['login'],
                 "first_name" => $data['first_name'],
                 "last_name" => $data['last_name'],
+                "second_name" => $data['second_name'],
             ],
             $data['password'],
             $data['password_confirm'],
@@ -206,6 +207,17 @@ case preg_match('#^/api/.*$#', $path):
         } else {
             $output['response'][] = $result;
             $output['response'][] = $auth->getPermissionLevel($_SESSION['user']['login']);
+        }
+        break;
+
+
+    case "/api/requests/filter":
+        $result = Server\Custom\Requests::getRequestStates();
+
+        if ($result === false) {
+            $output['message'] = "No filter options found";
+        } else {
+            $output['response'] = $result;
         }
         break;
 

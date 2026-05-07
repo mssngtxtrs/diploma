@@ -15,6 +15,7 @@ async function main(): Promise<void> {
   if (hostings) {
     const container = document.querySelector("#page_3 .slider_container");
     if (container) {
+      container.replaceChildren();
       for (const hosting of hostings) {
         const slide = makeSlide(hosting);
         if (slide) {
@@ -129,9 +130,11 @@ function makeSlide(hosting: Hosting): HTMLElement | undefined {
 }
 
 function addSliderListeners(): void {
-  const slider_buttons: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll("#page_3 .slider_controls button");
+  const slider_buttons: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll("#page_3 .slider > button");
   if (slider_buttons) {
     const slider: HTMLElement | null = document.querySelector("#page_3 .slider_container");
+
+    if (slider_buttons[0]) toggleButton(slider_buttons[0], true);
 
     if (slider) {
       slider_buttons.forEach((button) => {
@@ -148,13 +151,52 @@ function addSliderListeners(): void {
             break;
         }
       });
+
+      slider.addEventListener("scroll", () => {
+        const current_scroll = slider.scrollLeft;
+        const trigger_threshold = getMidpoint(slider.clientWidth);
+        const scroll_width = slider.scrollWidth - slider.clientWidth;
+
+        const prev_button: HTMLButtonElement | undefined = slider_buttons ? slider_buttons[0] : undefined;
+        const next_button: HTMLButtonElement | undefined = slider_buttons ? slider_buttons[1] : undefined;
+
+        switch (true) {
+          case current_scroll <= trigger_threshold:
+            if (prev_button) {
+              if (prev_button.disabled === false) {
+                toggleButton(prev_button, true);
+              }
+            }
+            break;
+          case current_scroll >= scroll_width - trigger_threshold:
+            if (next_button) {
+              if (next_button.disabled === false) {
+                toggleButton(next_button, true);
+              }
+            }
+            break;
+          case current_scroll > trigger_threshold && current_scroll < scroll_width - trigger_threshold:
+            if (prev_button && next_button) {
+              if (prev_button.disabled === true || next_button.disabled === true) {
+                toggleButton(prev_button, false);
+                toggleButton(next_button, false);
+              }
+            }
+            break;
+        }
+      })
     }
   }
 }
 
+
+function toggleButton(button: HTMLButtonElement, disabled: boolean): void {
+  button.disabled = disabled;
+}
+
 function changeSlide(slider: HTMLElement, direction: "prev" | "next"): void {
-  const scroll_amount = slider.clientWidth;
-  slider.scrollBy({ left: direction === "next" ? scroll_amount : -scroll_amount });
+  const scroll_amount = direction === "next" ? slider.clientWidth : -slider.clientWidth;
+  slider.scrollBy({ left: scroll_amount });
 }
 
 function changeBackgroundOnScroll(): void {

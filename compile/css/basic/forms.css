@@ -17,12 +17,12 @@ form {
         /* Поле ввода */
         & input {
             padding: 6px 12px;
-            border: 1px solid var(--fg);
-            border-radius: 11px;
+            border: 2px solid #ffffff40;
+            border-radius: 7px;
             background: var(--tooltip);
 
-            &:hover { background: var(--bg-hover); }
-            &:focus { background: var(--bg); }
+            &:hover { background: var(--tooltip-hover); }
+            &:focus { background: var(--tooltip-active); }
 
             /* Окрашивание границы в красный при неправильном вводе */
             &:user-invalid { border-color: var(--destructive); }

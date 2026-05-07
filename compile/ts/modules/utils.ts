@@ -16,8 +16,8 @@ export function displayMessage(message: string, message_class: MessageClass = "s
   }
 }
 
-export function createElement(tag: string, text_content: string | null = null, classes: string[] | null = null, props: Record<string, string> | null = null, append_to: HTMLElement | null = null): HTMLElement | void {
-  const element: HTMLElement = document.createElement(tag);
+export function createElement<T extends HTMLElement = HTMLElement>(tag: string, text_content: string | null = null, classes: string[] | null = null, props: Record<string, string> | null = null, append_to: HTMLElement | null = null): T | void {
+  const element: T = document.createElement(tag) as T;
 
   if (text_content) {
     element.textContent = text_content;

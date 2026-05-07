@@ -9,6 +9,7 @@
 @import url("basic/header_burger.css");
 @import url("basic/footer.css");
 @import url("basic/forms.css");
+@import url("basic/skeleton.css");
 
 /* Стили утилит */
 @import url("utils/messages.css");
