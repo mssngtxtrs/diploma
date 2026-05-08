@@ -70,5 +70,6 @@
     .messages {
         width: calc(100vw - 24px);
         padding-inline: 12px;
+        top: 80px;
     }
 }

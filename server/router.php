@@ -1,111 +1,9 @@
 <?php
-$request = $_SERVER['REQUEST_URI'];
-$path = parse_url($request, PHP_URL_PATH);
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $query = $_GET;
+$method = $_SERVER['REQUEST_METHOD'];
 
-switch (true) {
-
-
-
-case $path == '':
-case $path == '/':
-    echo $constructor->constructPage(
-        [ "header", "index_waves", "page_1", "page_2", "page_3", "page_4", "footer_placeholder" ],
-        "Главная",
-        $global_flags['show-messages'],
-        "index"
-    );
-    $_SESSION['page_back'] = $request;
-    break;
-
-
-
-case $path == "/about":
-    echo $constructor->constructPage(
-        [ "header", "about", "footer" ],
-        "О нас",
-        $global_flags['show-messages'],
-        "about"
-    );
-    $_SESSION['page_back'] = $request;
-    break;
-
-
-
-case $path == "/hostings":
-    echo $constructor->constructPage(
-        [ "header", "hostings", "footer" ],
-        "Наши хостинги",
-        $global_flags['show-messages'],
-        "hostings"
-    );
-    $_SESSION['page_back'] = $request;
-    break;
-
-
-
-case $path == '/dashboard':
-    if (empty($_SESSION['user']['login'])) {
-        header("Location: /auth");
-    } else {
-        echo $constructor->constructPage(
-            [ "header", "dashboard", "footer" ],
-            "Личный кабинет",
-            $global_flags['show-messages'],
-            "dashboard"
-        );
-        $_SESSION['page_back'] = $request;
-    }
-    break;
-
-
-
-case $path == '/request':
-    if (empty($_SESSION['user']['login'])) {
-        header("Location: /auth?" . htmlspecialchars($_SERVER['QUERY_STRING']));
-    } else {
-        echo $constructor->constructPage(
-            [ "header", "request", "footer" ],
-            "Новая заявка",
-            $global_flags['show-messages'],
-            "request"
-        );
-        $_SESSION['page_back'] = $request;
-    }
-    break;
-
-
-case $path == "/admin":
-    if (empty($_SESSION['user']['login']) || $auth->getPermissionLevel($_SESSION['user']['login']) !== 2) {
-        header("Location: /");
-    } else {
-        echo $constructor->constructPage(
-            [ "header", "admin", "footer" ],
-            "Админ-панель",
-            $global_flags['show-messages'],
-            "admin"
-        );
-    }
-    break;
-
-
-
-case $path == '/auth':
-    if (!empty($_SESSION['user']['login'])) {
-        header("Location: /dashboard");
-    } else {
-        echo $constructor->constructPage(
-            [ "header", "auth", "footer" ],
-            "Авторизация",
-            $global_flags['show-messages'],
-            "auth"
-        );
-        $_SESSION['page_back'] = $request;
-    }
-    break;
-
-
-case preg_match('#^/api/.*$#', $path):
+if ($method === 'POST') {
     require "server/custom/requests.php";
 
     $output = [];
@@ -117,134 +15,243 @@ case preg_match('#^/api/.*$#', $path):
     header("Content-Type: application/json");
 
     switch ($path) {
-    case "/api/messages":
-        $output['response'] = $message_handler->returnMessages($global_flags['debug']);
-        break;
+
+        case "/api/messages":
+            $output['response'] = $message_handler->returnMessages($global_flags['debug']);
+            break;
 
 
-    case "/api/hostings":
-        $fetched = Server\Custom\Requests::getHostings();
-        if (count($fetched) > 0) {
-            $output['response'] = $fetched;
-            unset($output['message']);
-        } else {
-            $output['message'] = "Empty hostings query";
-        }
-        break;
+        case "/api/hostings":
+            $fetched = Server\Custom\Requests::getHostings();
+            if (count($fetched) > 0) {
+                $output['response'] = $fetched;
+                unset($output['message']);
+            } else {
+                $output['message'] = "Empty hostings query";
+            }
+            break;
 
 
-    case "/api/servers":
-        $fetched = Server\Custom\Requests::getServers();
-        if (count($fetched) > 0) {
-            $output['response'] = $fetched;
-            unset($output['message']);
-        } else {
-            $output['message'] = "Empty servers query";
-        }
-        break;
+        case "/api/servers":
+            $fetched = Server\Custom\Requests::getServers();
+            if (count($fetched) > 0) {
+                $output['response'] = $fetched;
+                unset($output['message']);
+            } else {
+                $output['message'] = "Empty servers query";
+            }
+            break;
 
 
-    case "/api/auth/register":
-        $result = $auth->register(
-            [
-                "email" => $data['email'],
-                "login" => $data['login'],
-                "first_name" => $data['first_name'],
-                "last_name" => $data['last_name'],
-                "second_name" => $data['second_name'],
-            ],
-            $data['password'],
-            $data['password_confirm'],
-            $data['consent']
-        );
+        case "/api/auth/register":
+            $result = $auth->register(
+                [
+                    "email" => $data['email'],
+                    "login" => $data['login'],
+                    "first_name" => $data['first_name'],
+                    "last_name" => $data['last_name'],
+                    "second_name" => $data['second_name'],
+                ],
+                $data['password'],
+                $data['password_confirm'],
+                $data['consent']
+            );
 
-        if ($result === true) {
-            $output['response'] = true;
-        } else {
-            $output['message'] = $result;
-        }
-        break;
-
-
-    case "/api/auth/log-in":
-        $result = $auth->logIn($data['login'], $data['password']);
-
-        if ($result === true) {
-            $output['response'] = true;
-        } else {
-            $output['message'] = $result;
-        }
-        break;
+            if ($result === true) {
+                $output['response'] = true;
+            } else {
+                $output['message'] = $result;
+            }
+            break;
 
 
-    case "/api/auth/log-out":
-        $result = $auth->logOut();
+        case "/api/auth/log-in":
+            $result = $auth->logIn($data['login'], $data['password']);
 
-        if ($result === true) {
-            $output['response'] = true;
-        } else {
-            $output['message'] = $result;
-        }
-        break;
-
-
-    case "/api/auth/credentials":
-        $result = $auth->getCredentials();
-
-        if ($result === false) {
-            $output['message'] = "No credentials found";
-        } else {
-            $output['response'] = $result;
-        }
-        break;
+            if ($result === true) {
+                $output['response'] = true;
+            } else {
+                $output['message'] = $result;
+            }
+            break;
 
 
-    case "/api/requests/total":
-        $result = Server\Custom\Requests::getRequestsTotal();
+        case "/api/auth/log-out":
+            $result = $auth->logOut();
 
-        if ($result === false) {
-            $output['message'] = "No requests found";
-        } else {
-            $output['response'][] = $result;
-            $output['response'][] = $auth->getPermissionLevel($_SESSION['user']['login']);
-        }
-        break;
-
-
-    case "/api/requests/filter":
-        $result = Server\Custom\Requests::getRequestStates();
-
-        if ($result === false) {
-            $output['message'] = "No filter options found";
-        } else {
-            $output['response'] = $result;
-        }
-        break;
+            if ($result === true) {
+                $output['response'] = true;
+            } else {
+                $output['message'] = $result;
+            }
+            break;
 
 
-    default:
-        http_response_code(400);
-        $output['message'] = "Wrong URL";
-        break;
+        case "/api/auth/credentials":
+            $result = $auth->getCredentials();
+
+            if ($result === false) {
+                $output['message'] = "No credentials found";
+            } else {
+                $output['response'] = $result;
+            }
+            break;
+
+
+        case "/api/requests":
+            $result = Server\Custom\Requests::getRequests();
+
+            if ($result === false) {
+                $output['message'] = "No requests found";
+            } else {
+                $output['response'] = $result;
+            }
+            break;
+
+
+        case "/api/requests/total":
+            $result = Server\Custom\Requests::getRequestsTotal();
+
+            if ($result === false) {
+                $output['message'] = "No requests found";
+            } else {
+                $output['response'][] = $result;
+                $output['response'][] = $auth->getPermissionLevel($_SESSION['user']['login']);
+            }
+            break;
+
+
+        case "/api/requests/filter":
+            $result = Server\Custom\Requests::getRequestStates();
+
+            if ($result === false) {
+                $output['message'] = "No filter options found";
+            } else {
+                $output['response'] = $result;
+            }
+            break;
+
+
+        case "/api/admin":
+
+            break;
+
+
+        default:
+            http_response_code(400);
+            $output['message'] = "Wrong URL";
+            break;
+
     }
 
     echo json_encode($output);
+} else {
+    switch ($path) {
 
-    break;
+        case '':
+        case '/':
+            echo $constructor->constructPage(
+                [ "header", "index_waves", "page_1", "page_2", "page_3", "page_4", "footer_placeholder" ],
+                "Главная",
+                $global_flags['show-messages'],
+                "index"
+            );
+            $_SESSION['page_back'] = $request;
+            break;
 
 
-default:
-    http_response_code(404);
-    echo $constructor->constructPage(
-        [ "header", "not_found", "footer" ],
-        "Страница не найдена",
-        $global_flags['show-messages'],
-        "not_found"
-    );
-    $_SESSION['page_back'] = $request;
-    break;
+        case "/about":
+            echo $constructor->constructPage(
+                [ "header", "about", "footer" ],
+                "О нас",
+                $global_flags['show-messages'],
+                "about"
+            );
+            $_SESSION['page_back'] = $request;
+            break;
+
+
+        case "/hostings":
+            echo $constructor->constructPage(
+                [ "header", "hostings", "footer" ],
+                "Наши хостинги",
+                $global_flags['show-messages'],
+                "hostings"
+            );
+            $_SESSION['page_back'] = $request;
+            break;
+
+
+        case '/dashboard':
+            if (empty($_SESSION['user']['login'])) {
+                header("Location: /auth");
+            } else {
+                echo $constructor->constructPage(
+                    [ "header", "dashboard", "footer" ],
+                    "Личный кабинет",
+                    $global_flags['show-messages'],
+                    "dashboard"
+                );
+                $_SESSION['page_back'] = $request;
+            }
+            break;
+
+
+        case '/request':
+            if (empty($_SESSION['user']['login'])) {
+                header("Location: /auth?" . htmlspecialchars($_SERVER['QUERY_STRING']));
+            } else {
+                echo $constructor->constructPage(
+                    [ "header", "request", "footer" ],
+                    "Новая заявка",
+                    $global_flags['show-messages'],
+                    "request"
+                );
+                $_SESSION['page_back'] = $request;
+            }
+            break;
+
+
+        case "/admin":
+            if (empty($_SESSION['user']['login']) || $auth->getPermissionLevel($_SESSION['user']['login']) !== 2) {
+                header("Location: /");
+            } else {
+                echo $constructor->constructPage(
+                    [ "header", "admin", "footer" ],
+                    "Админ-панель",
+                    $global_flags['show-messages'],
+                    "admin"
+                );
+            }
+            break;
+
+
+        case '/auth':
+            if (!empty($_SESSION['user']['login'])) {
+                header("Location: /dashboard");
+            } else {
+                echo $constructor->constructPage(
+                    [ "header", "auth", "footer" ],
+                    "Авторизация",
+                    $global_flags['show-messages'],
+                    "auth"
+                );
+                $_SESSION['page_back'] = $request;
+            }
+            break;
+
+
+        default:
+            http_response_code(404);
+            echo $constructor->constructPage(
+                [ "header", "not_found", "footer" ],
+                "Страница не найдена",
+                $global_flags['show-messages'],
+                "not_found"
+            );
+            $_SESSION['page_back'] = $request;
+            break;
+
+    }
 }
-
-
-
 ?>

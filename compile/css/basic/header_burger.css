@@ -120,9 +120,10 @@ header {
     top: 0;
     left: -100vw;
     width: 100vw;
-    height: calc(100vh - 104px - 56px);
+    /*height: calc(100vh - 104px - 56px);*/
+    height: calc(100vh - 104px);
     padding-top: 104px;
-    padding-bottom: 56px;
+    /*padding-bottom: 56px;*/
     justify-content: end;
     align-items: stretch;
     flex-direction: column;
@@ -153,7 +154,7 @@ header {
         align-items: stretch;
         justify-content: end;
         border-top: 2px solid #ffffff40;
-        border-bottom: 2px solid #ffffff40;
+        /*border-bottom: 2px solid #ffffff40;*/
 
         & > button { width: 100%; }
 

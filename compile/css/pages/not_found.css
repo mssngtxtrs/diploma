@@ -39,12 +39,21 @@
         & .container {
             flex-direction: column-reverse;
             justify-content: center;
+            height: calc(100vh - 80px - 204px);
 
             /* Увеличение отступа между элементами */
             gap: 48px;
 
             /* Ширина по ширине контента */
-            & div { width: fit-content !important; }
+            & div {
+                width: fit-content !important;
+                height: calc(50% - 24px) !important;
+                justify-content: center;
+                align-items: start;
+
+                & button { width: 100%; }
+                & img { max-height: 100% !important; }
+            }
         }
     }
 }

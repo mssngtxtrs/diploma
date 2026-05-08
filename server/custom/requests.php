@@ -14,13 +14,14 @@ define("GET_HOSTINGS_QUERY", <<<HERE
 HERE);
 define("GET_REQUEST_STATES_QUERY", "select * from request_states");
 define("GET_REQUESTS_QUERY", <<<HERE
-    select r.request_id, rs.state_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_price_final
+    select r.request_id, rs.state_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_ssh_key_path, r.request_ipv4, r.request_price_final
     from requests r
     left join request_states rs on r.state_id = rs.state_id
     left join hostings h on r.hosting_id = h.hosting_id
     where user_id = :user_id
+    and r.state_id != 5
 HERE);
-define("GET_REQUESTS_TOTAL_QUERY", "select count(*) from requests where user_id = :user_id");
+define("GET_REQUESTS_TOTAL_QUERY", "select count(*) from requests where user_id = :user_id and (state_id = 1 or state_id = 2)");
 define("GET_REQUESTS_ADMIN_QUERY", <<<HERE
     select r.request_id, r.state_id, u.first_name, u.last_nale, u.second_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_price_final
     from requests r
