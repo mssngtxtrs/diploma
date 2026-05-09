@@ -1,0 +1,44 @@
+.modal {
+    padding: 15px;
+    border-radius: 15px;
+    background: var(--tooltip);
+    min-width: 100px;
+    max-width: 400px;
+    width: max-content;
+    border: 2px solid #ffffff40;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 12px;
+    position: absolute;
+    position-area: bottom;
+    position-try-fallbacks: flip-block, flip-inline;
+    margin-top: 12px;
+
+
+    & > div {
+        display: flex;
+        gap: 7px;
+        margin: 0 -8px -8px -8px;
+
+
+        & button {
+            border-radius: 7px !important;
+            height: fit-content !important;
+
+            background-color: var(--secondary);
+
+            &:hover { background-color: var(--secondary-hover); }
+            &:active { background-color: var(--secondary-active); }
+
+            &:not(:first-child) { border-left: none !important; }
+        }
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .modal {
+        margin-inline: 12px;
+        max-width: calc(100vw - 4px - 24px - 30px);
+    }
+}

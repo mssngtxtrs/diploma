@@ -91,6 +91,8 @@ a {
     }
 }
 
+.monospaced { font-family: "Iosevka Custom", "Courier New", monospace; }
+
 .standby {
     background: linear-gradient(
         90deg,
@@ -114,23 +116,54 @@ button {
     &:active { background-color: var(--secondary-active); }
     &:disabled { opacity: 0.6; }
 
+    &.destructive {
+        background-color: var(--destructive) !important;
+
+        &:hover { background-color: var(--destructive-hover) !important; }
+        &:active { background-color: var(--destructive-active) !important; }
+    }
+
+    &.opened { background-color: var(--secondary-active); }
+
     & img {
         width: 32px;
         height: 32px;
         margin-inline: -12px;
+        pointer-events: none;
     }
 }
 
 /* Select */
-select {
-    /*appearance: none;*/
-    padding: 6px 12px;
-    background: var(--tooltip);
-    border: 2px solid #ffffff40;
-    border-radius: 7px;
+.select_wrap {
+    display: inline-flex;
+    padding-right: 10px;
 
-    &:hover { background: var(--tooltip-hover); }
-    &:focus { background: var(--tooltip-active); }
+    & select {
+        appearance: none;
+        padding: 6px 12px;
+        background-color: var(--tooltip);
+        border: 2px solid #ffffff40;
+        border-radius: 7px;
+        padding-right: 36px;
+
+        &:hover { background-color: var(--tooltip-hover); }
+        &:focus { background-color: var(--tooltip-active); }
+        &:open ~ .select_chevron { transform: rotate(180deg); }
+    }
+
+    & .select_chevron {
+        width: 16px;
+        height: 16px;
+        margin-left: -26px;
+        margin-top: auto;
+        margin-bottom: auto;
+        background-image: url("/media/icons/chevron_down.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 16px;
+        transition: transform 0.3s cubic-bezier(.19,1,.22,1);
+        pointer-events: none;
+    }
 }
 
 /* Размер текста для заголовков */

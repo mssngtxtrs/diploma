@@ -3,9 +3,9 @@
         <div id="personal">
             <div class="text">
                 <h2 class="skeleton">Имя Фамилия Отчество</h2>
-                <h3 class="skeleton">Почта</h3>
-                <p class="skeleton">Роль</p>
-                <p class="skeleton">Количество заявок</p>
+                <h3 class="skeleton">Почта@домен.ру</h3>
+                <p class="skeleton">Роль: Пользователь</p>
+                <p class="skeleton">Количество заявок: 0</p>
             </div>
             <div class="buttons">
                 <button class="tooltipped" style="anchor-name: --dash-1" onclick="window.location.href = '/request'">
@@ -16,18 +16,70 @@
                     <img src="<?= $this->media_folder ?>/icons/edit_info.svg" alt="Редактировать информацию">
                     <p class="tooltip" style="position-anchor: --dash-2">Редактировать информацию</p>
                 </button>
-                <button class="tooltipped" style="anchor-name: --dash-3">
+                <button class="tooltipped" style="anchor-name: --dash-3" id="dash-3">
                     <img src="<?= $this->media_folder ?>/icons/log_out.svg" alt="Выйти">
                     <p class="tooltip" style="position-anchor: --dash-3">Выйти</p>
                 </button>
             </div>
         </div>
 
-        <div id="requests-header">
-            <div class="pagination"></div>
-            <select name="filter" id="filter" class="skeleton"></select>
+        <div id="requests_header">
+            <div class="pagination">
+                <button class="skeleton">1</button>
+                <button class="skeleton">2</button>
+                <button class="skeleton">3</button>
+            </div>
+            <div class="select_wrap">
+                <select name="filter" id="filter" class="skeleton">
+                    <option value="">Все</option>
+                </select>
+                <div class="select_chevron"></div>
+            </div>
         </div>
 
-        <div id="requests"></div>
+        <div id="requests">
+            <div class="request">
+                <div class="request_block id_block">
+                    <h3 class="skeleton">placeholder</h3>
+                    <p class="skeleton">placeholder</p>
+                </div>
+                <div class="request_block">
+                    <p class="skeleton">placeholder</p>
+                    <p class="skeleton">placeholder</p>
+                </div>
+                <div class="request_block">
+                    <p class="skeleton">placeholder</p>
+                    <p class="skeleton">placeholder</p>
+                </div>
+                <div class="request_block">
+                    <p class="skeleton">placeholder</p>
+                    <p class="skeleton">placeholder</p>
+                </div>
+            </div>
+            <div class="request">
+                <div class="request_block id_block">
+                    <h3 class="skeleton">placeholder</h3>
+                    <p class="skeleton">placeholder</p>
+                </div>
+                <div class="request_block">
+                    <p class="skeleton">placeholder</p>
+                    <p class="skeleton">placeholder</p>
+                </div>
+                <div class="request_block">
+                    <p class="skeleton">placeholder</p>
+                    <p class="skeleton">placeholder</p>
+                </div>
+                <div class="request_block">
+                    <p class="skeleton">placeholder</p>
+                    <p class="skeleton">placeholder</p>
+                </div>
+                <div class="request_block ssh_block">
+                    <p class="skeleton">placeholder</p>
+                    <p class="ip_paragraph skeleton">255.255.255.255</p>
+                    <span class="skeleton"></span>
+                    <p class="skeleton">placeholder</p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>

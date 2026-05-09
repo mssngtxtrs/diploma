@@ -1,7 +1,15 @@
-import { changeHeaderColorOnScroll, changeHeaderAuthButtons, burgerButtonListenerSetup, logOutEvent } from "./modules/ui.js";
+import { changeHeaderColorOnScroll, changeHeaderAuthButtons, burgerButtonListenerSetup, showLogOutModal } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
 import { displayMessage, createElement } from "./modules/utils.js";
 import { fetchAPIResponse } from "./modules/api.js";
+import type { APIResponse } from "./modules/api.js";
+
+var REQUESTS: Array<Record<string, any>> = [];
+var FILTERED_REQUESTS: Array<Record<string, any>> = [];
+var SHOWN_ENTRIES: number = 3;
+var TOTAL_PAGES: number = 0;
+var CANCEL_MODAL_OPENED: boolean = false;
+var REQUESTS_TOTAL: number = 0;
 
 async function main(): Promise<void> {
   displayMessagesFromServer();
@@ -12,6 +20,20 @@ async function main(): Promise<void> {
   fillPersonalInfo();
   listenersSetup();
   await fillFilterOptions();
+  await getRequestsWrap();
+}
+
+async function getRequestsWrap(): Promise<void> {
+  await getRequests().then((requests) => {
+    if (requests) {
+      REQUESTS = requests;
+      TOTAL_PAGES = Math.ceil(REQUESTS.length / SHOWN_ENTRIES);
+      fillPagination();
+      filterRequests();
+    } else {
+      createPlaceholderForRequests();
+    }
+  });
 }
 
 async function fillPersonalInfo(): Promise<void> {
@@ -48,16 +70,8 @@ async function fillPersonalInfo(): Promise<void> {
           console.error("Level container not found");
         }
 
-        const total_container: HTMLParagraphElement | null = personal_text_container.querySelector("p:last-of-type");
-        if (total_container) {
-          const total_string: string = `Всего запросов: ${dashboard_info.data['requests_total']}`;
-          total_container.classList.remove("skeleton");
-          total_container.textContent = total_string;
-        } else {
-          console.error("Level container not found");
-        }
-
-
+        REQUESTS_TOTAL = dashboard_info.data['requests_total'];
+        fillRequestsTotal();
       }
     }
   } else {
@@ -66,13 +80,264 @@ async function fillPersonalInfo(): Promise<void> {
   }
 }
 
-async function fillRequests(): Promise<void> {
+async function getRequests(state_id: number | null = null): Promise<Array<Record<string, any>> | null> {
+  var requests: APIResponse<Array<Record<string, any>>> | null = null;
+  if (!state_id) {
+    requests = await fetchAPIResponse<Array<Record<string, any>>>("/api/requests");
+  } else {
+    var payload: Record<string, string> = { 'state_id': state_id.toString() }
+    requests = await fetchAPIResponse<Array<Record<string, any>>>("/api/requests", payload);
+  }
 
+  if (requests.status === "success") {
+    if (requests.data) {
+      return requests.data;
+    }
+  } else {
+    displayMessage(requests.message ?? "Ошибка получения данных о запросах", "error");
+    console.error('Error fetching requests:', requests.message ?? 'Unknown error')
+  }
+  return null;
 }
 
-// function createRequestElement(): HTMLElement | null {
+async function fillRequests(requested_page: number = 1): Promise<void> {
+  var shown_requests: Array<Record<string, any>> = [];
 
-// }
+  if (requested_page <= TOTAL_PAGES) {
+    shown_requests = FILTERED_REQUESTS.slice((requested_page - 1) * SHOWN_ENTRIES, requested_page * SHOWN_ENTRIES)
+    if (shown_requests.length > 0) {
+      const container: HTMLElement | null = document.querySelector("#requests");
+      if (container) {
+        container.replaceChildren();
+        shown_requests.forEach((request: Record<string, any>) => {
+          const request_element = createRequestElement(request);
+          if (request_element) {
+            container.appendChild(request_element);
+          }
+          highlightPaginationButton(requested_page);
+        });
+      } else {
+        console.error("Requests container not found");
+      }
+    } else {
+      createPlaceholderForRequests();
+    }
+  } else {
+    createPlaceholderForRequests();
+  }
+}
+
+function createPlaceholderForRequests(): void {
+  const container: HTMLElement | null = document.querySelector("#requests");
+  if (container) {
+    container.replaceChildren();
+    const placeholder = createElement<HTMLDivElement>("div", null, ["no_results"]);
+    if (placeholder) {
+      createElement("h2", "Нет результатов", null, null, placeholder);
+      createElement("p", "Попробуйте изменить фильтры или вернуться позже.", null, null, placeholder);
+      container.appendChild(placeholder);
+    }
+  }
+}
+
+function fillPagination(): void {
+  const container: HTMLElement | null = document.querySelector("#requests_header .pagination");
+  if (container) {
+    container.replaceChildren();
+    for (let i = 1; i <= TOTAL_PAGES; i++) {
+      const button = createElement("button", i.toString(), null, { "id": `page_${i}` });
+      if (button) {
+        button.addEventListener("click", () => {
+          if (button.classList.contains("chosen")) {
+            return;
+          }
+          fillRequests(i);
+        });
+        container.appendChild(button);
+      }
+    }
+  }
+}
+
+function highlightPaginationButton(requested_page: number): void {
+  const container: HTMLElement | null = document.querySelector("#requests_header .pagination");
+  if (container) {
+    const buttons = container.querySelectorAll("button");
+    buttons.forEach((button) => {
+      if (button.id === `page_${requested_page}`) {
+        button.classList.add("chosen");
+      } else {
+        button.classList.remove("chosen");
+      }
+    });
+  }
+}
+
+function createRequestElement(request: Record<string, any>): HTMLElement | null {
+  const request_element = createElement("div", null, ["request"], { "id": `request_${request.request_id}` });
+  if (request_element) {
+    const id_block = createElement("div", null, ["request_block", "id_block"]);
+    if (id_block) {
+      createElement("h3", `Заявка №${request.request_id}`, null, null, id_block);
+      if (request.state_id < 3) {
+        const cancel_button = createElement<HTMLParagraphElement>("p", "Отозвать заявку", [ "underlined" ], { "style": `anchor-name: --request-${request.request_id}` });
+        if (cancel_button) {
+          cancel_button.addEventListener("click", (e) => showCancelModal(e, request.request_id));
+          id_block.appendChild(cancel_button);
+        }
+      }
+      request_element.appendChild(id_block);
+    }
+
+    const name_block = createElement("div", null, ["request_block", "name_block"]);
+    if (name_block) {
+      createElement("p", "Тариф", null, null, name_block);
+      createElement("p", request.hosting_name, null, null, name_block);
+      request_element.appendChild(name_block);
+    }
+
+    const price_block = createElement("div", null, ["request_block", "price_block"]);
+    if (price_block) {
+      var month_text: string;
+      switch (request.request_months) {
+        case 1:
+          month_text = "месяц";
+          break;
+        case 2:
+        case 3:
+        case 4:
+          month_text = "месяца";
+          break;
+        default:
+          month_text = "месяцев";
+          break;
+      }
+
+      createElement("p", "Цена: ", null, null, price_block);
+      createElement("p", `${request.request_price_final} ₽ за ${request.request_months} ${month_text}`, null, null, price_block);
+      request_element.appendChild(price_block);
+    }
+
+    const state_block = createElement("div", null, ["request_block", "state_block"]);
+    if (state_block) {
+      createElement("p", "Статус: ", null, null, state_block);
+      createElement("p", request.state_name, null, null, state_block);
+      request_element.appendChild(state_block);
+    }
+
+    if (request.state_id === 2) {
+      const ssh_block = createElement("div", null, ["request_block", "ssh_block"]);
+      if (ssh_block) {
+        createElement("p", `Адрес сервера:`, null, null, ssh_block);
+        const ip_paragraph = createElement("p", `${request.request_ipv4}`, [ "monospaced", "ip_paragraph", "tooltipped" ], { "style": `anchor-name: --ip-${request.request_id}` });
+        if (ip_paragraph) {
+          createElement("p", "Нажмите, чтобы скопировать", [ "tooltip" ], { "style": `position-anchor: --ip-${request.request_id}` }, ip_paragraph);
+          ip_paragraph.addEventListener("click", () => {
+            navigator.clipboard.writeText(`${request.request_ipv4}`).then(() => {
+              displayMessage("IP адрес скопирован в буфер обмена");
+            });
+          });
+          ssh_block.appendChild(ip_paragraph);
+        }
+        createElement("span", null, null, null, ssh_block);
+        const ssh_button = createElement("p", "Получить SSH ключ", [ "underlined" ]);
+        if (ssh_button) {
+          ssh_button.addEventListener("click", () => {
+            console.log("ssh key download placeholder", request.request_id, request.request_ssh_key);
+          });
+          ssh_block.appendChild(ssh_button);
+        }
+        request_element.appendChild(ssh_block);
+      }
+    }
+
+    return request_element;
+  }
+  return null;
+}
+
+function showCancelModal(e: MouseEvent, request_id: number): void {
+  const button: HTMLButtonElement = e.currentTarget as HTMLButtonElement;
+
+  if (button.classList.contains("opened")) {
+    button.classList.remove("opened");
+    const created_modal = document.querySelector(".cancel_modal");
+    if (created_modal) {
+      created_modal.remove();
+      CANCEL_MODAL_OPENED = false;
+    }
+    return;
+  }
+
+  if (CANCEL_MODAL_OPENED) {
+    return;
+  }
+
+  button.classList.add("opened");
+
+  const cancel_modal = createElement("div", null, ["modal", "cancel_modal"], { "style": `position-anchor: --request-${request_id}` });
+  if (cancel_modal) {
+    createElement("p", "Отозвать заявку? Данное действие не может быть отменено", null, null, cancel_modal);
+    const button_div = createElement("div");
+    if (button_div) {
+      const revoke_button = createElement("button", "Отозвать", ["destructive"]);
+      if (revoke_button) {
+        revoke_button.addEventListener("click", async () => {
+          // console.log("revoke placeholder", request_id);
+          const payload = { "request_id": request_id.toString() };
+          const response = await fetchAPIResponse("/api/request/revoke", payload);
+          if (response.status === "success") {
+            button.classList.remove("opened");
+            cancel_modal.remove();
+            CANCEL_MODAL_OPENED = false;
+            displayMessage("Запрос успешно отозван");
+            getRequestsWrap();
+            REQUESTS_TOTAL--;
+            fillRequestsTotal(true);
+          }
+        });
+        button_div.appendChild(revoke_button);
+      }
+      const cancel_button = createElement("button", "Отменить");
+      if (cancel_button) {
+        cancel_button.addEventListener("click", () => {
+          button.classList.remove("opened");
+          cancel_modal.remove();
+          CANCEL_MODAL_OPENED = false;
+        });
+        button_div.appendChild(cancel_button);
+      }
+      cancel_modal.appendChild(button_div);
+    }
+
+    const request = document.querySelector(`#request_${request_id}`);
+    if (request) {
+      request.appendChild(cancel_modal);
+    }
+
+    CANCEL_MODAL_OPENED = true;
+  }
+}
+
+function fillRequestsTotal(fill_header: boolean = false): void {
+  const total_container: HTMLParagraphElement | null = document.querySelector("#personal .text p:last-of-type");
+  if (total_container) {
+    const total_string: string = `Активных заявок: ${REQUESTS_TOTAL}`;
+    total_container.classList.remove("skeleton");
+    total_container.textContent = total_string;
+  } else {
+    console.error("Level container not found");
+  }
+
+  if (fill_header) {
+    const header_total: HTMLButtonElement | null = document.querySelector("header .auth_buttons button:first-of-type");
+    if (header_total) {
+      header_total.textContent = `Заявок: ${REQUESTS_TOTAL}`;
+    } else {
+      console.error("Header total not found");
+    }
+  }
+}
 
 async function fillFilterOptions(): Promise<void> {
   var filter_options = await fetchAPIResponse<Record<string, any>>("/api/requests/filter");
@@ -81,15 +346,8 @@ async function fillFilterOptions(): Promise<void> {
       const filter_options_select: HTMLSelectElement | null = document.querySelector("#filter");
       if (filter_options_select) {
         filter_options_select.classList.remove("skeleton");
-        filter_options_select.replaceChildren();
         for (const option of Object.entries(filter_options.data)) {
-          const option_block = createElement<HTMLOptionElement>("option", option[1].state_name, null, { value: option[1].state_id });
-          if (option_block) {
-            if (option_block.value === "1") {
-              option_block.selected = true;
-            }
-            filter_options_select.appendChild(option_block);
-          }
+          createElement<HTMLOptionElement>("option", option[1].state_name, null, { value: option[1].state_id }, filter_options_select);
         };
       } else {
         console.error("Request filter select not found");
@@ -101,10 +359,39 @@ async function fillFilterOptions(): Promise<void> {
   }
 }
 
+function filterRequests(requested_state: number = 0): void {
+  var ignore_filtering: boolean = requested_state === 0;
+  FILTERED_REQUESTS = [];
+  REQUESTS.forEach((request) => {
+    if (request.state_id === 5 && requested_state !== 5) {
+      return;
+    }
+    if (!ignore_filtering) {
+      if (request.state_id !== requested_state) {
+        return;
+      }
+    }
+    FILTERED_REQUESTS.push(request);
+  });
+  FILTERED_REQUESTS.sort((a, b) => a.request_id - b.request_id);
+  TOTAL_PAGES = Math.ceil(FILTERED_REQUESTS.length / SHOWN_ENTRIES);
+  fillPagination();
+  fillRequests();
+}
+
 function listenersSetup(): void {
   const log_out_button: HTMLButtonElement | null = document.querySelector("#personal button:last-of-type");
   if (log_out_button) {
-    log_out_button.addEventListener("click", (e) => logOutEvent(e));
+    log_out_button.addEventListener("click", (e) => showLogOutModal(e));
+  }
+
+  const filter_options_select: HTMLSelectElement | null = document.querySelector("#filter");
+  if (filter_options_select) {
+    filter_options_select.addEventListener("change", (e) => {
+      const target = e.target as HTMLSelectElement;
+      const state_id = parseInt(target.value) ? parseInt(target.value) : 0;
+      filterRequests(state_id);
+    });
   }
 }
 

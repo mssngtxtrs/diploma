@@ -14,6 +14,7 @@
 /* Стили утилит */
 @import url("utils/messages.css");
 @import url("utils/tooltips.css");
+@import url("utils/modals.css");
 
 /* Стили страниц */
 @import url("pages/index.css");

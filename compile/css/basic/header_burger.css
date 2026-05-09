@@ -56,7 +56,7 @@ header {
                 margin-bottom: auto;
                 width: 2px;
                 height: 24px;
-                background: var(--fg-active) content-box;
+                background: #ffffff40 content-box;
             }
         }
 

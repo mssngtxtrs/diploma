@@ -99,7 +99,7 @@ if ($method === 'POST') {
 
 
         case "/api/requests":
-            $result = Server\Custom\Requests::getRequests();
+            $result = Server\Custom\Requests::getRequests($data['state_id'] ?? null);
 
             if ($result === false) {
                 $output['message'] = "No requests found";
@@ -134,6 +134,17 @@ if ($method === 'POST') {
 
         case "/api/admin":
 
+            break;
+
+
+        case "/api/request/revoke":
+            $result = Server\Custom\Requests::updateRequestState($data['request_id'], 5);
+
+            if ($result === false) {
+                $output['message'] = "No request found";
+            } else {
+                $output['response'] = $result;
+            }
             break;
 
 

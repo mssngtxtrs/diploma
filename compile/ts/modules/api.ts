@@ -1,4 +1,4 @@
-type APIResponse<T> = {
+export type APIResponse<T> = {
   status: "success" | "error";
   data?: T;
   message?: string;

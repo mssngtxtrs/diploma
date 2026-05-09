@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800"
+   height="800"
+   viewBox="0 0 16 16"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="chevron_up.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.1325"
+     inkscape:cx="400"
+     inkscape:cy="400"
+     inkscape:window-width="1909"
+     inkscape:window-height="1158"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1" />
+  <defs
+     id="defs1" />
+  <path
+     d="m 15,11 c 0,0.265625 -0.105469,0.519531 -0.292969,0.707031 -0.390625,0.390625 -1.023437,0.390625 -1.414062,0 L 8,6.414062 2.707031,11.707031 c -0.390625,0.390625 -1.023437,0.390625 -1.414062,0 C 1.105469,11.519531 1,11.265625 1,11 1,10.734375 1.105469,10.480469 1.292969,10.292969 l 6,-6 c 0.390625,-0.390625 1.023437,-0.390625 1.414062,0 l 6,6 C 14.894531,10.480469 15,10.734375 15,11 Z m 0,0"
+     fill="#2e3436"
+     id="path1"
+     style="fill:#d0d0d0;fill-opacity:1" />
+</svg>
