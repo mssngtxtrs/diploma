@@ -14,7 +14,8 @@
 /* Стили утилит */
 @import url("utils/messages.css");
 @import url("utils/tooltips.css");
-@import url("utils/modals.css");
+@import url("utils/dialogs.css");
+@import url("utils/dropdowns.css");
 
 /* Стили страниц */
 @import url("pages/index.css");
@@ -23,3 +24,5 @@
 @import url("pages/dashboard.css");
 @import url("pages/auth.css");
 @import url("pages/not_found.css");
+@import url("pages/request.css");
+@import url("pages/admin.css");

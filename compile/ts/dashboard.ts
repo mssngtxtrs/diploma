@@ -1,14 +1,14 @@
-import { changeHeaderColorOnScroll, changeHeaderAuthButtons, burgerButtonListenerSetup, showLogOutModal } from "./modules/ui.js";
+import { changeHeaderColorOnScroll, changeHeaderAuthButtons, burgerButtonListenerSetup, showLogOutdialog } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
 import { displayMessage, createElement } from "./modules/utils.js";
-import { fetchAPIResponse } from "./modules/api.js";
+import { fetchAPIResponse, fetchAPIBlob } from "./modules/api.js";
 import type { APIResponse } from "./modules/api.js";
 
 var REQUESTS: Array<Record<string, any>> = [];
 var FILTERED_REQUESTS: Array<Record<string, any>> = [];
-var SHOWN_ENTRIES: number = 3;
+var SHOWN_ENTRIES: number = 4;
 var TOTAL_PAGES: number = 0;
-var CANCEL_MODAL_OPENED: boolean = false;
+var CANCEL_DIALOG_OPENED: boolean = false;
 var REQUESTS_TOTAL: number = 0;
 
 async function main(): Promise<void> {
@@ -151,6 +151,7 @@ function fillPagination(): void {
           if (button.classList.contains("chosen")) {
             return;
           }
+          CANCEL_DIALOG_OPENED = false;
           fillRequests(i);
         });
         container.appendChild(button);
@@ -182,7 +183,7 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
       if (request.state_id < 3) {
         const cancel_button = createElement<HTMLParagraphElement>("p", "Отозвать заявку", [ "underlined" ], { "style": `anchor-name: --request-${request.request_id}` });
         if (cancel_button) {
-          cancel_button.addEventListener("click", (e) => showCancelModal(e, request.request_id));
+          cancel_button.addEventListener("click", (e) => showCancelDialog(e, request.request_id));
           id_block.appendChild(cancel_button);
         }
       }
@@ -221,7 +222,8 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
     const state_block = createElement("div", null, ["request_block", "state_block"]);
     if (state_block) {
       createElement("p", "Статус: ", null, null, state_block);
-      createElement("p", request.state_name, null, null, state_block);
+      const date_string = request.state_id === 2 ? `, время истечения: ${new Date(request.request_expiration_date).toLocaleDateString()}` : "";
+      createElement("p", `${request.state_name}${date_string}`, null, null, state_block);
       request_element.appendChild(state_block);
     }
 
@@ -240,14 +242,27 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
           ssh_block.appendChild(ip_paragraph);
         }
         createElement("span", null, null, null, ssh_block);
-        const ssh_button = createElement("p", "Получить SSH ключ", [ "underlined" ]);
+        const ssh_button = createElement("p");
         if (ssh_button) {
-          ssh_button.addEventListener("click", () => {
-            console.log("ssh key download placeholder", request.request_id, request.request_ssh_key);
-          });
+          if (request.request_ssh_key_name !== null) {
+            ssh_button.textContent = "Получить SSH ключ";
+            ssh_button.classList.add("underlined");
+            ssh_button.addEventListener("click", () => fetchSSHKeyFromServer(request.request_ssh_key_name));
+          } else {
+            ssh_button.textContent = "Ключ SSH не присвоен, свяжитесь с администратором";
+          }
           ssh_block.appendChild(ssh_button);
         }
         request_element.appendChild(ssh_block);
+      }
+    }
+
+    if (request.request_note !== null) {
+      const note_block = createElement("div", null, ["request_block", "note_block"]);
+      if (note_block) {
+        createElement("p", "Заметка", null, null, note_block);
+        createElement("p", request.request_note, null, null, note_block);
+        request_element.appendChild(note_block);
       }
     }
 
@@ -256,40 +271,39 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
   return null;
 }
 
-function showCancelModal(e: MouseEvent, request_id: number): void {
+function showCancelDialog(e: MouseEvent, request_id: number): void {
   const button: HTMLButtonElement = e.currentTarget as HTMLButtonElement;
 
   if (button.classList.contains("opened")) {
     button.classList.remove("opened");
-    const created_modal = document.querySelector(".cancel_modal");
-    if (created_modal) {
-      created_modal.remove();
-      CANCEL_MODAL_OPENED = false;
+    const created_dialog = document.querySelector(".cancel_dialog");
+    if (created_dialog) {
+      created_dialog.remove();
+      CANCEL_DIALOG_OPENED = false;
     }
     return;
   }
 
-  if (CANCEL_MODAL_OPENED) {
+  if (CANCEL_DIALOG_OPENED) {
     return;
   }
 
   button.classList.add("opened");
 
-  const cancel_modal = createElement("div", null, ["modal", "cancel_modal"], { "style": `position-anchor: --request-${request_id}` });
-  if (cancel_modal) {
-    createElement("p", "Отозвать заявку? Данное действие не может быть отменено", null, null, cancel_modal);
+  const cancel_dialog = createElement("div", null, ["dialog", "cancel_dialog"], { "style": `position-anchor: --request-${request_id}` });
+  if (cancel_dialog) {
+    createElement("p", "Отозвать заявку? Данное действие не может быть отменено", null, null, cancel_dialog);
     const button_div = createElement("div");
     if (button_div) {
       const revoke_button = createElement("button", "Отозвать", ["destructive"]);
       if (revoke_button) {
         revoke_button.addEventListener("click", async () => {
-          // console.log("revoke placeholder", request_id);
           const payload = { "request_id": request_id.toString() };
           const response = await fetchAPIResponse("/api/request/revoke", payload);
           if (response.status === "success") {
             button.classList.remove("opened");
-            cancel_modal.remove();
-            CANCEL_MODAL_OPENED = false;
+            cancel_dialog.remove();
+            CANCEL_DIALOG_OPENED = false;
             displayMessage("Запрос успешно отозван");
             getRequestsWrap();
             REQUESTS_TOTAL--;
@@ -302,20 +316,20 @@ function showCancelModal(e: MouseEvent, request_id: number): void {
       if (cancel_button) {
         cancel_button.addEventListener("click", () => {
           button.classList.remove("opened");
-          cancel_modal.remove();
-          CANCEL_MODAL_OPENED = false;
+          cancel_dialog.remove();
+          CANCEL_DIALOG_OPENED = false;
         });
         button_div.appendChild(cancel_button);
       }
-      cancel_modal.appendChild(button_div);
+      cancel_dialog.appendChild(button_div);
     }
 
     const request = document.querySelector(`#request_${request_id}`);
     if (request) {
-      request.appendChild(cancel_modal);
+      request.appendChild(cancel_dialog);
     }
 
-    CANCEL_MODAL_OPENED = true;
+    CANCEL_DIALOG_OPENED = true;
   }
 }
 
@@ -373,16 +387,41 @@ function filterRequests(requested_state: number = 0): void {
     }
     FILTERED_REQUESTS.push(request);
   });
-  FILTERED_REQUESTS.sort((a, b) => a.request_id - b.request_id);
+  FILTERED_REQUESTS.sort((a, b) => b.request_id - a.request_id);
   TOTAL_PAGES = Math.ceil(FILTERED_REQUESTS.length / SHOWN_ENTRIES);
   fillPagination();
   fillRequests();
 }
 
+async function fetchSSHKeyFromServer(ssh_key_name: string): Promise<void> {
+  const payload = { ssh_key_name: ssh_key_name };
+  const response = await fetchAPIBlob<Blob>(`/api/request/ssh`, payload);
+  if (response.status === "success" && response.blob) {
+    const blob = response.blob;
+    if (!blob) return;
+
+    const object_url = URL.createObjectURL(blob);
+
+    const link = createElement<HTMLAnchorElement>("a");
+    if (!link) return;
+
+    link.href = object_url;
+    link.download = ssh_key_name;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(object_url);
+  } else {
+    displayMessage(response.message ?? "Неизвестная ошибка, невозможно получить SSH ключ");
+  }
+}
+
 function listenersSetup(): void {
   const log_out_button: HTMLButtonElement | null = document.querySelector("#personal button:last-of-type");
   if (log_out_button) {
-    log_out_button.addEventListener("click", (e) => showLogOutModal(e));
+    log_out_button.addEventListener("click", (e) => showLogOutdialog(e));
   }
 
   const filter_options_select: HTMLSelectElement | null = document.querySelector("#filter");

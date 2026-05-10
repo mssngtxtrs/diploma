@@ -15,7 +15,10 @@ header {
     /* Прозрачный фон, при прокручивании заполняется цветом */
     background: transparent;
 
-    &.scrolled { background: var(--bg-hover); }
+    &.scrolled {
+        background: var(--bg-hover);
+        box-shadow: 1px 1px 10px 10px var(--bg);
+    }
 
     /* Размещение контента внутри шапки */
     & .container {

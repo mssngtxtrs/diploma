@@ -1,4 +1,4 @@
-.modal {
+.dialog {
     padding: 15px;
     border-radius: 15px;
     background: var(--tooltip);
@@ -37,7 +37,7 @@
 }
 
 @media screen and (max-width: 500px) {
-    .modal {
+    .dialog {
         margin-inline: 12px;
         max-width: calc(100vw - 4px - 24px - 30px);
     }

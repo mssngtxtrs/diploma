@@ -46,6 +46,33 @@ class Constructor {
 
 
 
+    private function minifyHTML(string $html): string {
+        $search = array(
+            '/(\n|^)(\x20+|\t)/',
+            '/(\n|^)\/\/(.*?)(\n|$)/',
+            '/\n/',
+            '/\<\!--.*?-->/',
+            '/(\x20+|\t)/', # Delete multispace (Without \n)
+            '/\>\s+\</', # strip whitespaces between tags
+            '/(\"|\')\s+\>/', # strip whitespaces between quotation ("') and end tags
+            '/=\s+(\"|\')/'); # strip whitespaces between = "'
+
+        $replace = array(
+            "\n",
+            "\n",
+            " ",
+            "",
+            " ",
+            "><",
+            "$1>",
+            "=$1");
+
+        $html = preg_replace($search,$replace,$html);
+        return $html;
+    }
+
+
+
     /* Получение шаблона */
     public function returnTemplate(string $template_name): string {
         $path_to_template = $this->templates_folder . "/" . $template_name . ".html";
@@ -74,7 +101,8 @@ class Constructor {
             $page .= "<script type='module' src='" . $this->media_folder . "/js/" . $script . ".js'></script>";
         }
 
-        return $page;
+        // return $page;
+        return $this->minifyHTML($page);
     }
 }
 ?>

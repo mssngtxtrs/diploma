@@ -136,19 +136,20 @@ button {
 /* Select */
 .select_wrap {
     display: inline-flex;
-    padding-right: 10px;
 
-    & select {
+    & select, .select_block {
         appearance: none;
         padding: 6px 12px;
         background-color: var(--tooltip);
         border: 2px solid #ffffff40;
         border-radius: 7px;
         padding-right: 36px;
+        width: 100%;
 
         &:hover { background-color: var(--tooltip-hover); }
-        &:focus { background-color: var(--tooltip-active); }
-        &:open ~ .select_chevron { transform: rotate(180deg); }
+        &:focus, &.opened { background-color: var(--tooltip-active); }
+        &:open ~ .select_chevron, &.opened ~ .select_chevron { transform: rotate(180deg); }
+        &:user-invalid { border-color: var(--destructive); }
     }
 
     & .select_chevron {
@@ -165,6 +166,12 @@ button {
         pointer-events: none;
     }
 }
+ & .range_wrap {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
 
 /* Размер текста для заголовков */
 h1 { font-size: var(--title-size); }

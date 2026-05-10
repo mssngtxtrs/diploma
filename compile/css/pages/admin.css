@@ -1,54 +1,15 @@
-/* Страница пользователя */
 
-#dashboard {
+#admin {
     & .container {
         display: flex;
         flex-direction: column;
         gap: 12px;
     }
 
-    & #personal {
+    & #heading {
         border-radius: 15px;
-        background: var(--bg-hover);
-        display: flex;
-        justify-content: space-between;
-        align-items: end;
         padding: 15px;
-
-        & .text {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            align-items: start;
-        }
-
-        & .buttons {
-            display: flex;
-            justify-content: end;
-            margin-left: -7px;
-            margin-right: -7px;
-            margin-bottom: -7px;
-
-            & button {
-                border-radius: 0;
-                background-color: var(--tooltip);
-
-                &:hover { background-color: var(--tooltip-hover); }
-                &:active { background-color: var(--tooltip-active); }
-
-                &:first-child{
-                    border-top-left-radius: 7px;
-                    border-bottom-left-radius: 7px;
-                }
-
-                &:last-child {
-                    border-top-right-radius: 7px;
-                    border-bottom-right-radius: 7px;
-                }
-
-                &:not(:first-child) { border-left: 2px solid #ffffff40; }
-            }
-        }
+        background: var(--bg-hover);
     }
 
     & #requests_header {
@@ -141,14 +102,6 @@
                 }
             }
         }
-    }
-}
-
-@media screen and (max-width: 800px) {
-    #personal {
-        flex-direction: column;
-        align-items: start !important;
-        gap: 12px;
     }
 }
 

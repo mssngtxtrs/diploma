@@ -133,7 +133,24 @@ if ($method === 'POST') {
 
 
         case "/api/admin":
+            $result = Server\Custom\Requests::getRequestsAdmin();
 
+            if (is_array($result) && isset($result['error'])) {
+                $output['message'] = $result['error'];
+            } else {
+                $output['response'] = $result;
+            }
+            break;
+
+
+        case "/api/admin/change":
+            $result = Server\Custom\Requests::updateRequestState((int)$_POST['request_id'], (int)$_POST['state_id'], $_POST['ipv4'] ?? null);
+
+            if ($result === false) {
+                $output['message'] = "Изменения не были применены";
+            } else {
+                $output['response'] = $result;
+            }
             break;
 
 
@@ -148,6 +165,35 @@ if ($method === 'POST') {
             break;
 
 
+        case "/api/request":
+            $result = Server\Custom\Requests::createRequest((int)$data['hosting_id'], $data['request_months'], $data['request_note']);
+
+            if ($result === true) {
+                $output['response'] = $result;
+            } else {
+                $output['message'] = $result;
+            }
+            break;
+
+
+        case "/api/request/ssh":
+            $result = Server\Custom\Requests::getSSHKeyFile($data['ssh_key_name']);
+
+            if (isset($result['error'])) {
+                $output['message'] = $result['error'];
+            } else {
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename="' . $result['basename'] . '"');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . $result['filesize']);
+                $output = $result['content'];
+            }
+            break;
+
+
         default:
             http_response_code(400);
             $output['message'] = "Wrong URL";
@@ -157,6 +203,9 @@ if ($method === 'POST') {
 
     echo json_encode($output);
 } else {
+    // header('Accept-Encoding: gzip, deflate');
+    // header('Content-Encoding: gzip');
+
     switch ($path) {
 
         case '':

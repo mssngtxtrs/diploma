@@ -14,7 +14,7 @@ define("GET_HOSTINGS_QUERY", <<<HERE
 HERE);
 define("GET_REQUEST_STATES_QUERY", "select * from request_states");
 define("GET_REQUESTS_QUERY", <<<HERE
-    select r.request_id, r.state_id, rs.state_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_ssh_key_path, r.request_ipv4, r.request_price_final
+    select r.request_id, r.state_id, rs.state_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_ssh_key_name, r.request_ipv4, r.request_price_final
     from requests r
     left join request_states rs on r.state_id = rs.state_id
     left join hostings h on r.hosting_id = h.hosting_id
@@ -22,7 +22,7 @@ define("GET_REQUESTS_QUERY", <<<HERE
 HERE);
 define("GET_REQUESTS_TOTAL_QUERY", "select count(*) from requests where user_id = :user_id and (state_id = 1 or state_id = 2)");
 define("GET_REQUESTS_ADMIN_QUERY", <<<HERE
-    select r.request_id, r.state_id, u.first_name, u.last_nale, u.second_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_price_final
+    select r.request_id, r.state_id, u.first_name, u.last_name, u.second_name, h.hosting_name, r.request_months, r.request_expiration_date, r.request_note, r.request_ssh_key_name, r.request_price_final
     from requests r
     left join users u on r.user_id = u.user_id
     left join hostings h on r.hosting_id = h.hosting_id
@@ -41,10 +41,10 @@ define("GET_EXPIRATION_DATE_QUERY", <<<HERE
     from requests
     where request_id = :request_id
 HERE);
-define("GET_HOSTING_MONTHS_QUERY", <<<HERE
-    select hosting_months
-    from hostings
-    where hosting_id = :hosting_id
+define("GET_REQUEST_MONTHS_QUERY", <<<HERE
+    select request_months
+    from requests
+    where request_id = :request_id
 HERE);
 define("UPDATE_EXPIRATION_DATE_QUERY", <<<HERE
     update requests
@@ -56,11 +56,25 @@ define("UPDATE_REQUEST_STATE_QUERY", <<<HERE
     set state_id = :state_id
     where request_id = :request_id
 HERE);
+define("UPDATE_REQUEST_SSH_KEY_QUERY", <<<HERE
+    update requests
+    set request_ssh_key_name = :ssh_key_name
+    where request_id = :request_id
+HERE);
+define("UPDATE_IPV4_QUERY", <<<HERE
+    update requests
+    set request_ipv4 = :request_ipv4
+    where request_id = :request_id
+HERE);
 define("GET_USER_DELETING_REQUEST", <<<HERE
     select 1
     from requests r
     where r.request_id = :request_id
     and r.user_id = :user_id
+HERE);
+define("CREATE_REQUEST_QUERY", <<<HERE
+    insert into requests (user_id, hosting_id, state_id, request_months, request_note, request_price_final)
+    values (:user_id, :hosting_id, 1, :request_months, :request_note, :request_price_final)
 HERE);
 
 
@@ -128,7 +142,7 @@ class Requests {
 
 
     /* Получение числа заявок пользователя */
-    static public function getRequestsTotal() {
+    static public function getRequestsTotal(): bool | int {
         global $auth, $database;
         if (empty($_SESSION['user']['login'])) {
             return false;
@@ -145,15 +159,42 @@ class Requests {
 
 
     /* Получение заявок администратором */
-    static public function getRequestsAdmin() {
+    static public function getRequestsAdmin(): array {
         global $auth, $database;
-        if (empty($_SESSION['user']['login']) || $auth->getPermissionLevel($_SESSION['user']['login']) < 2) {
-            return false;
+        if (empty($_SESSION['user']['login'])) {
+            return ["error" => "Вы не авторизованы"];
+        }
+
+        if ($auth->getPermissionLevel($_SESSION['user']['login']) < 2) {
+            return ["error" => "У вас нет прав администратора"];
+        }
+
+        return $database->returnQuery(
+            GET_REQUESTS_ADMIN_QUERY,
+            "assoc"
+        );
+    }
+
+
+
+    static public function getSSHKeyFile(string $filename): array | string {
+        global $auth, $database;
+
+        if (empty($_SESSION['user']['login'])) {
+            return [ "error" => "Вы не авторизованы" ];
+        }
+
+        $user_id = $auth->getUserId($_SESSION['user']['login']);
+        $filepath = "private/ssh_keys/" . $user_id . "/" . $filename;
+
+        if (file_exists($filepath)) {
+            return [
+                "basename" => basename($filepath),
+                "content" => readfile($filepath),
+                "filesize" => filesize($filepath)
+            ];
         } else {
-            return $database->returnQuery(
-                GET_REQUESTS_ADMIN_QUERY,
-                "assoc"
-            );
+            return [ "error" => "Файл не найден" ];
         }
     }
 
@@ -167,14 +208,16 @@ class Requests {
         3.1 Получение данных о цене хостинга в месяц
         3.2 Умножение числа месяцев на цену в месяц
     4. Занесение данных в БД */
-    static public function createRequest(int $hosting_id, int $hosting_months, string $request_note) {
+    static public function createRequest(int $hosting_id, int $request_months, string $request_note): bool | string {
         global $auth, $database;
         if (empty($_SESSION['user']['login'])) {
-            return false;
+            return "Вы не вошли в систему";
         } else {
-            if (empty($hosting_id) || empty($hosting_months) || empty($request_note)) {
-                return false;
+            if (empty($hosting_id) || empty($request_months)) {
+                return "Не все поля заполены";
             } else {
+                $note = !empty($request_note) ? $request_note : null;
+
                 $user_id = $auth->getUserId($_SESSION['user']['login']);
 
                 $hosting_price = $database->returnQuery(
@@ -183,16 +226,17 @@ class Requests {
                     [ "hosting_id" => $hosting_id ]
                 );
 
-                $request_price_final = $hosting_price * $hosting_months;
+                $request_price_final = $hosting_price * $request_months;
 
+                $_SESSION['msg']['std'][] = "Заявка успешно создана";
                 return $database->returnQuery(
                     CREATE_REQUEST_QUERY,
                     "bool",
                     [
                         "user_id" => $user_id,
                         "hosting_id" => $hosting_id,
-                        "hosting_months" => $hosting_months,
-                        "request_note" => $request_note,
+                        "request_months" => $request_months,
+                        "request_note" => $note,
                         "request_price_final" => $request_price_final
                     ]
                 );
@@ -215,7 +259,7 @@ class Requests {
             3.3.3 Вычисление даты истечения заявки
             3.3.4 Обновление даты истечения заявки в БД
     4. Обновление статуса заявки в БД */
-    static public function updateRequestState(int $request_id, int $state_id) {
+    static public function updateRequestState(int $request_id, int $state_id, string | null $ipv4) {
         global $auth, $database;
         if (empty($_SESSION['user']['login']) || $auth->getPermissionLevel($_SESSION['user']['login']) < 2) {
             return false;
@@ -224,9 +268,11 @@ class Requests {
                 return false;
             } else {
                 if ($state_id == 2) {
+                    if (empty($ipv4)) return false;
+
                     if ($database->returnQuery(
                         GET_EXPIRATION_DATE_QUERY,
-                        "single",
+                        "bool",
                         [ "request_id" => $request_id ]
                     )) {
                         $current_date = date("Y-m-d");
@@ -245,6 +291,51 @@ class Requests {
                             ]
                         )) {
                             return false;
+                        }
+                    }
+
+                    if (!$database->returnQuery(
+                        UPDATE_IPV4_QUERY,
+                        "bool",
+                        [
+                            "request_id" => $request_id,
+                            "request_ipv4" => $ipv4
+                        ]
+                    )) {
+                        return false;
+                    }
+
+                    $user_id = $database->returnQuery(
+                        "select user_id from requests where request_id = :request_id",
+                        "single",
+                        [ "request_id" => $request_id ]
+                    );
+
+                    $project_root = dirname(__DIR__, 2);
+                    $upload_directory = $project_root . "/private/ssh_keys/" . $user_id . "/";
+                    if (!file_exists($upload_directory)) {
+                        mkdir($upload_directory, 0755, true);
+                    }
+
+                    if (isset($_FILES['ssh_key_file'])) {
+                        $error = $_FILES['ssh_key_file']['error'];
+                        if ($error === UPLOAD_ERR_OK) {
+                            $tmp_name = $_FILES['ssh_key_file']['tmp_name'];
+                            $filename = $_FILES['ssh_key_file']['name'];
+                            if (move_uploaded_file($tmp_name, $upload_directory . $filename)) {
+                                if (!$database->returnQuery(
+                                    UPDATE_REQUEST_SSH_KEY_QUERY,
+                                    "bool",
+                                    [
+                                        "request_id" => $request_id,
+                                        "ssh_key_name" => $filename,
+                                    ]
+                                )) {
+                                    return false;
+                                }
+                            } else {
+                                return false;
+                            }
                         }
                     }
                 }

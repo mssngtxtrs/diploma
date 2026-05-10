@@ -9,6 +9,7 @@
     left: 50%;
     transform: translateX(-50%);
     width: 540px;
+    z-index: 5;
 
     & .message {
         display: flex;

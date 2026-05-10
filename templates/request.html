@@ -1,0 +1,35 @@
+<section id="request">
+	<div class="container">
+		<form id="form">
+            <h2>Новая заявка</h2>
+            <div class="input">
+                <label for="hosting">Выберите хостинг</label>
+                <div class="select_wrap">
+                    <!--<select name="hosting" id="hosting" required>
+                        <option value="">Выберите хостинг...</option>
+                    </select>-->
+                    <input type="hidden" name="hosting" id="hosting" value="" required>
+                    <p class="select_block" style="anchor-name: --hosting">Выберите хостинг...</p>
+                    <div class="select_chevron"></div>
+                </div>
+            </div>
+            <div class="input">
+                <label for="months">Выберите количество месяцев</label>
+                <div class="range_wrap">
+                    <input type="range" name="months" id="months" min="3" max="12" step="3" value="3" required>
+                    <span>3</span>
+                </div>
+            </div>
+            <div class="input">
+                <label for="note">Ваша заметка</label>
+                <textarea name="note" id="note" rows="4" placeholder="Введите свою заметку..."></textarea>
+            </div>
+		</form>
+		<div id="submit">
+            <h2>Стоимость</h2>
+            <h3>0 ₽/мес.</h3>
+            <span>Заявка вступит в силу после её принятия</span>
+            <button>Оставить заявку</button>
+		</div>
+	</div>
+</section>

@@ -1,7 +1,7 @@
 import { getMidpoint, createElement } from "./utils.js";
 import { fetchAPIResponse } from "./api.js";
 
-var LOG_OUT_MODAL_OPENED: boolean = false;
+var LOG_OUT_DIALOG_OPENED: boolean = false;
 
 export function changeHeaderColorOnScroll() {
   const header = document.querySelector("header");
@@ -72,7 +72,7 @@ export async function changeHeaderAuthButtons() {
         const created_buttons: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".auth_buttons button:last-child");
         if (created_buttons) {
           created_buttons.forEach(button => {
-            button.addEventListener("click", (e) => showLogOutModal(e, true));
+            button.addEventListener("click", (e) => showLogOutdialog(e, true));
           })
         }
       }
@@ -101,28 +101,28 @@ export function changeButtonState(button: HTMLButtonElement): void {
   button.disabled = !button.disabled;
 }
 
-export function showLogOutModal(e: MouseEvent, place_in_header: boolean = false): void {
+export function showLogOutdialog(e: MouseEvent, place_in_header: boolean = false): void {
   const button: HTMLButtonElement = e.currentTarget as HTMLButtonElement;
 
   if (button.classList.contains("opened")) {
     button.classList.remove("opened");
-    const created_modal = document.querySelector(".log_out_modal");
-    if (created_modal) {
-      created_modal.remove();
-      LOG_OUT_MODAL_OPENED = false;
+    const created_dialog = document.querySelector(".log_out_dialog");
+    if (created_dialog) {
+      created_dialog.remove();
+      LOG_OUT_DIALOG_OPENED = false;
     }
     return;
   }
 
-  if (LOG_OUT_MODAL_OPENED) {
+  if (LOG_OUT_DIALOG_OPENED) {
     return;
   }
 
   button.classList.add("opened");
 
-  const log_out_modal = createElement("div", null, ["modal", "log_out_modal"], { "style": `position-anchor: --${button.id}` });
-  if (log_out_modal) {
-    createElement("p", "Выйти из аккаунта?", null, null, log_out_modal);
+  const log_out_dialog = createElement("div", null, ["dialog", "log_out_dialog"], { "style": `position-anchor: --${button.id}` });
+  if (log_out_dialog) {
+    createElement("p", "Выйти из аккаунта?", null, null, log_out_dialog);
     const button_div = createElement("div");
     if (button_div) {
       const log_out_button = createElement("button", "Выйти", ["destructive"]);
@@ -134,23 +134,23 @@ export function showLogOutModal(e: MouseEvent, place_in_header: boolean = false)
       if (cancel_button) {
         cancel_button.addEventListener("click", () => {
           button.classList.remove("opened");
-          log_out_modal.remove();
-          LOG_OUT_MODAL_OPENED = false;
+          log_out_dialog.remove();
+          LOG_OUT_DIALOG_OPENED = false;
         });
         button_div.appendChild(cancel_button);
       }
-      log_out_modal.appendChild(button_div);
+      log_out_dialog.appendChild(button_div);
     }
 
     if (place_in_header) {
       const header = document.querySelector("header");
       if (header) {
-        header.appendChild(log_out_modal);
+        header.appendChild(log_out_dialog);
       }
     } else {
-      document.body.appendChild(log_out_modal);
+      document.body.appendChild(log_out_dialog);
     }
 
-    LOG_OUT_MODAL_OPENED = true;
+    LOG_OUT_DIALOG_OPENED = true;
   }
 }
