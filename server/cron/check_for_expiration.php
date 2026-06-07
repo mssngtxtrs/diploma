@@ -14,10 +14,10 @@ define("EXPIRE_REQUEST_QUERY", <<<HERE
 HERE);
 
 // Подключение модуля для работы с БД
-require "../../basic/conn.php";
+require "../basic/conn.php";
 
 // Получение данных для входа в БД и соединение с ней
-$env = parse_ini_file('../../../.env');
+$env = parse_ini_file('../../.env');
 $database = new Server\Database();
 
 // Получение запросов из БД

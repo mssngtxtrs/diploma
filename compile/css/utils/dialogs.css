@@ -14,31 +14,70 @@
     position-area: bottom;
     position-try-fallbacks: flip-block, flip-inline;
     margin-top: 12px;
+    z-index: 5;
+    overflow-y: scroll;
+    overflow-x: hidden;
 
+    & > form {
+        width: 100%;
+        align-items: stretch;
 
-    & > div {
-        display: flex;
-        gap: 7px;
-        margin: 0 -8px -8px -8px;
+        & .select_wrap {
+            width: 100%;
+        }
 
+        & > button {
+            margin: 1px -8px -8px -8px;
+            width: calc(100% + 16px);
+        }
 
-        & button {
-            border-radius: 7px !important;
-            height: fit-content !important;
+        & .button_block {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 7px;
+            margin: 0 -8px -8px -8px;
 
-            background-color: var(--secondary);
-
-            &:hover { background-color: var(--secondary-hover); }
-            &:active { background-color: var(--secondary-active); }
-
-            &:not(:first-child) { border-left: none !important; }
+            & button {
+                width: 100%;
+                border-radius: 7px !important;
+                height: fit-content !important;
+            }
         }
     }
 }
 
 @media screen and (max-width: 500px) {
     .dialog {
-        margin-inline: 12px;
-        max-width: calc(100vw - 4px - 24px - 30px);
+        /*margin-inline: 12px;*/
+        /*max-width: calc(100vw - 4px - 24px - 30px);*/
+        margin: 0;
+        border: none;
+        max-width: calc(100vw - 30px);
+        min-width: calc(100vw - 30px);
+        max-height: calc(100vh - 104px - 15px);
+        min-height: calc(100vh - 104px - 15px);
+        position: fixed;
+        position-anchor: unset !important;
+        top: 0;
+        left: 0;
+        padding-top: 104px;
+        border-radius: 0;
+        background: #00000080;
+        backdrop-filter: blur(4px);
+
+        & form {
+            margin-top: auto;
+
+            & .button_block {
+                margin: 0;
+                gap: 12px;
+            }
+
+            & button {
+                margin: 0;
+                width: 100%;
+            }
+        }
     }
 }

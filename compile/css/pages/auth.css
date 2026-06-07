@@ -25,6 +25,10 @@
                     &:active { background: var(--fg-active) !important; }
                 }
             }
+
+            & a {
+                align-self: start;
+            }
         }
 
         & .forms {

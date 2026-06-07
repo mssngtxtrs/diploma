@@ -43,6 +43,17 @@ if ($method === 'POST') {
             break;
 
 
+        case "/api/cpus":
+            $fetched = Server\Custom\Requests::getCPUs();
+            if (count($fetched) > 0) {
+                $output['response'] = $fetched;
+                unset($output['message']);
+            } else {
+                $output['message'] = "Empty CPUs query";
+            }
+            break;
+
+
         case "/api/auth/register":
             $result = $auth->register(
                 [
@@ -98,6 +109,28 @@ if ($method === 'POST') {
             break;
 
 
+        case "/api/auth/code":
+            $result = $auth->createRecoverCode($data['email']);
+
+            if ($result === false) {
+                $output['message'] = "Пользователь не найден";
+            } else {
+                $output['response'] = true;
+            }
+            break;
+
+
+        case "/api/auth/recover":
+            $result = $auth->recoverPassword($data['token'], $data['new_password'], $data['new_password_confirm']);
+
+            if ($result === false) {
+                $output['message'] = "Не удалось сменить пароль";
+            } else {
+                $output['response'] = $result;
+            }
+            break;
+
+
         case "/api/requests":
             $result = Server\Custom\Requests::getRequests($data['state_id'] ?? null);
 
@@ -132,7 +165,7 @@ if ($method === 'POST') {
             break;
 
 
-        case "/api/admin":
+        case "/api/admin/requests":
             $result = Server\Custom\Requests::getRequestsAdmin();
 
             if (is_array($result) && isset($result['error'])) {
@@ -143,8 +176,8 @@ if ($method === 'POST') {
             break;
 
 
-        case "/api/admin/change":
-            $result = Server\Custom\Requests::updateRequestState((int)$_POST['request_id'], (int)$_POST['state_id'], $_POST['ipv4'] ?? null);
+        case "/api/admin/requests/change":
+            $result = Server\Custom\Requests::updateRequestState((int)$_POST['request_id'], (int)$_POST['state_id'], $_POST['ipv4'] ?? null, $_POST['reject_note'] ?? null);
 
             if ($result === false) {
                 $output['message'] = "Изменения не были применены";
@@ -154,8 +187,109 @@ if ($method === 'POST') {
             break;
 
 
+        case "/api/admin/users":
+            $result = Server\Custom\Requests::getUsers();
+
+            if ($result === false) {
+                $output['message'] = "No users found";
+            } else {
+                $output['response'] = $result;
+            }
+            break;
+
+
+        case "/api/admin/users/change_password":
+            $result = Server\Custom\Requests::changeUserPassword($data['user_id'], $data['password']);
+            if ($result === false) {
+                $output['message'] = "Не удалось изменить пароль";
+            } else {
+                $output['response'] = $result;
+            }
+            break;
+
+
+        case "/api/admin/users/change_privilege":
+            $result = Server\Custom\Requests::changeUserPrivilege($data['user_id'], $data['level_id']);
+            if ($result === false) {
+                $output['message'] = "Не удалось изменить привилегии";
+            } else {
+                $output['response'] = $result;
+            }
+            break;
+
+
+        case "/api/admin/users/delete":
+            $result = Server\Custom\Requests::deleteUserAccount($data['user_id']);
+            if ($result === false) {
+                $output['message'] = "Не удалось удалить пользователя";
+            } else {
+                $output['response'] = $result;
+            }
+            break;
+
+
+        case "/api/admin/servers/create":
+            $result = Server\Custom\Requests::saveServer($data);
+            if ($result === false) {
+                $output['message'] = "Не удалось создать сервер";
+            } else {
+                $output['response'] = true;
+            }
+            break;
+
+
+        case "/api/admin/servers/edit":
+            $result = Server\Custom\Requests::saveServer($data);
+            if ($result === false) {
+                $output['message'] = "Не удалось обновить данные сервера";
+            } else {
+                $output['response'] = true;
+            }
+            break;
+
+
+        case "/api/admin/servers/delete":
+            $result = Server\Custom\Requests::deleteServer($data['server_id']);
+            if ($result === false) {
+                $output['message'] = "Не удалось удалить сервер";
+            } else {
+                $output['response'] = true;
+            }
+            break;
+
+
+        case "/api/admin/hostings/create":
+            $result = Server\Custom\Requests::saveHosting($data);
+            if ($result === false) {
+                $output['message'] = "Не удалось создать хостинг";
+            } else {
+                $output['response'] = true;
+            }
+            break;
+
+
+        case "/api/admin/hostings/edit":
+            $result = Server\Custom\Requests::saveHosting($data);
+            if ($result === false) {
+                $output['message'] = "Не удалось обновить данные хостинга";
+            } else {
+                $output['response'] = true;
+            }
+            break;
+
+
+        case "/api/admin/hostings/delete":
+            $result = Server\Custom\Requests::deleteHosting($data['hosting_id']);
+            if ($result === false) {
+                $output['message'] = "Не удалось удалить хостинг";
+            } else {
+                $output['response'] = true;
+            }
+            break;
+
+
         case "/api/request/revoke":
-            $result = Server\Custom\Requests::updateRequestState($data['request_id'], 5);
+            $result = Server\Custom\Requests::updateRequestState($data['request_id'], 5, null, null);
 
             if ($result === false) {
                 $output['message'] = "No request found";
@@ -216,7 +350,6 @@ if ($method === 'POST') {
                 $global_flags['show-messages'],
                 "index"
             );
-            $_SESSION['page_back'] = $request;
             break;
 
 
@@ -227,7 +360,6 @@ if ($method === 'POST') {
                 $global_flags['show-messages'],
                 "about"
             );
-            $_SESSION['page_back'] = $request;
             break;
 
 
@@ -238,7 +370,6 @@ if ($method === 'POST') {
                 $global_flags['show-messages'],
                 "hostings"
             );
-            $_SESSION['page_back'] = $request;
             break;
 
 
@@ -252,7 +383,6 @@ if ($method === 'POST') {
                     $global_flags['show-messages'],
                     "dashboard"
                 );
-                $_SESSION['page_back'] = $request;
             }
             break;
 
@@ -267,23 +397,67 @@ if ($method === 'POST') {
                     $global_flags['show-messages'],
                     "request"
                 );
-                $_SESSION['page_back'] = $request;
             }
             break;
 
 
         case "/admin":
+        case "/admin/requests":
             if (empty($_SESSION['user']['login']) || $auth->getPermissionLevel($_SESSION['user']['login']) !== 2) {
                 header("Location: /");
             } else {
                 echo $constructor->constructPage(
-                    [ "header", "admin", "footer" ],
+                    [ "header", "admin_header", "admin", "footer" ],
                     "Админ-панель",
                     $global_flags['show-messages'],
                     "admin"
                 );
             }
             break;
+
+
+        case "/admin/users":
+            if (empty($_SESSION['user']['login']) || $auth->getPermissionLevel($_SESSION['user']['login']) !== 2) {
+            // if (empty($_SESSION['user']['login'])) {
+                header("Location: /");
+            } else {
+                echo $constructor->constructPage(
+                    [ "header", "admin_header", "admin_users", "footer" ],
+                    "Админ-панель",
+                    $global_flags['show-messages'],
+                    "admin_users"
+                );
+            }
+            break;
+
+
+        case "/admin/servers":
+            if (empty($_SESSION['user']['login']) || $auth->getPermissionLevel($_SESSION['user']['login']) !== 2) {
+                header("Location: /");
+            } else {
+                echo $constructor->constructPage(
+                    [ "header", "admin_header", "admin_servers", "footer" ],
+                    "Админ-панель",
+                    $global_flags['show-messages'],
+                    "admin_servers"
+                );
+            }
+            break;
+
+
+        case "/admin/hostings":
+            if (empty($_SESSION['user']['login']) || $auth->getPermissionLevel($_SESSION['user']['login']) !== 2) {
+                header("Location: /");
+            } else {
+                echo $constructor->constructPage(
+                    [ "header", "admin_header", "admin_hostings", "footer" ],
+                    "Админ-панель",
+                    $global_flags['show-messages'],
+                    "admin_hostings"
+                );
+            }
+            break;
+
 
 
         case '/auth':
@@ -296,7 +470,30 @@ if ($method === 'POST') {
                     $global_flags['show-messages'],
                     "auth"
                 );
-                $_SESSION['page_back'] = $request;
+            }
+            break;
+
+
+        case "/code":
+            echo $constructor->constructPage(
+                [ "header", "code", "footer" ],
+                "Восстановление пароля",
+                $global_flags['show-messages'],
+                "recover"
+            );
+            break;
+
+
+        case "/recover":
+            if (empty($_GET['token'])) {
+                header("Location:/code");
+            } else {
+                echo $constructor->constructPage(
+                    [ "header", "recover", "footer" ],
+                    "Восстановление пароля",
+                    $global_flags['show-messages'],
+                    "recover"
+                );
             }
             break;
 
@@ -309,7 +506,6 @@ if ($method === 'POST') {
                 $global_flags['show-messages'],
                 "not_found"
             );
-            $_SESSION['page_back'] = $request;
             break;
 
     }

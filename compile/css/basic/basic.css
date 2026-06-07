@@ -27,7 +27,7 @@ h1, h2, h3 {
 }
 
 /* Текст, кнопки и поля */
-a, p, span, button, input, label, textarea, li, select {
+a, p, span, button, input, label, textarea, li, select, pre {
     font-family: "IBM Plex Sans", Arial, sans-serif;
     font-weight: normal;
     font-size: var(--body-size);
@@ -41,6 +41,10 @@ a, p, span, button, input, label, textarea, li, select {
 a {
     &:hover { color: var(--fg-hover); }
     &:active { color: var(--fg-active); }
+}
+
+p {
+    &.destructive { color: var(--destructive); }
 }
 
 /* Анимация подчеркивания */
@@ -91,7 +95,9 @@ a {
     }
 }
 
-.monospaced { font-family: "Iosevka Custom", "Courier New", monospace; }
+.monospaced, pre { font-family: "Iosevka Custom", "Courier New", monospace; }
+
+.bold { font-weight: 700; }
 
 .standby {
     background: linear-gradient(
@@ -106,24 +112,37 @@ a {
 /* Кнопки */
 button {
     padding: 12px 24px;
-    background: var(--secondary);
+    background: var(--tooltip);
     color: var(--fg);
     border: none;
     border-radius: 7px;
     cursor: pointer;
 
-    &:hover { background-color: var(--secondary-hover); }
-    &:active { background-color: var(--secondary-active); }
-    &:disabled { opacity: 0.6; }
+    &:hover { background-color: var(--tooltip-hover); }
+    &:active { background-color: var(--tooltip-active); }
+    &:disabled {
+        opacity: 0.6;
+        background-color: var(--tooltip) !important;
+        cursor: auto;
+    }
 
     &.destructive {
         background-color: var(--destructive) !important;
 
         &:hover { background-color: var(--destructive-hover) !important; }
         &:active { background-color: var(--destructive-active) !important; }
+        &.opened { background-color: var(--destructive-active) !important; }
     }
 
-    &.opened { background-color: var(--secondary-active); }
+    &.accent {
+        background-color: var(--secondary);
+
+        &:hover { background-color: var(--secondary-hover); }
+        &:active { background-color: var(--secondary-active); }
+        &.opened { background-color: var(--secondary-active); }
+    }
+
+    &.opened { background-color: var(--tooltip-active); }
 
     & img {
         width: 32px;
@@ -145,6 +164,7 @@ button {
         border-radius: 7px;
         padding-right: 36px;
         width: 100%;
+        user-select: none;
 
         &:hover { background-color: var(--tooltip-hover); }
         &:focus, &.opened { background-color: var(--tooltip-active); }
@@ -166,7 +186,8 @@ button {
         pointer-events: none;
     }
 }
- & .range_wrap {
+
+.range_wrap {
     display: flex;
     gap: 12px;
     align-items: center;

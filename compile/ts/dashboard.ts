@@ -131,7 +131,7 @@ function createPlaceholderForRequests(): void {
   const container: HTMLElement | null = document.querySelector("#requests");
   if (container) {
     container.replaceChildren();
-    const placeholder = createElement<HTMLDivElement>("div", null, ["no_results"]);
+    const placeholder = createElement<HTMLDivElement>("div", null, ["placeholder"]);
     if (placeholder) {
       createElement("h2", "Нет результатов", null, null, placeholder);
       createElement("p", "Попробуйте изменить фильтры или вернуться позже.", null, null, placeholder);
@@ -141,9 +141,10 @@ function createPlaceholderForRequests(): void {
 }
 
 function fillPagination(): void {
-  const container: HTMLElement | null = document.querySelector("#requests_header .pagination");
+  const container: HTMLElement | null = document.querySelector("#requests_header .pagination .pagination_container");
   if (container) {
     container.replaceChildren();
+    countPagination();
     for (let i = 1; i <= TOTAL_PAGES; i++) {
       const button = createElement("button", i.toString(), null, { "id": `page_${i}` });
       if (button) {
@@ -153,11 +154,20 @@ function fillPagination(): void {
           }
           CANCEL_DIALOG_OPENED = false;
           fillRequests(i);
+          countPagination(i);
         });
         container.appendChild(button);
       }
     }
   }
+}
+
+function countPagination(requested_page: number = 1): void {
+  const pagination_count = document.querySelector("#requests_header .pagination .pagination_count");
+  if (!pagination_count) return;
+
+  if (pagination_count.classList.contains("skeleton")) pagination_count.classList.remove("skeleton");
+  pagination_count.textContent = `${requested_page} / ${TOTAL_PAGES}`;
 }
 
 function highlightPaginationButton(requested_page: number): void {
@@ -179,7 +189,7 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
   if (request_element) {
     const id_block = createElement("div", null, ["request_block", "id_block"]);
     if (id_block) {
-      createElement("h3", `Заявка №${request.request_id}`, null, null, id_block);
+      createElement("h3", `Заявка №${request.request_id}`, ["bold"], null, id_block);
       if (request.state_id < 3) {
         const cancel_button = createElement<HTMLParagraphElement>("p", "Отозвать заявку", [ "underlined" ], { "style": `anchor-name: --request-${request.request_id}` });
         if (cancel_button) {
@@ -192,7 +202,7 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
 
     const name_block = createElement("div", null, ["request_block", "name_block"]);
     if (name_block) {
-      createElement("p", "Тариф", null, null, name_block);
+      createElement("p", "Тариф: ", ["bold"], null, name_block);
       createElement("p", request.hosting_name, null, null, name_block);
       request_element.appendChild(name_block);
     }
@@ -214,23 +224,24 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
           break;
       }
 
-      createElement("p", "Цена: ", null, null, price_block);
+      createElement("p", "Цена: ", ["bold"], null, price_block);
       createElement("p", `${request.request_price_final} ₽ за ${request.request_months} ${month_text}`, null, null, price_block);
       request_element.appendChild(price_block);
     }
 
     const state_block = createElement("div", null, ["request_block", "state_block"]);
     if (state_block) {
-      createElement("p", "Статус: ", null, null, state_block);
+      createElement("p", "Статус: ", ["bold"], null, state_block);
       const date_string = request.state_id === 2 ? `, время истечения: ${new Date(request.request_expiration_date).toLocaleDateString()}` : "";
-      createElement("p", `${request.state_name}${date_string}`, null, null, state_block);
+      const reject_note = request.state_id === 4 ? `, причина: ${request.request_reject_note}` : "";
+      createElement("p", `${request.state_name}${date_string}${reject_note}`, ["state", `state_${request.state_id}`], null, state_block);
       request_element.appendChild(state_block);
     }
 
     if (request.state_id === 2) {
       const ssh_block = createElement("div", null, ["request_block", "ssh_block"]);
       if (ssh_block) {
-        createElement("p", `Адрес сервера:`, null, null, ssh_block);
+        createElement("p", `Адрес сервера:`, ["bold"], null, ssh_block);
         const ip_paragraph = createElement("p", `${request.request_ipv4}`, [ "monospaced", "ip_paragraph", "tooltipped" ], { "style": `anchor-name: --ip-${request.request_id}` });
         if (ip_paragraph) {
           createElement("p", "Нажмите, чтобы скопировать", [ "tooltip" ], { "style": `position-anchor: --ip-${request.request_id}` }, ip_paragraph);
@@ -260,7 +271,7 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
     if (request.request_note !== null) {
       const note_block = createElement("div", null, ["request_block", "note_block"]);
       if (note_block) {
-        createElement("p", "Заметка", null, null, note_block);
+        createElement("p", "Заметка: ", ["bold"], null, note_block);
         createElement("p", request.request_note, null, null, note_block);
         request_element.appendChild(note_block);
       }
@@ -292,7 +303,10 @@ function showCancelDialog(e: MouseEvent, request_id: number): void {
 
   const cancel_dialog = createElement("div", null, ["dialog", "cancel_dialog"], { "style": `position-anchor: --request-${request_id}` });
   if (cancel_dialog) {
-    createElement("p", "Отозвать заявку? Данное действие не может быть отменено", null, null, cancel_dialog);
+    const form = createElement<HTMLFormElement>("form");
+    if (!form) return;
+
+    createElement("p", "Отозвать заявку? Данное действие не может быть отменено", null, null, form);
     const button_div = createElement("div");
     if (button_div) {
       const revoke_button = createElement("button", "Отозвать", ["destructive"]);
@@ -321,7 +335,8 @@ function showCancelDialog(e: MouseEvent, request_id: number): void {
         });
         button_div.appendChild(cancel_button);
       }
-      cancel_dialog.appendChild(button_div);
+      form.appendChild(button_div);
+      cancel_dialog.appendChild(form);
     }
 
     const request = document.querySelector(`#request_${request_id}`);
@@ -375,9 +390,10 @@ async function fillFilterOptions(): Promise<void> {
 
 function filterRequests(requested_state: number = 0): void {
   var ignore_filtering: boolean = requested_state === 0;
+  const restricted_filters: Array<number> = [3, 4, 5];
   FILTERED_REQUESTS = [];
   REQUESTS.forEach((request) => {
-    if (request.state_id === 5 && requested_state !== 5) {
+    if (restricted_filters.includes(request.state_id) && !restricted_filters.includes(requested_state)) {
       return;
     }
     if (!ignore_filtering) {
@@ -427,7 +443,7 @@ function listenersSetup(): void {
   const filter_options_select: HTMLSelectElement | null = document.querySelector("#filter");
   if (filter_options_select) {
     filter_options_select.addEventListener("change", (e) => {
-      const target = e.target as HTMLSelectElement;
+      const target = e.currentTarget as HTMLSelectElement;
       const state_id = parseInt(target.value) ? parseInt(target.value) : 0;
       filterRequests(state_id);
     });

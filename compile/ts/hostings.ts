@@ -16,6 +16,8 @@ async function main(): Promise<void> {
     if (container) {
       container.replaceChildren();
       for (const hosting of hostings) {
+        if (!hosting.server.id) continue;
+
         const block = makeBlock(hosting);
         if (block) {
           container.appendChild(block);
@@ -44,6 +46,7 @@ function convertHostings(response: Record<string, any>): Array<HostingFull> {
       vcpu: hosting.hosting_vcpu,
       traffic: hosting.hosting_traffic,
       price_per_month: hosting.price_per_month,
+      invalid: hosting.invalid,
       server: {
         id: hosting.server_id,
         name: hosting.server_name,
@@ -127,23 +130,37 @@ function makeBlock(hosting: HostingFull): HTMLElement | undefined {
     const server_block = createElement("div", null, ["hosting_block", "server_block"]);
     if (server_block) {
       createElement("img", null, null, { "src": "/media/icons/server.svg", "alt": "Сервер" }, server_block);
-      createElement("p", "Сервер", null, null, server_block);
-      createElement("p", `${hosting.server.name}`, null, null, server_block);
+      if (hosting.server.id) {
+        createElement("p", "Сервер", null, null, server_block);
+        createElement("p", `${hosting.server.name}`, null, null, server_block);
+      } else {
+        createElement("p", "Сервер", null, null, server_block);
+        createElement("p", "Не указано", null, null, server_block);
+      }
       block.appendChild(server_block);
     }
 
-    const cpu_block = createElement("div", null, ["hosting_block", "cpu_block"]);
-    if (cpu_block) {
-      createElement("p", "Процессор", null, null, cpu_block);
-      createElement("p", `${hosting.server.cpu.name}`, null, null, cpu_block);
-      createElement("p", `Ядра: ${hosting.server.cpu.cores}, потоки: ${hosting.server.cpu.threads}`, null, null, cpu_block);
-      createElement("p", `Частота: ${hosting.server.cpu.frequency} МГц`, null, null, cpu_block);
-      block.appendChild(cpu_block);
+    if (hosting.server.id) {
+      const cpu_block = createElement("div", null, ["hosting_block", "cpu_block"]);
+      if (cpu_block) {
+        createElement("p", "Процессор", null, null, cpu_block);
+        createElement("p", `${hosting.server.cpu.name}`, null, null, cpu_block);
+        createElement("p", `Ядра: ${hosting.server.cpu.cores}, потоки: ${hosting.server.cpu.threads}`, null, null, cpu_block);
+        createElement("p", `Частота: ${hosting.server.cpu.frequency} МГц`, null, null, cpu_block);
+        block.appendChild(cpu_block);
+      }
     }
 
     const request_block = createElement("div", null, [ "hosting_block", "request_block" ]);
     if (request_block) {
-      createElement("button", "Арендовать", null, { "onclick": `window.location.href = "/request?id=${hosting.id}"` }, request_block);
+      const button = createElement<HTMLButtonElement>("button", "Арендовать", ['accent'], { "onclick": `window.location.href = "/request?id=${hosting.id}"` });
+      if (button) {
+        if (hosting.invalid) {
+          button.textContent = "Недоступен";
+          button.disabled = true;
+        }
+        request_block.appendChild(button);
+      }
       block.appendChild(request_block);
     }
 

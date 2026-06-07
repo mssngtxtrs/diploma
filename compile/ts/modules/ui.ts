@@ -3,6 +3,9 @@ import { fetchAPIResponse } from "./api.js";
 
 var LOG_OUT_DIALOG_OPENED: boolean = false;
 
+type LinkType = "requests" | "users" | "servers" | "hostings";
+type DialogPlacement = "header" | "burger" | "else";
+
 export function changeHeaderColorOnScroll() {
   const header = document.querySelector("header");
   if (header) {
@@ -69,11 +72,13 @@ export async function changeHeaderAuthButtons() {
         header_account_nav.replaceChildren(auth_buttons.cloneNode(true));
         burger_account_nav.replaceChildren(auth_buttons);
 
-        const created_buttons: NodeListOf<HTMLButtonElement> | null = document.querySelectorAll(".auth_buttons button:last-child");
-        if (created_buttons) {
-          created_buttons.forEach(button => {
-            button.addEventListener("click", (e) => showLogOutdialog(e, true));
-          })
+        const burger_button: HTMLButtonElement | null = document.querySelector(".burger_menu .auth_buttons #auth-3");
+        const header_button: HTMLButtonElement | null = document.querySelector("header .auth_buttons #auth-3");
+        if (burger_button) {
+          burger_button.addEventListener("click", (e) => showLogOutdialog(e, "burger"));
+        }
+        if (header_button) {
+          header_button.addEventListener("click", (e) => showLogOutdialog(e, "header"));
         }
       }
     }
@@ -101,7 +106,7 @@ export function changeButtonState(button: HTMLButtonElement): void {
   button.disabled = !button.disabled;
 }
 
-export function showLogOutdialog(e: MouseEvent, place_in_header: boolean = false): void {
+export function showLogOutdialog(e: MouseEvent, dialog_placement: DialogPlacement = "else"): void {
   const button: HTMLButtonElement = e.currentTarget as HTMLButtonElement;
 
   if (button.classList.contains("opened")) {
@@ -122,8 +127,11 @@ export function showLogOutdialog(e: MouseEvent, place_in_header: boolean = false
 
   const log_out_dialog = createElement("div", null, ["dialog", "log_out_dialog"], { "style": `position-anchor: --${button.id}` });
   if (log_out_dialog) {
-    createElement("p", "Выйти из аккаунта?", null, null, log_out_dialog);
-    const button_div = createElement("div");
+    const form = createElement<HTMLFormElement>("form");
+    if (!form) return;
+
+    createElement("h3", "Выйти из аккаунта?", null, null, form);
+    const button_div = createElement("div", null, ["button_block"]);
     if (button_div) {
       const log_out_button = createElement("button", "Выйти", ["destructive"]);
       if (log_out_button) {
@@ -139,18 +147,32 @@ export function showLogOutdialog(e: MouseEvent, place_in_header: boolean = false
         });
         button_div.appendChild(cancel_button);
       }
-      log_out_dialog.appendChild(button_div);
+      form.appendChild(button_div);
+      log_out_dialog.appendChild(form);
     }
 
-    if (place_in_header) {
+    if (dialog_placement === "header") {
       const header = document.querySelector("header");
       if (header) {
         header.appendChild(log_out_dialog);
+      }
+    } else if (dialog_placement === "burger") {
+      const burger = document.querySelector(".burger_menu");
+      if (burger) {
+        burger.appendChild(log_out_dialog);
       }
     } else {
       document.body.appendChild(log_out_dialog);
     }
 
     LOG_OUT_DIALOG_OPENED = true;
+  }
+}
+
+export function highlightActiveLink(link_type: LinkType): void {
+  const active_link = document.querySelector<HTMLAnchorElement>(`#admin_header a.${link_type}_link`);
+  if (active_link) {
+    active_link.href = "#";
+    active_link.classList.remove("underlined");
   }
 }

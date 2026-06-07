@@ -15,6 +15,7 @@
     position-area: bottom;
     position-try-fallbacks: flip-block, flip-inline;
     margin-top: 12px;
+    z-index: 5;
 
     & input {
         width: calc(100% - 14px);

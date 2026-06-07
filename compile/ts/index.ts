@@ -47,7 +47,8 @@ function convertHostings(response: Record<string, any>): Array<Hosting> {
       space: hosting.hosting_space,
       vcpu: hosting.hosting_vcpu,
       traffic: hosting.hosting_traffic,
-      price_per_month: hosting.price_per_month
+      price_per_month: hosting.price_per_month,
+      invalid: hosting.invalid
     });
   }
 
@@ -119,7 +120,14 @@ function makeSlide(hosting: Hosting): HTMLElement | undefined {
 
     const request_block = createElement("div", null, [ "slide_block", "request_block" ]);
     if (request_block) {
-      createElement("button", "Арендовать", null, { "onclick": `window.location.href = "/request?id=${hosting.id}"` }, request_block);
+      const button = createElement<HTMLButtonElement>("button", "Арендовать", ['accent'], { "onclick": `window.location.href = "/request?id=${hosting.id}"` });
+      if (button) {
+        if (hosting.invalid) {
+          button.textContent = "Недоступен";
+          button.disabled = true;
+        }
+        request_block.appendChild(button);
+      }
       slide_container.appendChild(request_block);
     }
 

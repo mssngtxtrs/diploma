@@ -1,0 +1,47 @@
+<div id="recover">
+	<div class="container">
+	<h2>Восстановление пароля</h2>
+        <form>
+            <!--<div class="input tooltipped" style="anchor-name: --recover-1">
+                <label for="password">Код из письма</label>
+                <input
+                    type="text"
+                    name="confirm"
+                    id="confirm"
+                    required
+                    title="Неверный формат пароля"
+                    pattern="^[0-9]{6,6}$"
+                >
+                <span></span>
+                <p class="tooltip" style="position-anchor: --recover-1">На указанную Вами ранее почту пришёл код для смены пароля, введите его сюда</p>
+            </div>-->
+            <div class="input tooltipped" style="anchor-name: --recover-2">
+                <label for="password">Новый пароль</label>
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    required
+                    title="Неверный формат пароля"
+                    pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
+                >
+                <span></span>
+                <p class="tooltip" style="position-anchor: --recover-2">8–30 символов. Минимум: 1 цифра, 1 заглавная буква. Только латиница, цифры и '_'</p>
+            </div>
+            <div class="input tooltipped" style="anchor-name: --recover-3">
+                <label for="password_confirm">Подтвердите пароль</label>
+                <input
+                    type="password"
+                    name="password_confirm"
+                    id="password_confirm"
+                    required
+                    title="Пароли не совпадают"
+                    pattern="^(?=.*[A-Z])(?=.*\d)[A-Za-z0-9_]{8,30}$"
+                >
+                <span></span>
+                <p class="tooltip" style="position-anchor: --recover-3">Пароли должны совпадать</p>
+            </div>
+            <button type="submit" class="accent">Сменить пароль</button>
+        </form>
+	</div>
+</div>

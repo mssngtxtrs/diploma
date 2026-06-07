@@ -1,6 +1,10 @@
 <?php
 namespace Server;
 
+use \PHPMailer\PHPMailer\PHPMailer;
+use \PHPMailer\PHPMailer\Exception;
+use \League\OAuth2\Client\Provider\Google;
+
 /* Константы с запросами */
 define("PASSWORD_QUERY", "select password from users where user_id = :user_id");
 define("USER_ID_QUERY", "select user_id from users where login = :login");
@@ -141,6 +145,114 @@ class Auth {
 
 
 
+    public function createRecoverCode(string $email) {
+        global $database, $constructor, $env;
+
+        if (!$database->returnQuery(
+            "select * from users where email = :email",
+            "single",
+            [ "email" => $email ]
+        )) {
+            return false;
+        }
+
+        $token = bin2hex(random_bytes(32));
+        $token_hash = hash('sha256', $token);
+        $code = (string)random_int(100000, 999999);
+        $code_hash = password_hash($code, PASSWORD_DEFAULT);
+
+        if (!mail(
+            $email,
+            $constructor->getWebsiteName() . ": Восстановление пароля",
+            "Ссылка для восстановления пароля: 127.0.0.1:5000/recover?token=" . $token,
+            [
+                'From' => $env['MAIL_FROM'],
+                'Reply-To' => $env['MAIL_FROM'],
+                'X-Mailer' => 'PHP/' . phpversion()
+            ]
+        )) {
+            return false;
+        }
+
+        $user_id = $database->returnQuery(
+            "select user_id from users where email = :email",
+            "single",
+            [ "email" => $email ]
+        );
+
+        if (!$database->returnQuery(
+            <<<HERE
+                insert into password_resets
+                (user_id, reset_token_hash, reset_expires_at)
+                values (:user_id, :token_hash, NOW() + INTERVAL '15 minutes')
+            HERE,
+            "bool",
+            [
+                "user_id" => $user_id,
+                "token_hash" => $token_hash
+            ]
+        )) {
+            return false;
+        }
+
+        return $token;
+    }
+
+
+
+    public function recoverPassword(string $token, string $password, string $password_confirm) {
+        global $database;
+
+        if (empty($token) || empty($password) || empty($password_confirm)) {
+            return false;
+        }
+
+        if ($password !== $password_confirm) {
+            return false;
+        }
+
+        $token_hash = hash('sha256', $token);
+
+        $reset_record = $database->returnQuery(
+            "select user_id from password_resets where reset_token_hash = :token_hash and reset_expires_at > NOW()",
+            "assoc",
+            [ "token_hash" => $token_hash ]
+        );
+
+        if (empty($reset_record)) {
+            return false;
+        }
+
+        // if (!password_verify($code, $reset_record[0]["code_hash"])) {
+        //     return false;
+        // }
+
+        if (!$database->returnQuery(
+            "delete from password_resets where user_id = :user_id",
+            "bool",
+            [ "user_id" => $reset_record[0]['user_id'] ]
+        )) {
+            return false;
+        }
+
+        $new_password_hash = password_hash($password, PASSWORD_DEFAULT);
+        if (!$database->returnQuery(
+            "update users set password = :password_hash where user_id = :user_id",
+            "bool",
+            [
+                "password_hash" => $new_password_hash,
+                "user_id" => $reset_record[0]['user_id'],
+            ]
+        )) {
+            return false;
+        }
+
+        $_SESSION['msg']['std'][] = "Пароль успешно сменён";
+        return true;
+    }
+
+
+
     /* Регистрация */
     public function register(array $credentials, string $password, string $password_confirm, bool $consent): string | bool {
         global $database;
@@ -159,7 +271,6 @@ class Auth {
             empty($credentials['login']) ||
             empty($credentials['first_name']) ||
             empty($credentials['last_name']) ||
-            empty($credentials['second_name']) ||
             empty($password) ||
             empty($password_confirm) ||
             empty($consent)

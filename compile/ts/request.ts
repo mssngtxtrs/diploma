@@ -138,6 +138,8 @@ function toggleDropdown(anchor: string = ""): void {
     const list = createElement("div", null, ["dropdown_list", "hostings_list"]);
     if (list) {
       HOSTINGS.forEach((hosting) => {
+        if (hosting.invalid) return;
+
         const item = createElement("div", null, ["dropdown_item", "hosting_item"]);
         if (item) {
           createElement("h3", hosting.name, null, null, item);
@@ -175,8 +177,17 @@ function toggleDropdown(anchor: string = ""): void {
 function recalculatePrice(): void {
   const price_block = document.querySelector<HTMLHeadingElement>("#submit h3");
   if (!price_block) return;
+  var month_text: string;
+  switch (MONTHS) {
+    case 3:
+      month_text = "месяца";
+      break;
+    default:
+      month_text = "месяцев";
+      break;
+  }
 
-  price_block.textContent = `${PRICE_PER_MONTH * MONTHS} ₽/мес.`;
+  price_block.textContent = `${PRICE_PER_MONTH * MONTHS} ₽ за ${MONTHS} ${month_text}`;
 }
 
 function convertHostings(response: Record<string, any>): Array<HostingFull> {
@@ -191,6 +202,7 @@ function convertHostings(response: Record<string, any>): Array<HostingFull> {
       vcpu: hosting.hosting_vcpu,
       traffic: hosting.hosting_traffic,
       price_per_month: hosting.price_per_month,
+      invalid: hosting.invalid,
       server: {
         id: hosting.server_id,
         name: hosting.server_name,

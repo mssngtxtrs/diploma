@@ -12,9 +12,9 @@
                     <img src="<?= $this->media_folder ?>/icons/new_request.svg" alt="Новая заявка">
                     <p class="tooltip" style="position-anchor: --dash-1">Новая заявка</p>
                 </button>
-                <button class="tooltipped" style="anchor-name: --dash-2" onclick="window.location.href = '/edit_info'">
-                    <img src="<?= $this->media_folder ?>/icons/edit_info.svg" alt="Редактировать информацию">
-                    <p class="tooltip" style="position-anchor: --dash-2">Редактировать информацию</p>
+                <button class="tooltipped" style="anchor-name: --dash-2" onclick="window.location.href = '/code'">
+                    <img src="<?= $this->media_folder ?>/icons/edit_info.svg" alt="Восстановить пароль">
+                    <p class="tooltip" style="position-anchor: --dash-2">Восстановить пароль</p>
                 </button>
                 <button class="tooltipped" style="anchor-name: --dash-3" id="dash-3">
                     <img src="<?= $this->media_folder ?>/icons/log_out.svg" alt="Выйти">
@@ -25,9 +25,12 @@
 
         <div id="requests_header">
             <div class="pagination">
-                <button class="skeleton">1</button>
-                <button class="skeleton">2</button>
-                <button class="skeleton">3</button>
+                <p class="pagination_count monospaced skeleton">1 / 1</p>
+                <div class="pagination_container">
+                    <button class="skeleton">1</button>
+                    <button class="skeleton">2</button>
+                    <button class="skeleton">3</button>
+                </div>
             </div>
             <div class="select_wrap">
                 <select name="filter" id="filter" class="skeleton">

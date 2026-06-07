@@ -4,7 +4,7 @@ form {
     display: flex;
     flex-direction: column;
     width: inherit;
-    align-items: stretch;
+    align-items: start;
     gap: 12px;
 
     /* Блок с полем ввода и подписью */
@@ -140,5 +140,9 @@ form {
             font-size: var(--tooltip);
             color: var(--destructive);
         }
+    }
+
+    & button {
+        width: 100%;
     }
 }

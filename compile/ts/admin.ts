@@ -1,4 +1,4 @@
-import { changeHeaderColorOnScroll, changeHeaderAuthButtons, burgerButtonListenerSetup, showLogOutdialog } from "./modules/ui.js";
+import { changeHeaderColorOnScroll, changeHeaderAuthButtons, burgerButtonListenerSetup, highlightActiveLink } from "./modules/ui.js";
 import { displayMessagesFromServer } from "./modules/messages.js";
 import { displayMessage, createElement } from "./modules/utils.js";
 import { fetchAPIResponse } from "./modules/api.js";
@@ -17,17 +17,13 @@ async function main(): Promise<void> {
   changeHeaderColorOnScroll();
   changeHeaderAuthButtons();
   burgerButtonListenerSetup();
+  highlightActiveLink("requests");
 
-  listenersSetup();
   await getFilterOptions().then(() => fillFilterOptions());
   await getRequestsWrap();
 }
 
-function listenersSetup(): void {
-
-}
-
-function fillFilterOptions(target: HTMLSelectElement | null = null): void {
+function fillFilterOptions(target: HTMLSelectElement | null = null, required_options: Array<number> = [1, 2, 3, 4, 5]): void {
   var filter_options_select: HTMLSelectElement | null;
   if (target) {
     filter_options_select = target;
@@ -38,6 +34,10 @@ function fillFilterOptions(target: HTMLSelectElement | null = null): void {
   if (filter_options_select) {
     filter_options_select.classList.remove("skeleton");
     for (const state of STATES) {
+      if (!state.state_id) continue;
+
+      if (!required_options.includes(parseInt(state.state_id))) continue;
+
       const name = state.state_name;
       if (!name) continue;
 
@@ -80,7 +80,7 @@ async function getRequestsWrap(): Promise<void> {
 
 async function getRequests(): Promise<Array<Record<string, any>>| null> {
   var requests: APIResponse<Array<Record<string, any>>> | null = null;
-  requests = await fetchAPIResponse<Array<Record<string, any>>>("/api/admin");
+  requests = await fetchAPIResponse<Array<Record<string, any>>>("/api/admin/requests");
 
   if (requests.status === "success") {
     if (requests.data) {
@@ -125,21 +125,31 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
   if (request_element) {
     const id_block = createElement("div", null, ["request_block", "id_block"]);
     if (id_block) {
-      createElement("h3", `Заявка №${request.request_id}`, null, null, id_block);
-      const second_name: string = request.second_name ? ` ${request.second_name}` : "";
-      const name_string: string = request.last_name + " " + request.first_name + second_name;
+      createElement("h3", `Заявка №${request.request_id}`, ["bold"], null, id_block);
+      var name_string: string;
+
+      if (!request.first_name || !request.last_name) {
+        name_string = "Удалённый пользователь";
+      } else {
+        const second_name: string = request.second_name ? ` ${request.second_name}` : "";
+        name_string = request.last_name + " " + request.first_name + second_name;
+      }
+
       createElement("p", name_string, null, null, id_block);
-      const change_button = createElement("p", "Изменить статус", ["underlined"], { "style": `anchor-name: --request-${request.request_id}` });
-      if (change_button) {
-        change_button.addEventListener("click", (e) => showChangeDialog(e, request.request_id, request.state_id));
-        id_block.appendChild(change_button);
+
+      if (request.first_name && request.last_name) {
+        const change_button = createElement("p", "Изменить статус", ["underlined"], { "style": `anchor-name: --request-${request.request_id}` });
+        if (change_button) {
+          change_button.addEventListener("click", (e) => showChangeDialog(e, request.request_id));
+          id_block.appendChild(change_button);
+        }
       }
       request_element.appendChild(id_block);
     }
 
     const name_block = createElement("div", null, ["request_block", "name_block"]);
     if (name_block) {
-      createElement("p", "Тариф", null, null, name_block);
+      createElement("p", "Тариф: ", ["bold"], null, name_block);
       createElement("p", request.hosting_name, null, null, name_block);
       request_element.appendChild(name_block);
     }
@@ -161,24 +171,25 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
           break;
       }
 
-      createElement("p", "Цена: ", null, null, price_block);
+      createElement("p", "Цена: ", ["bold"], null, price_block);
       createElement("p", `${request.request_price_final} ₽ за ${request.request_months} ${month_text}`, null, null, price_block);
       request_element.appendChild(price_block);
     }
 
     const state_block = createElement("div", null, ["request_block", "state_block"]);
     if (state_block) {
-      createElement("p", "Статус: ", null, null, state_block);
-      const date_string = request.state_id === 2 ? `, время истечения: ${new Date(request.request_expiration_date).toLocaleDateString()}` : "";
+      createElement("p", "Статус: ", ["bold"], null, state_block);
       const state_string = STATES[request.state_id - 1]?.state_name ?? "";
-      createElement("p", `${state_string}${date_string}`, null, null, state_block);
+      const date_string = request.state_id === 2 ? `, время истечения: ${new Date(request.request_expiration_date).toLocaleDateString()}` : "";
+      const reject_note = request.state_id === 4 ? `, причина: ${request.request_reject_note}` : "";
+      createElement("p", `${state_string}${date_string}${reject_note}`, ["state", `state_${request.state_id}`], null, state_block);
       request_element.appendChild(state_block);
     }
 
     if (request.state_id === 2) {
       const ssh_block = createElement("div", null, ["request_block", "ssh_block"]);
       if (ssh_block) {
-        createElement("p", `Адрес сервера:`, null, null, ssh_block);
+        createElement("p", `Адрес сервера:`, ["bold"], null, ssh_block);
         createElement("p", `${request.request_ipv4}`, [ "monospaced", "ip_paragraph" ], null, ssh_block);
         createElement("span", null, null, null, ssh_block);
         if (request.request_ssh_key_name !== null) {
@@ -193,7 +204,7 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
     if (request.request_note !== null) {
       const note_block = createElement("div", null, ["request_block", "note_block"]);
       if (note_block) {
-        createElement("p", "Заметка", null, null, note_block);
+        createElement("p", "Заметка: ", ["bold"], null, note_block);
         createElement("p", request.request_note, null, null, note_block);
         request_element.appendChild(note_block);
       }
@@ -205,9 +216,10 @@ function createRequestElement(request: Record<string, any>): HTMLElement | null 
 }
 
 function fillPagination(): void {
-  const container: HTMLElement | null = document.querySelector("#requests_header .pagination");
+  const container: HTMLElement | null = document.querySelector("#requests_header .pagination .pagination_container");
   if (container) {
     container.replaceChildren();
+    countPagination();
     for (let i = 1; i <= TOTAL_PAGES; i++) {
       const button = createElement("button", i.toString(), null, { "id": `page_${i}` });
       if (button) {
@@ -216,11 +228,20 @@ function fillPagination(): void {
             return;
           }
           fillRequests(i);
+          countPagination(i);
         });
         container.appendChild(button);
       }
     }
   }
+}
+
+function countPagination(requested_page: number = 1): void {
+  const pagination_count = document.querySelector("#requests_header .pagination .pagination_count");
+  if (!pagination_count) return;
+
+  if (pagination_count.classList.contains("skeleton")) pagination_count.classList.remove("skeleton");
+  pagination_count.textContent = `${requested_page} / ${TOTAL_PAGES}`;
 }
 
 function highlightPaginationButton(requested_page: number): void {
@@ -258,7 +279,7 @@ function createPlaceholderForRequests(): void {
   const container: HTMLElement | null = document.querySelector("#requests");
   if (container) {
     container.replaceChildren();
-    const placeholder = createElement<HTMLDivElement>("div", null, ["no_results"]);
+    const placeholder = createElement<HTMLDivElement>("div", null, ["placeholder"]);
     if (placeholder) {
       createElement("h2", "Нет результатов", null, null, placeholder);
       createElement("p", "Попробуйте изменить фильтры или вернуться позже.", null, null, placeholder);
@@ -267,7 +288,7 @@ function createPlaceholderForRequests(): void {
   }
 }
 
-function showChangeDialog(e: MouseEvent, request_id: number, initial_state_id: number = 1) {
+function showChangeDialog(e: MouseEvent, request_id: number, initial_state_id: number = 2) {
   const button = e.currentTarget as HTMLButtonElement;
 
   if (button.classList.contains("opened")) {
@@ -300,7 +321,7 @@ function showChangeDialog(e: MouseEvent, request_id: number, initial_state_id: n
         if (state_select_wrap) {
           const state_select = createElement<HTMLSelectElement>("select", null, null, { "id": "state_id", "name": "state_id" });
           if (state_select) {
-            fillFilterOptions(state_select);
+            fillFilterOptions(state_select, [ 2, 4 ]);
             state_select.addEventListener("change", () => {
               const ssh_file_block = form.querySelector<HTMLDivElement>(".ssh_file_block");
               const ipv4_block = form.querySelector<HTMLDivElement>(".ipv4_block");
@@ -323,6 +344,21 @@ function showChangeDialog(e: MouseEvent, request_id: number, initial_state_id: n
                 ipv4_input.required = false;
                 ipv4_input.value = "";
               }
+
+              const reject_note_block = form.querySelector<HTMLDivElement>(".reject_note_block");
+              if (!reject_note_block) return;
+
+              const reject_note_textarea = reject_note_block.querySelector<HTMLTextAreaElement>("textarea");
+              if (!reject_note_textarea) return;
+
+              if (parseInt(state_select.value) === 4) {
+                reject_note_block.style.display = "flex";
+                reject_note_textarea.required = true;
+              } else {
+                reject_note_block.style.display = "none";
+                reject_note_textarea.required = false;
+                reject_note_textarea.value = "";
+              }
             });
             state_select_wrap.appendChild(state_select);
             createElement("div", null, ["select_chevron"], null, state_select_wrap);
@@ -341,24 +377,71 @@ function showChangeDialog(e: MouseEvent, request_id: number, initial_state_id: n
           ssh_file_block.style.display = "flex";
           ssh_file_input.required = true;
         }
+        ssh_file_input.addEventListener("input", (e) => {
+          const input = e.currentTarget as HTMLInputElement;
+          if (!input) return;
+
+          const error_span: Element | null = input.nextElementSibling;
+          if (error_span) {
+            if (!input.validity.valid) {
+              error_span.textContent = input.getAttribute('title') || "Ошибка валидации";
+            } else {
+              error_span.textContent = "";
+            }
+          }
+        });
         ssh_file_block.appendChild(ssh_file_input);
+        createElement("span", null, null, null, ssh_file_block);
         form.appendChild(ssh_file_block);
       }
 
       const ipv4_block = createElement("div", null, ["input", "ipv4_block"], { "style": "display: none" });
       if (ipv4_block) {
         createElement("label", "IPv4", null, { "for": "ipv4" }, ipv4_block);
-        const ipv4_input = createElement<HTMLInputElement>("input", null, null, { "id": "ipv4", "name": "ipv4" });
+        const ipv4_input = createElement<HTMLInputElement>("input", null, null, { "id": "ipv4", "name": "ipv4", "title": "Неверный IP адрес" });
         if (!ipv4_input) return;
         if (initial_state_id === 2) {
           ipv4_block.style.display = "flex";
           ipv4_input.required = true;
         }
+        ipv4_input.addEventListener("input", (e) => {
+          const input = e.currentTarget as HTMLInputElement;
+          if (!input) return;
+
+          if (!validateIPAddress(input.value)) {
+            input.setCustomValidity("Неверный IP адрес");
+          } else {
+            input.setCustomValidity("");
+          }
+
+          const error_span: Element | null = input.nextElementSibling;
+          if (error_span) {
+            if (!input.validity.valid) {
+              error_span.textContent = input.getAttribute('title') || "Ошибка валидации";
+            } else {
+              error_span.textContent = "";
+            }
+          }
+        })
         ipv4_block.appendChild(ipv4_input);
+        createElement("span", null, null, null, ipv4_block);
         form.appendChild(ipv4_block);
       }
 
-      createElement("button", "Изменить", null, { "type": "submit" }, form);
+      const reject_note_block = createElement("div", null, ["input", "reject_note_block"], { "style": "display: none" });
+      if (reject_note_block) {
+        createElement("label", "Причина отказа", null, { "for": "reject_note" }, reject_note_block);
+        const reject_note_textarea = createElement<HTMLTextAreaElement>("textarea", null, null, { "id": "reject_note", "name": "reject_note", "placeholder": "Введите причину...", "rows": "4" });
+        if (!reject_note_textarea) return;
+        if (initial_state_id === 4) {
+          reject_note_block.style.display = "flex";
+          reject_note_textarea.required = true;
+        }
+        reject_note_block.appendChild(reject_note_textarea);
+        form.appendChild(reject_note_block);
+      }
+
+      createElement("button", "Изменить", ['accent'], { "type": "submit" }, form);
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -387,16 +470,18 @@ function showChangeDialog(e: MouseEvent, request_id: number, initial_state_id: n
   }
 }
 
+function validateIPAddress(ipv4: string) {
+  return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipv4)
+}
+
 async function changeRequestState(form_data: FormData): Promise<boolean> {
-  console.log(form_data);
   const payload: FormData = form_data;
-  const response = await fetchAPIResponse("/api/admin/change", payload);
+  const response = await fetchAPIResponse("/api/admin/requests/change", payload);
   if (response.status === "success") {
     return true;
   } else {
     return false;
   }
-
 }
 
 document.addEventListener("DOMContentLoaded", main);

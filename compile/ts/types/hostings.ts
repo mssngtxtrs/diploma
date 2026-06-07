@@ -8,6 +8,7 @@ export type Hosting = {
   vcpu: number;
   traffic: number;
   price_per_month: number;
+  invalid: boolean;
 };
 
 export type HostingFull = Hosting & {
