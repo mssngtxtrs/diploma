@@ -138,6 +138,8 @@ GRANT ALL PRIVILEGES ON DATABASE lunahost_db TO lunahost_user;
 sudo -u www-data psql -U lunahost_user -d lunahost_db -f /var/www/lunahost/server/db/schema.sql
 ```
 
+> Важно! Файл миграции не содержит базовых данных для процессоров, серверов и хостингов. Данные должны быть заполнены самостоятельно.
+
 Укажите параметры подключения в `.env`:
 
 ```
