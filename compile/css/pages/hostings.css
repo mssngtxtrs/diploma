@@ -35,6 +35,7 @@
 
                 &.request_block {
                     min-height: 48px;
+		    margin-top: auto;
 
                     & button {
                         width: 100%;

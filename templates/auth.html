@@ -38,19 +38,6 @@
             </form>
 
             <form id="reg">
-                <div class="input tooltipped" style="anchor-name: --reg-1">
-                    <label for="first_name">Имя</label>
-                    <input
-                        type="text"
-                        name="first_name"
-                        id="first_name"
-                        required
-                        title="Неверный формат имени"
-                        pattern="^[A-Za-zА-Яа-яЁё]+$"
-                    >
-                    <span></span>
-                    <p class="tooltip" style="position-anchor: --reg-1">Только буквы: латиница и кириллица</p>
-                </div>
                 <div class="input tooltipped" style="anchor-name: --reg-2">
                     <label for="last_name">Фамилия</label>
                     <input
@@ -63,6 +50,19 @@
                     >
                     <span></span>
                     <p class="tooltip" style="position-anchor: --reg-2">Только буквы: латиница и кириллица</p>
+                </div>
+                <div class="input tooltipped" style="anchor-name: --reg-1">
+                    <label for="first_name">Имя</label>
+                    <input
+                        type="text"
+                        name="first_name"
+                        id="first_name"
+                        required
+                        title="Неверный формат имени"
+                        pattern="^[A-Za-zА-Яа-яЁё]+$"
+                    >
+                    <span></span>
+                    <p class="tooltip" style="position-anchor: --reg-1">Только буквы: латиница и кириллица</p>
                 </div>
                 <div class="input tooltipped" style="anchor-name: --reg-3">
                     <label for="second_name">Отчество (необязательно)</label>
